@@ -82,33 +82,47 @@ export function createRequestHandler(config, providerPoolManager) {
                     return;
                 }
 
-                // Serve static files for UI (除了登录页面需要认证)
-                // 检查是否是插件静态文件
-                const pluginManager = getPluginManager();
-                const isPluginStatic = pluginManager.isPluginStaticPath(path);
-                const pluginStaticOwner = isPluginStatic ? pluginManager.getPluginByStaticPath(path) : null;
-                if (pluginStaticOwner && !pluginStaticOwner._enabled) {
-                    res.writeHead(503, { 'Content-Type': 'application/json; charset=utf-8' });
-                    res.end(JSON.stringify({
-                        success: false,
-                        error: {
-                            message: `插件未启用：${pluginStaticOwner.name}`,
-                            code: 'PLUGIN_DISABLED'
+                // [v3.0 CORE_ONLY Optimization] Skip UI and Plugins if in Core mode
+                if (config.CORE_ONLY === true) {
+                    if (!(path === '/health' || path === '/provider_health' || path === '/api/grok/assets' || path.startsWith('/v1/') || path.startsWith('/api/'))) {
+                        if (path === '/' || path.endsWith('.html')) {
+                            res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
+                            res.end('A-Plan v3.0 is running in CORE_ONLY mode. API endpoints are active.');
+                        } else {
+                            res.writeHead(404);
+                            res.end();
                         }
-                    }));
-                    return;
-                }
-                if (path.startsWith('/static/') || path === '/' || path === '/favicon.ico' || path === '/index.html' || path.startsWith('/app/') || path.startsWith('/components/') || path === '/login.html' || isPluginStatic) {
-                    const served = await serveStaticFiles(path, res);
-                    if (served) return;
-                }
+                        return;
+                    }
+                } else {
+                    // Serve static files for UI (除了登录页面需要认证)
+                    // 检查是否是插件静态文件
+                    const pluginManager = getPluginManager();
+                    const isPluginStatic = pluginManager.isPluginStaticPath(path);
+                    const pluginStaticOwner = isPluginStatic ? pluginManager.getPluginByStaticPath(path) : null;
+                    if (pluginStaticOwner && !pluginStaticOwner._enabled) {
+                        res.writeHead(503, { 'Content-Type': 'application/json; charset=utf-8' });
+                        res.end(JSON.stringify({
+                            success: false,
+                            error: {
+                                message: `插件未启用：${pluginStaticOwner.name}`,
+                                code: 'PLUGIN_DISABLED'
+                            }
+                        }));
+                        return;
+                    }
+                    if (path.startsWith('/static/') || path === '/' || path === '/favicon.ico' || path === '/index.html' || path.startsWith('/app/') || path.startsWith('/components/') || path === '/login.html' || isPluginStatic) {
+                        const served = await serveStaticFiles(path, res);
+                        if (served) return;
+                    }
 
-                // 执行插件路由
-                const pluginRouteHandled = await pluginManager.executeRoutes(method, path, req, res, currentConfig);
-                if (pluginRouteHandled) return;
+                    // 执行插件路由
+                    const pluginRouteHandled = await pluginManager.executeRoutes(method, path, req, res, currentConfig);
+                    if (pluginRouteHandled) return;
 
-                const uiHandled = await handleUIApiRequests(method, path, req, res, currentConfig, providerPoolManager);
-                if (uiHandled) return;
+                    const uiHandled = await handleUIApiRequests(method, path, req, res, currentConfig, providerPoolManager);
+                    if (uiHandled) return;
+                }
 
                 // logger.info(`\n${new Date().toLocaleString()}`);
                 logger.info(`[Server] Received request: ${req.method} http://${req.headers.host}${req.url}`);

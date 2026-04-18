@@ -5,6 +5,7 @@ import * as http from 'http';
 import { initializeConfig, CONFIG } from '../core/config-manager.js';
 import { initApiService } from './service-manager.js';
 import { initializeAPIManagement } from './api-manager.js';
+import { discoverPlugins, getPluginManager } from '../core/plugin-manager.js';
 import { createRequestHandler } from '../handlers/request-handler.js';
 import { getTLSSidecar } from '../utils/tls-sidecar.js';
 import { HEALTH_CHECK } from '../utils/constants.js';
@@ -56,16 +57,35 @@ async function startServer() {
     await initializeConfig(process.argv.slice(2), 'configs/config.json');
     
     // Core optimization: Minimal Mode if specified, but default keeps UI
-    if (process.env.LITE_MODE === 'true') {
+    if (process.env.CORE_ONLY === 'true' || process.env.LITE_MODE === 'true') {
+        CONFIG.CORE_ONLY = true;
         CONFIG.UI_ENABLED = false;
-        CONFIG.PLUGINS_ENABLED = false;
-        logger.info('[A-Plan] Running in LITE mode (UI/Plugins disabled)');
+        // In CORE_ONLY mode, we still enable the plugin SYSTEM for auth, 
+        // but individual non-auth plugins can be disabled via configs/plugins.json
+        CONFIG.PLUGINS_ENABLED = true; 
+        logger.info('[A-Plan] 🚀 Running in CORE_ONLY mode (UI/Extended Stats disabled, Auth-Engine active)');
     }
 
     if (CONFIG.TLS_SIDECAR_ENABLED) {
         await getTLSSidecar().start({
             port: CONFIG.TLS_SIDECAR_PORT,
             binaryPath: CONFIG.TLS_SIDECAR_BINARY_PATH || undefined,
+        });
+    }
+
+    // Initialize plugin system (Mandatory for Auth)
+    logger.info('[Initialization] Discovering and initializing plugins...');
+    await discoverPlugins();
+    const pluginManager = getPluginManager();
+    await pluginManager.initAll(CONFIG);
+    
+    // Log loaded plugins
+    const pluginList = pluginManager.getPluginList();
+    if (pluginList.length > 0) {
+        logger.info(`[Plugins] Loaded ${pluginList.length} plugin(s):`);
+        pluginList.forEach(p => {
+            const status = p.enabled ? '✓' : '✗';
+            logger.info(`  ${status} ${p.name} v${p.version} - ${p.description}`);
         });
     }
 
