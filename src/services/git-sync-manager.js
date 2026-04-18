@@ -19,16 +19,19 @@ class GitSyncManager {
             return;
         }
 
-        logger.info('[GitSync] Initializing Git Sync...');
+        logger.info('[GitSync] Initializing Git Sync in background...');
         await this.setupGit();
         
-        // Initial pull
-        await this.pull();
+        // 极致加速：不再 await pull()，直接丢进后台运行
+        this.pull().then(() => {
+            logger.info('[GitSync] Initial background pull completed.');
+        }).catch(err => {
+            logger.warn('[GitSync] Initial background pull failed:', err.message);
+        });
 
-        // Schedule periodic sync
+        // 依然保持定时同步
         const intervalMs = (this.config.GIT_SYNC.interval || 10) * 60 * 1000;
         this.syncIntervalId = setInterval(() => this.sync(), intervalMs);
-        logger.info(`[GitSync] Scheduled periodic sync every ${this.config.GIT_SYNC.interval || 10} minutes.`);
     }
 
     async setupGit() {

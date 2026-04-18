@@ -124,14 +124,6 @@ async function startServer() {
 
     const services = await initApiService(CONFIG, true);
     
-    // Initialize and start Git Sync Service
-    const gitSyncManager = getGitSyncManager(CONFIG);
-    if (gitSyncManager) {
-        gitSyncManager.init().catch(err => {
-            logger.error('[A-Plan] Git sync initialization failed:', err.message);
-        });
-    }
-
     const heartbeatAndRefreshToken = initializeAPIManagement(services);
     const requestHandlerInstance = createRequestHandler(CONFIG, getProviderPoolManager());
 
@@ -141,11 +133,21 @@ async function startServer() {
         keepAliveTimeout: 65000
     }, requestHandlerInstance);
 
+    // 极致速度优化：先让端口跑起来，再慢慢搞 Git 同步和定时任务
     serverInstance.listen(CONFIG.SERVER_PORT, CONFIG.HOST, () => {
         logger.info(`🚀 A-Plan (A计划) Gateway running on http://${CONFIG.HOST}:${CONFIG.SERVER_PORT}`);
         
-        // Task Lock for Heartbeat
+        // 端口一旦 Ready，立即在后台异步启动 Git 同步
+        const gitSyncManager = getGitSyncManager(CONFIG);
+        if (gitSyncManager) {
+            gitSyncManager.init().catch(err => {
+                logger.error('[A-Plan] Git sync background initialization failed:', err.message);
+            });
+        }
+
+        // 剩下的心跳、健康检查全都在后台跑，不影响 API 响应
         if (CONFIG.CRON_REFRESH_TOKEN) {
+            // ... (省略后续逻辑)
             setInterval(async () => {
                 if (isTaskRunning.heartbeat) return;
                 isTaskRunning.heartbeat = true;
