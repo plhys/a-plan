@@ -20,6 +20,7 @@ let isTaskRunning = {
 
 // 4.0 核心状态：标记核心逻辑是否已加载完成
 global.CORE_READY = false;
+global.BOOTSTRAP_ERROR = null;
 
 async function gracefulShutdown() {
     logger.info('[A-Plan] Initiating graceful shutdown...');
@@ -96,6 +97,10 @@ async function startServer() {
     }, async (req, res) => {
         // 如果核心逻辑还没加载完，返回 503 让客户端重试，但不挂断连接
         if (!global.CORE_READY || !requestHandlerInstance) {
+            if (global.BOOTSTRAP_ERROR) {
+                res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' });
+                return res.end(`A-Plan 4.0 Bootstrap Failed: ${global.BOOTSTRAP_ERROR.message}`);
+            }
             res.writeHead(503, { 
                 'Content-Type': 'text/plain; charset=utf-8',
                 'Retry-After': '1' 
@@ -111,6 +116,7 @@ async function startServer() {
         
         // 3. 在端口开启后的“背景音”里，异步执行重型初始化
         bootstrapCore().catch(err => {
+            global.BOOTSTRAP_ERROR = err;
             logger.error('[A-Plan 4.0] Critical Bootstrap Failure:', err.message);
         });
     });
@@ -122,8 +128,12 @@ async function startServer() {
 async function bootstrapCore() {
     const startTime = Date.now();
     
-    // 加载完整配置
+    // 1. 加载完整配置并初始化日志系统
     await initializeConfig(process.argv.slice(2), 'configs/config.json');
+    
+    // 2. 4.0 增强：立即开启 UI 日志遥测，让启动过程在 Web 上可见
+    const { initializeUIManagement } = await import('../ui-modules/event-broadcast.js');
+    initializeUIManagement();
     
     // 环境优化
     if (process.env.CORE_ONLY === 'true' || process.env.LITE_MODE === 'true') {
