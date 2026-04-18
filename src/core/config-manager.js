@@ -57,7 +57,7 @@ function normalizeConfiguredProviders(config) {
 export async function initializeConfig(args = process.argv.slice(2), configFilePath = 'configs/config.json') {
     const defaultConfig = {
         REQUIRED_API_KEY: process.env.API_KEY || "123456", // 优先从环境变量读取
-        SERVER_PORT: parseInt(process.env.PORT) || 3000,
+        SERVER_PORT: parseInt(process.env.PORT) || 18788,
         HOST: process.env.HOST || '0.0.0.0',
         MODEL_PROVIDER: MODEL_PROVIDER.GEMINI_CLI,
         PROXY_URL: process.env.PROXY_URL || null, // 动态代理配置
