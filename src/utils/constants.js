@@ -50,6 +50,7 @@ export const MODEL_PROTOCOL_PREFIX = {
     CODEX: 'codex',
     FORWARD: 'forward',
     GROK: 'grok',
+    DEEPSEEK: 'deepseek',
 };
 
 // 提供商标识符常量
@@ -65,5 +66,6 @@ export const MODEL_PROVIDER = {
     CODEX_API: 'openai-codex-oauth',
     FORWARD_API: 'forward-api',
     GROK_CUSTOM: 'grok-custom',
+    DEEPSEEK_CUSTOM: 'deepseek-custom',
     AUTO: 'auto',
 };

@@ -9,6 +9,7 @@ import { IFlowApiService } from './openai/iflow-core.js';
 import { CodexApiService } from './openai/codex-core.js';
 import { ForwardApiService } from './forward/forward-core.js';
 import { GrokApiService } from './grok/grok-core.js';
+import { DeepSeekApiService } from './deepseek/deepseek-core.js';
 import { MODEL_PROVIDER } from '../utils/constants.js';
 import logger from '../utils/logger.js';
 
@@ -92,6 +93,34 @@ export class ApiServiceAdapter {
      */
     isExpiryDateNear() {
         throw new Error("Method 'isExpiryDateNear()' must be implemented.");
+    }
+}
+
+// DeepSeek API 服务适配器
+export class DeepSeekApiServiceAdapter extends ApiServiceAdapter {
+    constructor(config) {
+        super();
+        this.deepSeekApiService = new DeepSeekApiService(config);
+    }
+
+    async generateContent(model, requestBody) {
+        return this.deepSeekApiService.generateContent(model, requestBody);
+    }
+
+    async *generateContentStream(model, requestBody) {
+        yield* this.deepSeekApiService.generateContentStream(model, requestBody);
+    }
+
+    async listModels() {
+        return this.deepSeekApiService.listModels();
+    }
+
+    async refreshToken() { return Promise.resolve(); }
+    async forceRefreshToken() { return Promise.resolve(); }
+    isExpiryDateNear() { return false; }
+    
+    async getUsageLimits() {
+        return this.deepSeekApiService.getUsageLimits();
     }
 }
 
@@ -697,6 +726,7 @@ registerAdapter(MODEL_PROVIDER.ANTIGRAVITY, AntigravityApiServiceAdapter);
 registerAdapter(MODEL_PROVIDER.KIRO_API, KiroApiServiceAdapter);
 registerAdapter(MODEL_PROVIDER.CODEX_API, CodexApiServiceAdapter);
 registerAdapter(MODEL_PROVIDER.GROK_CUSTOM, GrokApiServiceAdapter);
+registerAdapter(MODEL_PROVIDER.DEEPSEEK_CUSTOM, DeepSeekApiServiceAdapter);
 // registerAdapter(MODEL_PROVIDER.FORWARD_API, ForwardApiServiceAdapter);
 // registerAdapter(MODEL_PROVIDER.QWEN_API, QwenApiServiceAdapter);
 // registerAdapter(MODEL_PROVIDER.IFLOW_API, IFlowApiServiceAdapter);

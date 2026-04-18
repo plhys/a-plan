@@ -74,6 +74,11 @@ function getBaseProviderConfigs() {
             name: 'OpenAI Responses', 
             icon: 'fa-reply-all'
         },
+        { 
+            id: 'deepseek-custom', 
+            name: 'DeepSeek', 
+            icon: 'fa-microchip'
+        },
     ];
 }
 
@@ -449,6 +454,20 @@ function getProviderTypeFields(providerType) {
                 label: `${t('modal.provider.field.headerPrefix')} <span class="optional-tag">${t('config.optional')}</span>`,
                 type: 'text',
                 placeholder: 'Bearer '
+            }
+        ],
+        'deepseek-custom': [
+            {
+                id: 'DEEPSEEK_API_KEY',
+                label: 'DeepSeek API Key',
+                type: 'password',
+                placeholder: 'sk-...'
+            },
+            {
+                id: 'DEEPSEEK_BASE_URL',
+                label: 'DeepSeek Base URL',
+                type: 'text',
+                placeholder: 'https://api.deepseek.com'
             }
         ]
     };
