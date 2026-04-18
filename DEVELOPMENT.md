@@ -56,14 +56,26 @@ export default {
 
 ---
 
-## 4. 自动化更新系统
+## 4. 工业级版本更新规范 (A-Plan Update Standard)
 
-### 4.1 工作原理
-更新引擎位于 `src/ui-modules/update-api.js`，采用以下逻辑确保“一以贯之”：
-1. **自动清理**: 执行 `git fetch --all --tags --prune` 清理本地陈旧标签。
-2. **智能排序**: 使用 SemVer 算法对 Tag 进行排序，确保 beta 版和正式版顺序正确。
-3. **原子更新**: `git checkout <tag> && git reset --hard <tag>` 确保代码绝对干净。
-4. **无缝热更**: 联动 Master 进程，在不中断 Pod 的情况下完成进程热切换。
+为了确保在不稳定的 PUD/Pod 环境中更新始终成功，所有后续版本必须严格遵守此更新流程。禁止“想写啥写啥”，必须维持以下原子操作链：
+
+### 4.1 版本对齐三要素 ( must-have )
+发布新版本（打 Tag）前，必须确保以下三个文件的版本号完全一致：
+1.  **`VERSION` (根目录)**: 纯文本文件，如 `4.0.3`。这是 UI 判定当前版本的唯一标准。
+2.  **`package.json`**: `version` 字段必须同步更新。
+3.  **Git Tag**: 必须打上带 `v` 前缀的标签，如 `v4.0.3`。
+
+### 4.2 更新引擎逻辑 (Update Engine Logic)
+更新引擎位于 `src/ui-modules/update-api.js`，其核心逻辑严禁随意改动：
+- **归一化比较**: 必须使用 `normalize` 函数去除 `v` 前缀后再比对 `VERSION` 内容与 Git Tag 名称。
+- **强制对齐策略**: 
+  - 执行 `git fetch --all --tags --force --prune --prune-tags`。
+  - 在切换版本前，必须执行 `git reset --hard` 和 `git clean -fd`，以清除 PUD 环境中可能产生的临时冲突或文件损坏。
+- **热重启序列**: 脚本更新代码后，必须通过 `axios.post` 触发 Master 进程的 `/master/restart` 接口，实现 0 秒停机热切换。
+
+### 4.3 极速模式下的更新
+当 `CORE_ONLY=true` 时，Web UI 更新接口被禁用。此时应通过 `start.sh` 中的异步 Git 同步逻辑完成。`start.sh` 必须保持对 `origin main` 的静默拉取，确保 Pod 每次重启都能自动“复活”到最新提交。
 
 ---
 
