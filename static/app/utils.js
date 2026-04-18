@@ -49,12 +49,6 @@ function getBaseProviderConfigs() {
             defaultPath: 'configs/qwen/'
         },
         { 
-            id: 'openai-iflow', 
-            name: t('dashboard.routing.nodeName.iflow'), 
-            icon: 'fa-stream',
-            defaultPath: 'configs/iflow/'
-        },
-        { 
             id: 'grok-custom', 
             name: t('dashboard.routing.nodeName.grok'), 
             icon: 'fa-user-secret'
@@ -73,11 +67,6 @@ function getBaseProviderConfigs() {
             id: 'openaiResponses-custom', 
             name: 'OpenAI Responses', 
             icon: 'fa-reply-all'
-        },
-        { 
-            id: 'deepseek-custom', 
-            name: 'DeepSeek (Official)', 
-            icon: 'fa-microchip'
         },
         { 
             id: 'deepseek-free', 
@@ -459,20 +448,6 @@ function getProviderTypeFields(providerType) {
                 label: `${t('modal.provider.field.headerPrefix')} <span class="optional-tag">${t('config.optional')}</span>`,
                 type: 'text',
                 placeholder: 'Bearer '
-            }
-        ],
-        'deepseek-custom': [
-            {
-                id: 'DEEPSEEK_API_KEY',
-                label: 'DeepSeek API Key',
-                type: 'password',
-                placeholder: 'sk-...'
-            },
-            {
-                id: 'DEEPSEEK_BASE_URL',
-                label: 'DeepSeek Base URL',
-                type: 'text',
-                placeholder: 'https://api.deepseek.com'
             }
         ],
         'deepseek-free': [
