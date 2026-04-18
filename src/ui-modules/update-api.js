@@ -4,6 +4,7 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import { exec } from 'child_process';
 import { promisify } from 'util';
+import axios from 'axios';
 import { CONFIG } from '../core/config-manager.js';
 import { parseProxyUrl } from '../utils/proxy-utils.js';
 import { getRequestBody } from '../utils/common.js';
@@ -48,62 +49,108 @@ function compareVersions(v1, v2) {
 }
 
 /**
- * 检查更新
+ * 检查更新 (极客版：直接从本地 Git 仓库获取 Tags)
  */
 export async function checkForUpdates() {
     const versionFilePath = path.join(process.cwd(), 'VERSION');
-    let localVersion = '2.14.6';
+    let localVersion = '3.0.0-beta.1';
     try {
         if (existsSync(versionFilePath)) {
             localVersion = readFileSync(versionFilePath, 'utf-8').trim();
         }
     } catch (e) {}
 
-    return {
-        hasUpdate: true,
-        localVersion,
-        latestVersion: 'Latest (Stable)',
-        availableVersions: ['HEAD'],
-        updateMethod: 'git',
-        error: null
-    };
+    try {
+        // 1. 获取远程 Tags
+        await execAsync('git fetch --tags --force');
+        
+        // 2. 列出所有 Tags，并按版本号降序排列
+        const { stdout } = await execAsync('git tag -l --sort=-v:refname');
+        const tags = stdout.split('\n').map(t => t.trim()).filter(t => t.length > 0);
+        
+        // 3. 始终把 HEAD (主分支最新) 放在最前面
+        const availableVersions = ['HEAD', ...tags];
+        const latestVersion = tags[0] || 'HEAD';
+
+        return {
+            hasUpdate: localVersion !== latestVersion,
+            localVersion,
+            latestVersion,
+            availableVersions,
+            updateMethod: 'git-tags',
+            error: null
+        };
+    } catch (error) {
+        logger.error('[Update] Failed to fetch tags:', error.message);
+        return {
+            hasUpdate: false,
+            localVersion,
+            latestVersion: localVersion,
+            availableVersions: ['HEAD'],
+            updateMethod: 'git',
+            error: error.message
+        };
+    }
 }
 
 /**
- * 执行更新操作 (指向 plhys/a-plan 并支持重启)
+ * 执行更新操作
  */
 export async function performUpdate(targetTag = null) {
-    logger.info(`[Update] Manual update triggered via plhys repo...`);
+    const target = targetTag || 'HEAD';
+    logger.info(`[Update] Manual update triggered. Target: ${target}`);
 
     try {
         // 1. 获取最新代码
-        logger.info('[Update] Pulling latest code from origin main...');
-        await execAsync('git fetch origin main');
-        await execAsync('git reset --hard origin/main');
+        await execAsync('git fetch --all --tags --force');
+        
+        if (target === 'HEAD') {
+            logger.info('[Update] Switching to origin/main (HEAD)...');
+            await execAsync('git reset --hard origin/main');
+        } else {
+            logger.info(`[Update] Checking out tag: ${target}...`);
+            await execAsync(`git checkout ${target}`);
+            // 如果是 Tag，建议 reset --hard 确保干净
+            await execAsync(`git reset --hard ${target}`);
+        }
 
         // 2. 检查依赖
         logger.info('[Update] Running npm install...');
+        // 极速模式下使用 --production
         await execAsync('npm install --production');
 
-        // 3. 准备重启
+        // 3. 更新 VERSION 文件 (如果是 checkout tag)
+        if (target !== 'HEAD') {
+            const versionFilePath = path.join(process.cwd(), 'VERSION');
+            writeFileSync(versionFilePath, target.replace(/^v/, ''));
+        }
+
+        // 4. 准备重启
         logger.info('[Update] Update successful, triggering service restart...');
         
-        // 异步执行重启
+        // 触发 Master 进程热重启
         setTimeout(() => {
             const masterPort = process.env.MASTER_PORT || 3100;
-            logger.info(`[Update] Requesting restart on port ${masterPort}...`);
-            fetch(`http://localhost:${masterPort}/master/restart`, { method: 'POST' }).catch(() => {});
-        }, 2000);
+            logger.info(`[Update] Requesting restart on master port ${masterPort}...`);
+            // 使用内部调用的方式通知 Master 重启
+            axios.post(`http://127.0.0.1:${masterPort}/master/restart`).catch(err => {
+                logger.warn('[Update] Auto-restart notification failed, manual restart may be required.');
+            });
+        }, 3000);
 
         return {
             success: true,
-            message: 'Successfully updated to the latest version. Service is restarting...',
+            message: `Successfully updated to ${target}. Service is restarting...`,
             updated: true,
-            updateMethod: 'git-pull-hard'
+            target: target
         };
     } catch (error) {
         logger.error('[Update] Update failed:', error.message);
-        throw error;
+        return {
+            success: false,
+            message: `Update failed: ${error.message}`,
+            error: error.message
+        };
     }
 }
 
@@ -128,7 +175,9 @@ export async function handleCheckUpdate(req, res) {
  */
 export async function handlePerformUpdate(req, res) {
     try {
-        const updateResult = await performUpdate();
+        const body = await getRequestBody(req);
+        const targetTag = body?.tag || body?.version;
+        const updateResult = await performUpdate(targetTag);
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(updateResult));
         return true;
