@@ -738,7 +738,7 @@ export default {
     }
 
     /**
-     * 启用/禁用插件
+     * 启用/禁用插件（支持热切换）
      * @param {string} name - 插件名称
      * @param {boolean} enabled - 是否启用
      */
@@ -746,12 +746,37 @@ export default {
         if (!this.pluginsConfig.plugins[name]) {
             this.pluginsConfig.plugins[name] = {};
         }
+        
+        const oldStatus = this.pluginsConfig.plugins[name].enabled !== false;
         this.pluginsConfig.plugins[name].enabled = enabled;
         await this.saveConfig();
         
         const plugin = this.plugins.get(name);
         if (plugin) {
-            plugin._enabled = enabled;
+            // 如果状态发生变化，触发生命周期钩子实现热切换
+            if (oldStatus !== enabled) {
+                try {
+                    if (enabled) {
+                        if (typeof plugin.init === 'function') {
+                            // 使用全局配置进行初始化
+                            const { CONFIG } = await import('./config-manager.js');
+                            await plugin.init(CONFIG);
+                        }
+                        plugin._enabled = true;
+                        logger.info(`[PluginManager] Hot-enabled plugin: ${name}`);
+                    } else {
+                        if (typeof plugin.destroy === 'function') {
+                            await plugin.destroy();
+                        }
+                        plugin._enabled = false;
+                        logger.info(`[PluginManager] Hot-disabled plugin: ${name}`);
+                    }
+                } catch (error) {
+                    logger.error(`[PluginManager] Hot-toggle plugin "${name}" failed:`, error.message);
+                    // 状态回滚或保持禁用
+                    plugin._enabled = false;
+                }
+            }
         }
     }
 }

@@ -158,7 +158,12 @@ async function bootstrapCore() {
     // 启动 Git 同步
     const gitSyncManager = getGitSyncManager(CONFIG);
     if (gitSyncManager) {
-        gitSyncManager.init().catch(e => logger.error('[GitSync] Error:', e.message));
+        gitSyncManager.init().then(async () => {
+            // 4.0 增强：首拉完成后，自动重载内存配置以恢复云端设置
+            logger.info('[A-Plan 4.0] Initial Git Pull finished, syncing memory state...');
+            const { reloadConfig } = await import('../ui-modules/config-api.js');
+            await reloadConfig(getProviderPoolManager());
+        }).catch(e => logger.error('[GitSync] Error:', e.message));
     }
 
     // 启动定时任务
