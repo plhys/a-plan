@@ -89,6 +89,11 @@ import {
 } from './tutorial-manager.js';
 
 import {
+    initClashManager,
+    updateClashUIState
+} from './clash-manager.js';
+
+import {
     CustomModelsManager
 } from './custom-models-manager.js';
 
@@ -129,6 +134,10 @@ export function initApp() {
     initImageZoom(); // 初始化图片放大功能
     initPluginManager(); // 初始化插件管理功能
     initTutorialManager(); // 初始化教程管理功能
+    initClashManager(); // 初始化 Clash 管理功能
+    
+    // 初始化 Clash 原子开关逻辑
+    initClashAtomicControl();
     
     // 初始化自定义模型管理
     window.customModelsManager = new CustomModelsManager();
@@ -212,26 +221,68 @@ function initMobileMenu() {
 }
 
 /**
- * 检查 Clash 插件状态并控制侧边栏显示
+ * 初始化 Clash 原子开关控制
  */
-async function checkClashPluginStatus() {
+async function initClashAtomicControl() {
     try {
-        const response = await fetch('/api/plugins');
-        const data = await response.json();
-        const clashPlugin = data.plugins?.find(p => p.name === 'clash-guardian');
+        // 【修正】改用 apiClient 解决 401 导致的刷新后开关复位问题
+        const data = await window.apiClient.get('/plugins');
+        const plugins = data.plugins || [];
+        const plugin = plugins.find(p => p.name === 'clash-guardian');
         
-        const clashNav = document.getElementById('nav-item-clash');
-        if (clashNav) {
-            if (clashPlugin && clashPlugin.enabled) {
-                clashNav.style.display = 'flex';
-            } else {
-                clashNav.style.display = 'none';
+        const toggle = document.getElementById('clashAtomicToggle');
+        if (toggle) {
+            const isActive = !!(plugin && plugin.installed && plugin.enabled);
+            toggle.checked = isActive;
+            console.log('[Clash] 侧边栏开关初始化成功:', isActive);
+            
+            if (isActive && window.updateClashUIState) {
+                window.updateClashUIState();
             }
         }
-    } catch (error) {
-        console.error('Failed to check Clash plugin status:', error);
+    } catch (e) {
+        console.error('[Clash] 初始化开关失败 (Auth Error?):', e);
     }
 }
+
+/**
+ * 处理 Clash 原子开关切换
+ */
+window.handleClashAtomicToggle = async function(enabled) {
+    const toggle = document.getElementById('clashAtomicToggle');
+    // 使用项目内置的 apiClient 以自动携带认证 Token
+    const client = window.apiClient; 
+    
+    try {
+        if (enabled) {
+            console.log('[Clash] 正在激活模块...');
+            // 1. 安装
+            await client.post('/plugins/clash-guardian/install');
+            // 2. 启用
+            await client.post('/plugins/clash-guardian/toggle', { enabled: true });
+            
+            showToast('激活成功', '代理模块已加载', 'success');
+        } else {
+            console.log('[Clash] 正在停用模块...');
+            // 1. 禁用
+            await client.post('/plugins/clash-guardian/toggle', { enabled: false });
+            // 2. 卸载
+            await client.delete('/plugins/clash-guardian/uninstall');
+            
+            showToast('停用成功', '模块已彻底移除', 'success');
+        }
+        
+        setTimeout(() => {
+            console.log('[Clash] 锁定锚点并刷新');
+            window.location.hash = 'clash';
+            location.reload();
+        }, 800);
+    } catch (e) {
+        console.error('[Clash] 开关操作失败:', e);
+        showToast('操作失败', e.message, 'error');
+        toggle.checked = !enabled; 
+    }
+};
 
 // 导出供外部使用的函数
 window.initApp = initApp;

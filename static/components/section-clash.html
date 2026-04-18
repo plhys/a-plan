@@ -1,110 +1,67 @@
 <div id="clash" class="section">
     <div class="section-header">
-        <h1><i class="fas fa-shield-alt"></i> Clash Guardian 极客代理</h1>
+        <h1><i class="fas fa-shield-alt"></i> Clash Guardian 极客分流管理</h1>
     </div>
 
-    <!-- 未安装状态显示 -->
-    <div id="clashNotInstalled" class="dashboard-card" style="max-width: 600px; margin: 50px auto; text-align: center; padding: 40px; display: none;">
+    <!-- 未激活状态提示 -->
+    <div id="clashDisabledState" class="dashboard-card" style="max-width: 600px; margin: 50px auto; text-align: center; padding: 40px; display: none;">
         <div style="font-size: 60px; color: var(--text-secondary); margin-bottom: 20px;">
-            <i class="fas fa-microchip"></i>
+            <i class="fas fa-power-off"></i>
         </div>
-        <h2>功能模块未激活</h2>
-        <p style="color: var(--text-secondary); margin-bottom: 30px;">为了极致轻量化，代理模块代码默认不加载。点击下方按钮进行原子化激活（自动拉取逻辑并加载到内存）。</p>
-        <button class="btn btn-primary btn-lg" id="btnActivateClash" onclick="activateClashModule()">
-            <i class="fas fa-bolt"></i> 立即激活代理模块
-        </button>
-        <div id="clashActivating" style="display:none; margin-top: 20px;">
-            <i class="fas fa-spinner fa-spin"></i> 正在部署核心逻辑...
-        </div>
+        <h2>代理服务已关闭</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 30px;">遵循极客原子化原则：关闭后模块代码物理移除。请通过侧边栏开关开启服务。</p>
     </div>
 
-    <!-- 已安装/运行状态显示 -->
-    <div id="clashMainUI" style="display: none;">
+    <!-- 已激活管理界面 -->
+    <div id="clashActiveUI" style="display: none;">
         <div class="dashboard-grid">
             <div class="dashboard-card">
                 <div class="card-header">
-                    <h3><i class="fas fa-cog"></i> 核心配置</h3>
-                    <div class="status-badge active">
-                        <i class="fas fa-check-circle"></i> 已就绪
-                    </div>
+                    <h3><i class="fas fa-link"></i> 订阅与核心</h3>
                 </div>
                 <div class="card-content">
                     <div class="config-group">
-                        <label>订阅地址</label>
-                        <input type="text" id="clashSubUrlInput" placeholder="https://...">
+                        <label>订阅 URL</label>
+                        <input type="text" id="clashSubUrlInput" class="form-control" placeholder="https://...">
+                    </div>
+                    <div class="config-group" style="margin-top: 15px;">
+                        <label>本地代理端口</label>
+                        <input type="number" id="clashPortInput" class="form-control" value="7890">
                     </div>
                     <button class="btn btn-primary" style="margin-top: 20px; width: 100%;" onclick="saveClashSettings()">
-                        保存并拉取节点
+                        <i class="fas fa-sync"></i> 更新订阅并同步节点
                     </button>
                 </div>
             </div>
 
             <div class="dashboard-card">
                 <div class="card-header">
-                    <h3><i class="fas fa-server"></i> 节点切换</h3>
+                    <h3><i class="fas fa-route"></i> 供应商分流路由</h3>
                 </div>
                 <div class="card-content">
-                    <div class="node-list" id="clashNodeList"></div>
+                    <div class="table-responsive">
+                        <table class="data-table" style="width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th>API 供应商</th>
+                                    <th>指定出口节点</th>
+                                </tr>
+                            </thead>
+                            <tbody id="clashRoutingTable"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<script>
-    async function checkClashInstallation() {
-        const notInstalled = document.getElementById('clashNotInstalled');
-        const mainUI = document.getElementById('clashMainUI');
-        
-        try {
-            const res = await fetch('/api/plugins');
-            const data = await res.json();
-            const plugin = data.find(p => p.name === 'clash-guardian');
-            
-            if (plugin && plugin.installed && plugin.enabled) {
-                notInstalled.style.display = 'none';
-                mainUI.style.display = 'block';
-                loadClashData();
-            } else {
-                notInstalled.style.display = 'block';
-                mainUI.style.display = 'none';
-            }
-        } catch (e) {
-            notInstalled.style.display = 'block';
-        }
-    }
-
-    async function activateClashModule() {
-        const btn = document.getElementById('btnActivateClash');
-        const loading = document.getElementById('clashActivating');
-        btn.disabled = true;
-        loading.style.display = 'block';
-        
-        try {
-            // 1. 安装插件
-            await fetch('/api/plugins/clash-guardian/install', { method: 'POST' });
-            // 2. 启用插件 (触发后端热加载)
-            await fetch('/api/plugins/clash-guardian/toggle', { 
-                method: 'POST', 
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ enabled: true })
-            });
-            
-            // 模拟延迟感，确保后端加载完成
-            setTimeout(() => {
-                alert('模块激活成功！核心逻辑已注入。');
-                location.reload(); // 刷新以加载完整的 UI 逻辑
-            }, 1500);
-        } catch (e) {
-            alert('激活失败: ' + e.message);
-            btn.disabled = false;
-            loading.style.display = 'none';
-        }
-    }
-
-    // 后续逻辑保持不变...
-    async function loadClashData() { /* ... */ }
+<script type="module">
+    import { updateClashUIState } from '/app/clash-manager.js';
     
-    // 初始化检查
-    checkClashInstallation();
+    // 定时检查状态，防止状态不同步
+    setInterval(updateClashUIState, 5000);
+    
+    // 初始化
+    updateClashUIState();
 </script>

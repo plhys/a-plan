@@ -20,6 +20,7 @@ const elements = {
     get restartBtn() { return document.getElementById('restartBtn'); },
     get sections() { return document.querySelectorAll('.section'); },
     get navItems() { return document.querySelectorAll('.nav-item'); },
+    get clashSection() { return document.getElementById('clash'); },
     get logsContainer() { return document.getElementById('logsContainer'); },
     get clearLogsBtn() { return document.getElementById('clearLogs'); },
     get downloadLogsBtn() { return document.getElementById('downloadLogs'); },

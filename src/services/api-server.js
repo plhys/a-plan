@@ -153,7 +153,7 @@ async function bootstrapCore() {
 
     // 插件系统：仅在非精简模式下加载
     if (!CONFIG.CORE_ONLY) {
-        await discoverPlugins();
+        // 【修正】统一使用 initAll 传入 CONFIG
         await getPluginManager().initAll(CONFIG);
     }
 

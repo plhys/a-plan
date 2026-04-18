@@ -11,37 +11,28 @@ function initNavigation() {
         return;
     }
 
+    // 【新增】处理初始页面加载时的锚点路由
+    const handleInitialRoute = () => {
+        const hash = window.location.hash.substring(1);
+        if (hash) {
+            console.log('[Navigation] 正在路由到:', hash);
+            switchToSection(hash);
+        }
+    };
+
     elements.navItems.forEach(item => {
         item.addEventListener('click', (e) => {
             e.preventDefault();
             const sectionId = item.dataset.section;
-
-            // 更新导航状态
-            elements.navItems.forEach(nav => nav.classList.remove('active'));
-            item.classList.add('active');
-
-            // 显示对应章节
-            elements.sections.forEach(section => {
-                section.classList.remove('active');
-                if (section.id === sectionId) {
-                    section.classList.add('active');
-                    
-                    // 如果是日志页面，默认滚动到底部
-                    if (sectionId === 'logs') {
-                        setTimeout(() => {
-                            const logsContainer = document.getElementById('logsContainer');
-                            if (logsContainer) {
-                                logsContainer.scrollTop = logsContainer.scrollHeight;
-                            }
-                        }, 100);
-                    }
-                }
-            });
-
-            // 滚动到顶部
-            scrollToTop();
+            window.location.hash = sectionId; // 更新锚点以便刷新后能回来
+            switchToSection(sectionId);
         });
     });
+
+    // 监听组件加载完成事件后再执行路由
+    window.addEventListener('componentsLoaded', handleInitialRoute);
+    // 同时也监听 hash 变化
+    window.addEventListener('hashchange', handleInitialRoute);
 }
 
 /**

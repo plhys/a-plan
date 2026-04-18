@@ -45,6 +45,26 @@
     font-weight: 600;
 }
 
+.nav-item-wrapper {
+    display: flex;
+    align-items: center;
+    border-radius: var(--radius-lg);
+    transition: var(--transition);
+}
+
+.nav-item-wrapper:hover {
+    background: var(--bg-tertiary);
+}
+
+.nav-item-wrapper .nav-item {
+    flex: 1;
+    background: transparent !important;
+}
+
+.nav-item-wrapper .toggle-switch {
+    margin-right: 12px;
+}
+
 .nav-item i {
     width: 20px;
     text-align: center;
