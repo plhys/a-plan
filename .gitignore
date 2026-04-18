@@ -3,3 +3,7 @@ logs/
 *.log
 .DS_Store
 .env
+configs/token-store.json
+configs/*.lock
+configs/*.tmp
+logs/*.log
