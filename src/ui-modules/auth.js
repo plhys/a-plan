@@ -133,13 +133,38 @@ async function readTokenStore() {
 }
 
 /**
- * 写入token存储文件
+ * 写入token存储文件（带多进程锁与原子写入）
  */
 async function writeTokenStore(tokenStore) {
+    const lockPath = `${TOKEN_STORE_FILE}.lock`;
+    const tempPath = `${TOKEN_STORE_FILE}.tmp`;
+    let lockAcquired = false;
+
     try {
-        await fs.writeFile(TOKEN_STORE_FILE, JSON.stringify(tokenStore, null, 2), 'utf8');
+        // 尝试获取锁，如果失败则重试（最多5次）
+        for (let i = 0; i < 5; i++) {
+            try {
+                await fs.writeFile(lockPath, process.pid.toString(), { flag: 'wx' });
+                lockAcquired = true;
+                break;
+            } catch (e) {
+                await new Promise(r => setTimeout(r, 100));
+            }
+        }
+
+        if (!lockAcquired) {
+            logger.error('[Auth] Failed to acquire lock for token store write');
+            return;
+        }
+
+        await fs.writeFile(tempPath, JSON.stringify(tokenStore, null, 2), 'utf8');
+        await fs.rename(tempPath, TOKEN_STORE_FILE);
     } catch (error) {
         logger.error('[Token Store] Failed to write token store file:', error);
+    } finally {
+        if (lockAcquired) {
+            try { await fs.unlink(lockPath); } catch (e) {}
+        }
     }
 }
 

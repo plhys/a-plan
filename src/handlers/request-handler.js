@@ -14,10 +14,13 @@ import { randomUUID } from 'crypto';
 import { handleGrokAssetsProxy } from '../utils/grok-assets-proxy.js';
 
 /**
- * Generate a short unique request ID (8 characters)
+ * Generate a short unique request ID (fast)
  */
+let requestIdCounter = 0;
+const processStartTime = Date.now().toString(36);
 function generateRequestId() {
-    return randomUUID().slice(0, 8);
+    requestIdCounter = (requestIdCounter + 1) % 1000000;
+    return `${processStartTime}-${requestIdCounter.toString(36)}`;
 }
 
 /**

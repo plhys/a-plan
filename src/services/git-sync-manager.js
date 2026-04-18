@@ -35,14 +35,21 @@ class GitSyncManager {
         try {
             const { userEmail, userName, repoUrl } = this.config.GIT_SYNC;
             
-            if (userEmail) await execAsync(`git config --global user.email "${userEmail}"`);
-            if (userName) await execAsync(`git config --global user.name "${userName}"`);
+            // 安全过滤：确保参数不包含 shell 特殊字符
+            const safeRepoUrl = repoUrl.replace(/[;&|`$<>]/g, '');
+            const safeEmail = (userEmail || '').replace(/[;&|`$<>]/g, '');
+            const safeName = (userName || '').replace(/[;&|`$<>]/g, '');
+
+            if (safeEmail) await execAsync(`git config --global user.email "${safeEmail}"`);
+            if (safeName) await execAsync(`git config --global user.name "${safeName}"`);
 
             // Check if remote origin exists, if not add it
             try {
                 await execAsync('git remote get-url origin');
+                // 如果已存在但 URL 不同，更新它
+                await execAsync(`git remote set-url origin "${safeRepoUrl}"`);
             } catch (e) {
-                await execAsync(`git remote add origin "${repoUrl}"`);
+                await execAsync(`git remote add origin "${safeRepoUrl}"`);
             }
 
             // Ensure we are on main branch

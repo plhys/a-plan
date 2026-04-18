@@ -317,6 +317,23 @@ export function determineReasoningEffortFromBudget(budgetTokens) {
 }
 
 /**
+ * 从 OpenAI 文本中提取 DeepSeek 风格的思考过程
+ * 支持 <thought>...</thought> 格式
+ */
+export function extractDeepSeekThinking(text) {
+    if (!text) return { thinking: '', content: '' };
+    
+    const thoughtMatch = text.match(/<thought>\s*([\s\S]*?)\s*<\/thought>/i);
+    if (thoughtMatch) {
+        const thinking = thoughtMatch[1];
+        const content = text.replace(/<thought>[\s\S]*?<\/thought>/i, '').trim();
+        return { thinking, content };
+    }
+    
+    return { thinking: '', content: text };
+}
+
+/**
  * 从OpenAI文本中提取thinking内容
  * @param {string} text - 文本内容
  * @returns {string|Array} 提取后的内容

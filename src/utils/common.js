@@ -309,7 +309,15 @@ export function getClientIp(req) {
 export function getRequestBody(req) {
     return new Promise((resolve, reject) => {
         let body = '';
+        const MAX_BODY_SIZE = 100 * 1024 * 1024; // 100MB limit
+        let bodySize = 0;
+
         req.on('data', chunk => {
+            bodySize += chunk.length;
+            if (bodySize > MAX_BODY_SIZE) {
+                req.destroy();
+                return reject(new Error("Request body too large. Limit is 100MB."));
+            }
             body += chunk.toString();
         });
         req.on('end', () => {

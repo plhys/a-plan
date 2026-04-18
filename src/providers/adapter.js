@@ -703,6 +703,8 @@ registerAdapter(MODEL_PROVIDER.GROK_CUSTOM, GrokApiServiceAdapter);
 
 // 用于存储服务适配器单例的映射
 export const serviceInstances = {};
+// 存储最后访问时间，用于清理
+const lastAccessTimes = new Map();
 
 export function getServiceInstanceKey(provider, uuid = null) {
     return uuid ? provider + uuid : provider;
@@ -712,11 +714,29 @@ export function invalidateServiceAdapter(provider, uuid = null) {
     const providerKey = getServiceInstanceKey(provider, uuid);
     if (serviceInstances[providerKey]) {
         delete serviceInstances[providerKey];
+        lastAccessTimes.delete(providerKey);
         logger.info(`[Adapter] Invalidated service adapter, provider: ${provider}, uuid: ${uuid || 'default'}`);
         return true;
     }
     return false;
 }
+
+/**
+ * 自动清理闲置实例，防止内存泄漏
+ */
+function cleanupIdleInstances() {
+    const now = Date.now();
+    const IDLE_TIMEOUT = 30 * 60 * 1000; // 30分钟闲置则清理
+    
+    for (const [key, lastAccess] of lastAccessTimes.entries()) {
+        if (now - lastAccess > IDLE_TIMEOUT) {
+            delete serviceInstances[key];
+            lastAccessTimes.delete(key);
+            logger.info(`[Adapter] Auto-cleaned idle instance: ${key}`);
+        }
+    }
+}
+setInterval(cleanupIdleInstances, 5 * 60 * 1000); // 每5分钟检查一次
 
 /**
  * 检查提供商是否已注册（支持前缀匹配）
@@ -740,12 +760,16 @@ export function isRegisteredProvider(provider) {
 
 // 服务适配器工厂
 export function getServiceAdapter(config) {
-    const customNameDisplay = config.customName ? ` (${config.customName})` : '';
-    logger.info(`[Adapter] getServiceAdapter, provider: ${config.MODEL_PROVIDER}, uuid: ${config.uuid}${customNameDisplay}`);
     const provider = config.MODEL_PROVIDER;
     const providerKey = getServiceInstanceKey(provider, config.uuid);
     
+    // 更新最后访问时间
+    lastAccessTimes.set(providerKey, Date.now());
+
     if (!serviceInstances[providerKey]) {
+        const customNameDisplay = config.customName ? ` (${config.customName})` : '';
+        logger.info(`[Adapter] Creating NEW service adapter, provider: ${config.MODEL_PROVIDER}, uuid: ${config.uuid}${customNameDisplay}`);
+        
         let AdapterClass = adapterRegistry.get(provider);
         
         // 如果没找到精确匹配，尝试通过前缀查找 (例如 openai-custom-1 -> openai-custom)

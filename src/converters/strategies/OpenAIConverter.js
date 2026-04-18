@@ -13,6 +13,7 @@ import {
     safeParseJSON,
     checkAndAssignOrDefault,
     extractThinkingFromOpenAIText,
+    extractDeepSeekThinking,
     mapFinishReason,
     cleanJsonSchemaProperties as cleanJsonSchema,
     CLAUDE_DEFAULT_MAX_TOKENS,
@@ -409,7 +410,16 @@ export class OpenAIConverter extends BaseConverter {
         // 处理文本内容
         const contentText = choice.message?.content || "";
         if (contentText) {
-            const extractedContent = extractThinkingFromOpenAIText(contentText);
+            // [DEEPSEEK OPTIMIZATION] 自动处理 DeepSeek 风格的思考标签
+            const { thinking, content: cleanText } = extractDeepSeekThinking(contentText);
+            if (thinking) {
+                contentList.push({
+                    type: "thinking",
+                    thinking: thinking
+                });
+            }
+
+            const extractedContent = extractThinkingFromOpenAIText(cleanText);
             if (Array.isArray(extractedContent)) {
                 contentList.push(...extractedContent);
             } else {
@@ -538,14 +548,29 @@ export class OpenAIConverter extends BaseConverter {
 
             // 4. 处理普通文本 content (对应 text 类型的 content_block)
             if (delta?.content) {
-                events.push({
-                    type: "content_block_delta",
-                    index: 0,
-                    delta: {
-                        type: "text_delta",
-                        text: delta.content
+                // [DEEPSEEK OPTIMIZATION] 流式解析 DeepSeek 思考过程
+                // 处理 <thought> 开头的情况
+                if (delta.content.includes('<thought>')) {
+                    const parts = delta.content.split('<thought>');
+                    if (parts[0]) {
+                        events.push({ type: "content_block_delta", index: 0, delta: { type: "text_delta", text: parts[0] } });
                     }
-                });
+                    // 假设剩余部分是思考内容的开始，这里我们简单处理，更复杂的逻辑可以使用状态机
+                    const thinkingParts = parts[1].split('</thought>');
+                    events.push({ type: "content_block_delta", index: 0, delta: { type: "thinking_delta", thinking: thinkingParts[0] } });
+                    if (thinkingParts[1]) {
+                        events.push({ type: "content_block_delta", index: 0, delta: { type: "text_delta", text: thinkingParts[1] } });
+                    }
+                } else {
+                    events.push({
+                        type: "content_block_delta",
+                        index: 0,
+                        delta: {
+                            type: "text_delta",
+                            text: delta.content
+                        }
+                    });
+                }
             }
 
             // 5. 处理 finish_reason (对应 message_delta 和 message_stop)

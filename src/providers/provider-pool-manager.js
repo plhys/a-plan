@@ -2226,6 +2226,7 @@ export class ProviderPoolManager {
     
     /**
      * 批量保存所有待保存的 providerType（优化为单次文件写入）
+     * 加入原子写入与简单文件锁，解决多进程竞争
      * @private
      */
     async _flushPendingSaves() {
@@ -2235,8 +2236,24 @@ export class ProviderPoolManager {
         this.pendingSaves.clear();
         this.saveTimer = null;
         
+        const filePath = this.globalConfig.PROVIDER_POOLS_FILE_PATH || 'configs/provider_pools.json';
+        const lockPath = `${filePath}.lock`;
+        let lockAcquired = false;
+
         try {
-            const filePath = this.globalConfig.PROVIDER_POOLS_FILE_PATH || 'configs/provider_pools.json';
+            // 简单文件锁尝试
+            try {
+                // exclusive 模式创建文件，已存在则报错
+                await fs.promises.writeFile(lockPath, process.pid.toString(), { flag: 'wx' });
+                lockAcquired = true;
+            } catch (e) {
+                // 锁被占用，稍后重试
+                this._log('debug', 'File is locked, retrying save later...');
+                typesToSave.forEach(t => this.pendingSaves.add(t));
+                this._debouncedSave(); // 重新调度
+                return;
+            }
+
             let currentPools = {};
             
             // 一次性读取文件
@@ -2244,40 +2261,33 @@ export class ProviderPoolManager {
                 const fileContent = await fs.promises.readFile(filePath, 'utf8');
                 currentPools = JSON.parse(fileContent);
             } catch (readError) {
-                if (readError.code === 'ENOENT') {
-                    this._log('info', 'configs/provider_pools.json does not exist, creating new file.');
-                } else {
-                    throw readError;
-                }
+                if (readError.code !== 'ENOENT') throw readError;
             }
 
             // 更新所有待保存的 providerType
             for (const providerType of typesToSave) {
                 if (this.providerStatus[providerType]) {
                     currentPools[providerType] = this.providerStatus[providerType].map(p => {
-                        // Convert Date objects to ISOString if they exist
                         const config = { ...p.config };
-                        if (config.lastUsed instanceof Date) {
-                            config.lastUsed = config.lastUsed.toISOString();
-                        }
-                        if (config.lastErrorTime instanceof Date) {
-                            config.lastErrorTime = config.lastErrorTime.toISOString();
-                        }
-                        if (config.lastHealthCheckTime instanceof Date) {
-                            config.lastHealthCheckTime = config.lastHealthCheckTime.toISOString();
-                        }
+                        // 清理临时运行时字段，不保存到磁盘
+                        delete config._lastSelectionSeq;
                         return config;
                     });
-                } else {
-                    this._log('warn', `Attempted to save unknown providerType: ${providerType}`);
                 }
             }
             
-            // 一次性写入文件
-            await fs.promises.writeFile(filePath, JSON.stringify(currentPools, null, 2), 'utf8');
+            // 原子写入：先写临时文件再 rename
+            const tempPath = `${filePath}.tmp`;
+            await fs.promises.writeFile(tempPath, JSON.stringify(currentPools, null, 2), 'utf8');
+            await fs.promises.rename(tempPath, filePath);
+            
             this._log('info', `configs/provider_pools.json updated successfully for types: ${typesToSave.join(', ')}`);
         } catch (error) {
             this._log('error', `Failed to write provider_pools.json: ${error.message}`);
+        } finally {
+            if (lockAcquired) {
+                try { await fs.promises.unlink(lockPath); } catch (e) {}
+            }
         }
     }
 
