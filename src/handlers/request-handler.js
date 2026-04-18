@@ -52,8 +52,8 @@ export function createRequestHandler(config, providerPoolManager) {
         const requestId = `${clientIp}:${generateRequestId()}`;
 
         return logger.runWithContext(requestId, async () => {
-            // Deep copy the config for each request to allow dynamic modification
-            const currentConfig = deepmerge({}, config);
+            // High-performance shallow copy + request specific fields
+            const currentConfig = { ...config };
             currentConfig._pluginRequestId = requestId;
             
             // 计算当前请求的基础 URL
