@@ -23,9 +23,24 @@ export { broadcastEvent, initializeUIManagement, handleUploadOAuthCredentials, u
  * @param {http.ServerResponse} res - The HTTP response object
  */
 export async function serveStaticFiles(pathParam, res) {
-    const filePath = path.join(process.cwd(), 'static', pathParam === '/' || pathParam === '/index.html' ? 'index.html' : pathParam.replace('/static/', ''));
+    // 安全检查：防止目录穿越 (Path Traversal)
+    const normalizedPath = path.normalize(pathParam === '/' || pathParam === '/index.html' ? 'index.html' : pathParam.replace('/static/', ''));
+    if (normalizedPath.startsWith('..') || path.isAbsolute(normalizedPath)) {
+        res.writeHead(403);
+        res.end('Forbidden');
+        return true;
+    }
+
+    const filePath = path.join(process.cwd(), 'static', normalizedPath);
 
     if (existsSync(filePath)) {
+        // 确保最终路径依然在 static 目录下
+        const relative = path.relative(path.join(process.cwd(), 'static'), filePath);
+        if (relative.startsWith('..') || path.isAbsolute(relative)) {
+            res.writeHead(403);
+            res.end('Forbidden');
+            return true;
+        }
         const ext = path.extname(filePath);
         const contentType = {
             '.html': 'text/html',
