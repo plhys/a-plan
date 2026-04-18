@@ -143,7 +143,7 @@ class PluginManager {
                 
                 try {
                     // 动态导入插件以获取其元信息
-                    const pluginModule = await import(\`file://\${pluginPath}\`);
+                    const pluginModule = await import(`file://${pluginPath}`);
                     const plugin = pluginModule.default || pluginModule;
                     
                     if (plugin && plugin.name) {
@@ -154,7 +154,7 @@ class PluginManager {
                             description: plugin.description || '',
                             config: plugin.defaultConfig || {} // 初始化默认配置
                         };
-                        logger.info(\`[PluginManager] Found plugin for default config: \${plugin.name}\`);
+                        logger.info(`[PluginManager] Found plugin for default config: ${plugin.name}`);
                     }
                 } catch (importError) {
                     // 如果导入失败，使用目录名作为插件名
