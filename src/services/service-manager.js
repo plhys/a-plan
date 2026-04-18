@@ -1,7 +1,7 @@
 import { getServiceAdapter, serviceInstances } from '../providers/adapter.js';
 import logger from '../utils/logger.js';
 import { ProviderPoolManager } from '../providers/provider-pool-manager.js';
-import deepmerge from 'deepmerge';
+import { deepMerge } from '../utils/native-utils.js';
 import * as fs from 'fs';
 import { promises as pfs } from 'fs';
 import * as path from 'path';
@@ -338,7 +338,7 @@ export async function initApiService(config, isReady = false) {
                 
                 try {
                     // 合并全局配置和节点配置
-                    const nodeConfig = deepmerge(config, {
+                    const nodeConfig = deepMerge(config, {
                         ...providerConfig,
                         MODEL_PROVIDER: providerType
                     });
@@ -418,7 +418,7 @@ export async function getApiService(config, requestedModel = null, options = {})
         const selectedProviderConfig = await providerPoolManager.selectProvider(config.MODEL_PROVIDER, actualModelName, { ...options, skipUsageCount: true });
         if (selectedProviderConfig) {
             // 合并选中的提供者配置到当前请求的 config 中
-            serviceConfig = deepmerge(config, selectedProviderConfig);
+            serviceConfig = deepMerge(config, selectedProviderConfig);
             delete serviceConfig.providerPools; // 移除 providerPools 属性
             config.uuid = serviceConfig.uuid;
             config.customName = serviceConfig.customName;
@@ -485,7 +485,7 @@ export async function getApiServiceWithFallback(config, requestedModel = null, o
             const { config: selectedProviderConfig, actualProviderType: selectedType, isFallback: fallbackUsed, actualModel: fallbackModel } = selectedResult;
             
             // 合并选中的提供者配置到当前请求的 config 中
-            serviceConfig = deepmerge(config, selectedProviderConfig);
+            serviceConfig = deepMerge(config, selectedProviderConfig);
             delete serviceConfig.providerPools;
             
             actualProviderType = selectedType;

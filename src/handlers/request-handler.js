@@ -1,4 +1,4 @@
-import deepmerge from 'deepmerge';
+import { deepMerge } from '../utils/native-utils.js';
 import logger from '../utils/logger.js';
 import { handleError, getClientIp } from '../utils/common.js';
 import { handleUIApiRequests, serveStaticFiles } from '../services/ui-manager.js';
