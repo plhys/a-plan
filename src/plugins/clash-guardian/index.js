@@ -46,8 +46,8 @@ export default {
         const useProxy = config.USE_SYSTEM_PROXY_OPENAI || config.USE_SYSTEM_PROXY_FORWARD || config.useProxy;
 
         if (useProxy) {
-            config.PROXY_URL = \`http://127.0.0.1:\${this._config.port || '7890'}\`;
-            logger.info(\`[Clash-Guardian] 已为请求 \${requestUrl.hostname} 注入原子代理: \${config.PROXY_URL}\`);
+            config.PROXY_URL = `http://127.0.0.1:${this._config.port || '7890'}`;
+            logger.info(`[Clash-Guardian] 已为请求 ${requestUrl.hostname} 注入原子代理: ${config.PROXY_URL}`);
         } else {
             // 确保不被系统环境变量污染
             config.PROXY_URL = null;
