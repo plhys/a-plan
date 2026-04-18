@@ -842,11 +842,11 @@ function showDeepSeekAuthModal(providerType) {
     [closeBtn, cancelBtn].forEach(btn => btn.onclick = () => modal.remove());
     
     loginBtn.onclick = () => {
-        // 打开 DeepSeek 登录页
+        // [优化] 直接跳转到通用登录页，让用户自选 Google/邮箱/手机
         const authWin = window.open('https://chat.deepseek.com/login', 'DeepSeekAuth', 'width=800,height=600');
         
         // 核心：给用户一个“一键捕获”的代码
-        showToast('请注意', '请在登录成功后，手动点击弹出窗顶部的“授权”按钮（或使用书签脚本）', 'info');
+        showToast('请注意', '登录成功后，请复制下方提示框中的代码到控制台运行即可完成捕获。', 'info');
         
         // 注入捕获提示
         modal.innerHTML = `
@@ -855,12 +855,20 @@ function showDeepSeekAuthModal(providerType) {
                 <div class="modal-body">
                     <p>请在弹出的 DeepSeek 窗口中完成登录。</p>
                     <p style="margin-top: 10px; font-size: 12px; color: #666;">
-                        提示：如果自动捕获没触发，请在 DeepSeek 页面控制台粘贴以下代码并回车：<br>
-                        <code style="background:#eee; padding:4px; display:block; margin-top:5px; word-break:break-all;">
-                        fetch('/api/v0/users/current').then(()=> { 
+                        <strong>🔑 极客捕获步骤：</strong><br>
+                        1. 在新窗口中点击 <strong>Google 登录</strong>（或您喜欢的任何方式）。<br>
+                        2. 登录成功进入聊天界面后，<strong>按 F12</strong> 打开开发者工具。<br>
+                        3. 切换到 <strong>Console (控制台)</strong>，粘贴以下代码并回车：<br>
+                        <code style="background:#000; color:#0f0; padding:10px; display:block; margin-top:5px; word-break:break-all; border-radius:4px;">
+                        (function(){
                             const t = localStorage.getItem('user_token');
-                            window.opener.postMessage({type:'oauth-popup-complete', provider:'deepseek-free', token: t}, '*');
-                        })
+                            if(t) {
+                                window.opener.postMessage({type:'oauth-popup-complete', provider:'deepseek-free', token: t}, '*');
+                                alert('Token 捕获成功！请回到 A-Plan 页面查看。');
+                            } else {
+                                alert('未检测到 Token，请确保您已登录成功！');
+                            }
+                        })();
                         </code>
                     </p>
                 </div>
