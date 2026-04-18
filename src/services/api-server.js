@@ -10,6 +10,7 @@ import { getTLSSidecar } from '../utils/tls-sidecar.js';
 import { HEALTH_CHECK } from '../utils/constants.js';
 import { getProviderPoolManager } from './service-manager.js';
 import { isRetryableNetworkError } from '../utils/common.js';
+import { getGitSyncManager } from './git-sync-manager.js';
 
 let serverInstance = null;
 let isTaskRunning = {
@@ -19,6 +20,11 @@ let isTaskRunning = {
 
 async function gracefulShutdown() {
     logger.info('[A-Plan] Initiating graceful shutdown...');
+    
+    // Stop Git sync
+    const gitSyncManager = getGitSyncManager();
+    if (gitSyncManager) gitSyncManager.stop();
+
     try {
         await getTLSSidecar().stop();
     } catch { /* ignore */ }
@@ -64,6 +70,15 @@ async function startServer() {
     }
 
     const services = await initApiService(CONFIG, true);
+    
+    // Initialize and start Git Sync Service
+    const gitSyncManager = getGitSyncManager(CONFIG);
+    if (gitSyncManager) {
+        gitSyncManager.init().catch(err => {
+            logger.error('[A-Plan] Git sync initialization failed:', err.message);
+        });
+    }
+
     const heartbeatAndRefreshToken = initializeAPIManagement(services);
     const requestHandlerInstance = createRequestHandler(CONFIG, getProviderPoolManager());
 

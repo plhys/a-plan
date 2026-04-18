@@ -98,6 +98,14 @@ const translations = {
         'dashboard.routing.nodeName.codex': 'OpenAI Codex OAuth',
         'dashboard.routing.nodeName.grok': 'Grok Reverse',
         'dashboard.contact.title': '联系与赞助',
+        // Git Sync
+        'config.git.title': '云端持久化 (Git 同步)',
+        'config.git.enabled': '启用自动同步',
+        'config.git.interval': '同步间隔(分钟)',
+        'config.git.repoUrl': '仓库地址 (包含 Token)',
+        'config.git.userEmail': 'Git 用户邮箱',
+        'config.git.userName': 'Git 用户名',
+
         'dashboard.contact.wechat': '扫码进群，注明来意',
         'dashboard.contact.wechatDesc': '添加微信获取更多技术支持和交流',
         'dashboard.contact.x': '关注 X.com',

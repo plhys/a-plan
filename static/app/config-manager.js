@@ -382,6 +382,15 @@ async function loadConfiguration() {
             });
         }
         
+        // 加载 Git 同步配置
+        if (data.GIT_SYNC) {
+            if (document.getElementById('gitSyncEnabled')) document.getElementById('gitSyncEnabled').checked = data.GIT_SYNC.enabled === true;
+            if (document.getElementById('gitSyncInterval')) document.getElementById('gitSyncInterval').value = data.GIT_SYNC.interval || 10;
+            if (document.getElementById('gitRepoUrl')) document.getElementById('gitRepoUrl').value = data.GIT_SYNC.repoUrl || '';
+            if (document.getElementById('gitUserEmail')) document.getElementById('gitUserEmail').value = data.GIT_SYNC.userEmail || '';
+            if (document.getElementById('gitUserName')) document.getElementById('gitUserName').value = data.GIT_SYNC.userName || '';
+        }
+
         // 定时健康检查间隔快捷按钮（防止重复绑定）
         const intervalQuickBtns = document.querySelectorAll('#scheduledHealthCheckInterval + .quick-select-btns button');
         intervalQuickBtns.forEach(btn => {
@@ -536,6 +545,15 @@ async function saveConfiguration() {
         startupRun: document.getElementById('scheduledHealthCheckStartupRun')?.checked !== false,
         interval: validatedInterval,
         providerTypes: scheduledHealthCheckProviderTypes
+    };
+
+    // 保存 Git 同步配置
+    config.GIT_SYNC = {
+        enabled: document.getElementById('gitSyncEnabled')?.checked === true,
+        interval: parseInt(document.getElementById('gitSyncInterval')?.value || 10),
+        repoUrl: document.getElementById('gitRepoUrl')?.value || '',
+        userEmail: document.getElementById('gitUserEmail')?.value || '',
+        userName: document.getElementById('gitUserName')?.value || ''
     };
 
     try {
