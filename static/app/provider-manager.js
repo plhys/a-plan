@@ -842,11 +842,11 @@ function showDeepSeekAuthModal(providerType) {
     [closeBtn, cancelBtn].forEach(btn => btn.onclick = () => modal.remove());
     
     loginBtn.onclick = () => {
-        // [优化] 直接跳转到通用登录页，让用户自选 Google/邮箱/手机
-        const authWin = window.open('https://chat.deepseek.com/login', 'DeepSeekAuth', 'width=800,height=600');
+        // [优化] 跳转到根目录，首页的登录框通常更智能，更容易显示 Google 选项
+        const authWin = window.open('https://chat.deepseek.com/', 'DeepSeekAuth', 'width=800,height=600');
         
         // 核心：给用户一个“一键捕获”的代码
-        showToast('请注意', '登录成功后，请复制下方提示框中的代码到控制台运行即可完成捕获。', 'info');
+        showToast('极客提示', '如果没看到 Google 登录，请在弹出窗中开启全局加速后刷新页面。', 'info');
         
         // 注入捕获提示
         modal.innerHTML = `
