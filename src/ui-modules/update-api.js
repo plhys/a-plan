@@ -68,25 +68,30 @@ export async function checkForUpdates() {
         const { stdout } = await execAsync('git tag -l');
         let tags = stdout.split('\n').map(t => t.trim()).filter(t => t.length > 0);
         
-        // 极客版排序：手动处理 beta 版本号
+        // 极客版排序：手动处理 beta 版本号，确保 v3.0.0-beta.11 大于 v3.0.0-beta.5
         tags.sort((a, b) => {
             const getRank = (v) => {
+                // 提取数字部分进行比较
                 const parts = v.replace(/^v/, '').split(/[.-]/);
-                return parts.map(p => isNaN(p) ? p : parseInt(p, 10));
+                return parts.map(p => {
+                    const n = parseInt(p, 10);
+                    return isNaN(n) ? p : n;
+                });
             };
             const rankA = getRank(a);
             const rankB = getRank(b);
+            
+            // 逐位比较
             for (let i = 0; i < Math.max(rankA.length, rankB.length); i++) {
                 const vA = rankA[i];
                 const vB = rankB[i];
                 if (vA === undefined) return -1;
                 if (vB === undefined) return 1;
                 if (typeof vA !== typeof vB) return typeof vA === 'number' ? 1 : -1;
-                if (vA > vB) return 1;
-                if (vA < vB) return -1;
+                if (vA !== vB) return vA > vB ? 1 : -1;
             }
             return 0;
-        }).reverse();
+        }).reverse(); // 降序排列，最新版排在最上面
         
         // 3. 始终把 HEAD (主分支最新) 放在最前面
         const availableVersions = ['HEAD', ...tags];
