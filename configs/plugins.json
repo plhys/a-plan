@@ -15,6 +15,9 @@
     "model-usage-stats": {
       "enabled": false,
       "description": "模型用量统计插件<br>接口：<code>/api/model-usage-stats</code><br>页面：<a href=\"model-usage-stats.html\" target=\"_blank\">model-usage-stats.html</a>"
+    },
+    "clash-guardian": {
+      "enabled": false
     }
   }
 }
