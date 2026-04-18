@@ -62,11 +62,31 @@ export async function checkForUpdates() {
 
     try {
         // 1. 获取远程 Tags
-        await execAsync('git fetch --tags --force');
+        await execAsync('git fetch --all --tags --force');
         
-        // 2. 列出所有 Tags，并按版本号降序排列
-        const { stdout } = await execAsync('git tag -l --sort=-v:refname');
-        const tags = stdout.split('\n').map(t => t.trim()).filter(t => t.length > 0);
+        // 2. 列出所有 Tags，并尝试不同的排序方式
+        const { stdout } = await execAsync('git tag -l');
+        let tags = stdout.split('\n').map(t => t.trim()).filter(t => t.length > 0);
+        
+        // 极客版排序：手动处理 beta 版本号
+        tags.sort((a, b) => {
+            const getRank = (v) => {
+                const parts = v.replace(/^v/, '').split(/[.-]/);
+                return parts.map(p => isNaN(p) ? p : parseInt(p, 10));
+            };
+            const rankA = getRank(a);
+            const rankB = getRank(b);
+            for (let i = 0; i < Math.max(rankA.length, rankB.length); i++) {
+                const vA = rankA[i];
+                const vB = rankB[i];
+                if (vA === undefined) return -1;
+                if (vB === undefined) return 1;
+                if (typeof vA !== typeof vB) return typeof vA === 'number' ? 1 : -1;
+                if (vA > vB) return 1;
+                if (vA < vB) return -1;
+            }
+            return 0;
+        }).reverse();
         
         // 3. 始终把 HEAD (主分支最新) 放在最前面
         const availableVersions = ['HEAD', ...tags];
