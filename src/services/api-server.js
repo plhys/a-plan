@@ -82,11 +82,12 @@ async function startServer() {
     // Log loaded plugins
     const pluginList = pluginManager.getPluginList();
     if (pluginList.length > 0) {
-        logger.info(`[Plugins] Loaded ${pluginList.length} plugin(s):`);
+        console.log('\n🧩 [Module System] Active Plugins:');
         pluginList.forEach(p => {
-            const status = p.enabled ? '✓' : '✗';
-            logger.info(`  ${status} ${p.name} v${p.version} - ${p.description}`);
+            const status = p.enabled ? '✅' : '⚪';
+            console.log(`  ${status} ${p.name.padEnd(20)} v${(p.version || '1.0.0').padEnd(10)} [${p.enabled ? 'LOADED' : 'DISABLED'}]`);
         });
+        console.log('');
     }
 
     const services = await initApiService(CONFIG, true);
