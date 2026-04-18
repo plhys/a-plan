@@ -21,7 +21,4 @@ export {
     batchImportKiroRefreshTokens,
     batchImportKiroRefreshTokensStream,
     importAwsCredentials,
-    // iFlow OAuth
-    handleIFlowOAuth,
-    refreshIFlowTokens,
 } from './index.js';

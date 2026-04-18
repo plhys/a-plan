@@ -49,11 +49,6 @@ export async function handleGenerateAuthUrl(req, res, currentConfig, providerTyp
             const result = await handleKiroOAuth(currentConfig, options);
             authUrl = result.authUrl;
             authInfo = result.authInfo;
-        } else if (providerType === 'openai-iflow') {
-            // iFlow OAuth 授权
-            const result = await handleIFlowOAuth(currentConfig, options);
-            authUrl = result.authUrl;
-            authInfo = result.authInfo;
         } else if (providerType === 'openai-codex-oauth') {
             // Codex OAuth（OAuth2 + PKCE）
             const result = await handleCodexOAuth(currentConfig, options);

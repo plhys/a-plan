@@ -27,9 +27,3 @@ export {
     batchImportKiroRefreshTokensStream,
     importAwsCredentials
 } from './kiro-oauth.js';
-
-// iFlow OAuth
-export {
-    handleIFlowOAuth,
-    refreshIFlowTokens
-} from './iflow-oauth.js';

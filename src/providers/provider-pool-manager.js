@@ -52,7 +52,6 @@ export class ProviderPoolManager {
         'claude-custom': 'claude-3-7-sonnet-20250219',
         'claude-kiro-oauth': 'claude-haiku-4-5',
         'openai-qwen-oauth': 'qwen3-coder-flash',
-        'openai-iflow': 'qwen3-coder-plus',
         'openai-codex-oauth': 'gpt-5-codex-mini',
         'openaiResponses-custom': 'gpt-4o-mini',
         'forward-api': 'gpt-4o-mini',
@@ -150,8 +149,6 @@ export class ProviderPoolManager {
                     configPath = config.ANTIGRAVITY_OAUTH_CREDS_FILE_PATH;
                 } else if (providerType.startsWith('openai-qwen')) {
                     configPath = config.QWEN_OAUTH_CREDS_FILE_PATH;
-                } else if (providerType.startsWith('openai-iflow')) {
-                    configPath = config.IFLOW_OAUTH_CREDS_FILE_PATH;
                 } else if (providerType.startsWith('openai-codex')) {
                     configPath = config.CODEX_OAUTH_CREDS_FILE_PATH;
                 }

@@ -58,17 +58,6 @@ export const PROVIDER_MAPPINGS = [
         urlKeys: ['ANTIGRAVITY_BASE_URL_DAILY', 'ANTIGRAVITY_BASE_URL_AUTOPUSH']
     },
     {
-        // iFlow 配置
-        dirName: 'iflow',
-        patterns: ['configs/iflow/', '/iflow/'],
-        providerType: 'openai-iflow',
-        credPathKey: 'IFLOW_TOKEN_FILE_PATH',
-        defaultCheckModel: 'gpt-4o',
-        displayName: 'iFlow API',
-        needsProjectId: false,
-        urlKeys: ['IFLOW_BASE_URL']
-    },
-    {
         // Codex OAuth 配置
         dirName: 'codex',
         patterns: ['configs/codex/', '/codex/'],

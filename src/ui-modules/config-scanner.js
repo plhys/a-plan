@@ -28,7 +28,6 @@ export async function scanConfigFiles(currentConfig, providerPoolManager) {
     addToUsedPaths(usedPaths, currentConfig.KIRO_OAUTH_CREDS_FILE_PATH);
     addToUsedPaths(usedPaths, currentConfig.QWEN_OAUTH_CREDS_FILE_PATH);
     addToUsedPaths(usedPaths, currentConfig.ANTIGRAVITY_OAUTH_CREDS_FILE_PATH);
-    addToUsedPaths(usedPaths, currentConfig.IFLOW_TOKEN_FILE_PATH);
     addToUsedPaths(usedPaths, currentConfig.CODEX_OAUTH_CREDS_FILE_PATH);
 
     // 使用最新的提供商池数据
@@ -45,7 +44,6 @@ export async function scanConfigFiles(currentConfig, providerPoolManager) {
                 addToUsedPaths(usedPaths, provider.KIRO_OAUTH_CREDS_FILE_PATH);
                 addToUsedPaths(usedPaths, provider.QWEN_OAUTH_CREDS_FILE_PATH);
                 addToUsedPaths(usedPaths, provider.ANTIGRAVITY_OAUTH_CREDS_FILE_PATH);
-                addToUsedPaths(usedPaths, provider.IFLOW_TOKEN_FILE_PATH);
                 addToUsedPaths(usedPaths, provider.CODEX_OAUTH_CREDS_FILE_PATH);
             }
         }
@@ -92,7 +90,6 @@ export async function analyzeOAuthFile(filePath, usedPaths, currentConfig) {
         else if (normalizedPath.includes('/qwen/')) oauthProvider = 'qwen';
         else if (normalizedPath.includes('/antigravity/')) oauthProvider = 'antigravity';
         else if (normalizedPath.includes('/codex/')) oauthProvider = 'codex';
-        else if (normalizedPath.includes('/iflow/')) oauthProvider = 'iflow';
 
         try {
             content = await fs.readFile(filePath, 'utf8');
@@ -303,17 +300,6 @@ function getFileUsageInfo(relativePath, fileName, usedPaths, currentConfig) {
         });
     }
 
-    if (currentConfig.IFLOW_TOKEN_FILE_PATH &&
-        (pathsEqual(relativePath, currentConfig.IFLOW_TOKEN_FILE_PATH) ||
-         pathsEqual(relativePath, currentConfig.IFLOW_TOKEN_FILE_PATH.replace(/\\/g, '/')))) {
-        usageInfo.usageType = 'main_config';
-        usageInfo.usageDetails.push({
-            type: 'Main Config',
-            location: 'iFlow Token file path',
-            configKey: 'IFLOW_TOKEN_FILE_PATH'
-        });
-    }
-
     if (currentConfig.CODEX_OAUTH_CREDS_FILE_PATH &&
         (pathsEqual(relativePath, currentConfig.CODEX_OAUTH_CREDS_FILE_PATH) ||
          pathsEqual(relativePath, currentConfig.CODEX_OAUTH_CREDS_FILE_PATH.replace(/\\/g, '/')))) {
@@ -397,22 +383,6 @@ function getFileUsageInfo(relativePath, fileName, usedPaths, currentConfig) {
                     isHealthy: provider.isHealthy !== false,
                     isDisabled: provider.isDisabled === true,
                     configKey: 'ANTIGRAVITY_OAUTH_CREDS_FILE_PATH'
-                });
-            }
-
-            if (provider.IFLOW_TOKEN_FILE_PATH &&
-                (pathsEqual(relativePath, provider.IFLOW_TOKEN_FILE_PATH) ||
-                 pathsEqual(relativePath, provider.IFLOW_TOKEN_FILE_PATH.replace(/\\/g, '/')))) {
-                providerUsages.push({
-                    type: 'Provider Pool',
-                    location: `iFlow Token (node ${index + 1})`,
-                    providerType: providerType,
-                    providerIndex: index,
-                    nodeName: provider.customName,
-                    uuid: provider.uuid,
-                    isHealthy: provider.isHealthy !== false,
-                    isDisabled: provider.isDisabled === true,
-                    configKey: 'IFLOW_TOKEN_FILE_PATH'
                 });
             }
 
