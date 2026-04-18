@@ -632,18 +632,12 @@ export default {
 
     async init(config) {
         logger.info('[Clash-Guardian] 正在启动代理侧边进程...');
-        // 侧边进程启动逻辑将放在这里
-        // 1. 检查二进制
-        // 2. 拉取订阅
-        // 3. 启动 Clash
         this._enabled = true;
     },
 
     async middleware(req, res, requestUrl, config) {
-        // 自动将 A-Plan 的上游请求路由到本地代理端口
         if (this._enabled) {
             config.PROXY_URL = 'http://127.0.0.1:7890';
-            // 排除本地和健康检查
             if (requestUrl.hostname === 'localhost' || requestUrl.hostname === '127.0.0.1') {
                 config.PROXY_URL = null;
             }
@@ -675,18 +669,11 @@ export default {
     _child: null,
 
     async init(config) {
-        // 从 plugins.json 读取该插件的私有配置
         const pluginConfig = config.pluginsConfig?.plugins?.['easytier-link']?.config || {};
-        
         if (!pluginConfig.enabled) return;
 
         logger.info('[EasyTier] 正在拉起分布式组网守护进程 (无 TUN 模式)...');
-        
-        // 核心逻辑：
-        // 1. 检查二进制 (省略下载逻辑，假设已存在或通过市场脚本下载)
         const binPath = path.join(process.cwd(), 'bin', 'easytier-core');
-        
-        // 2. 构造无 TUN 命令行参数
         const args = [
             '--no-tun',
             '--net-save', path.join(process.cwd(), 'configs', 'easytier.json'),
@@ -696,10 +683,7 @@ export default {
             '--ipv4', pluginConfig.virtualIp || ''
         ];
 
-        logger.info(\`[EasyTier] 执行命令: easytier-core \${args.join(' ')}\`);
-        
-        // 3. 启动进程
-        // this._child = spawn(binPath, args, { stdio: 'inherit' });
+        logger.info("[EasyTier] 执行命令: easytier-core " + args.join(' '));
         this._enabled = true;
     },
 
@@ -710,7 +694,6 @@ export default {
         }
     },
 
-    // 扩展路由：提供插件专属的管理 API (移植 WebUI 核心)
     routes: [
         {
             method: 'GET',
@@ -726,7 +709,6 @@ export default {
             method: 'POST',
             path: '/api/plugins/easytier/config',
             handler: async (method, path, req, res, config) => {
-                // 接收前端传来的详细设置并保存
                 res.writeHead(200, { 'Content-Type': 'application/json' });
                 res.end(JSON.stringify({ success: true, message: '配置已保存，重启生效' }));
                 return true;
@@ -745,7 +727,7 @@ export default {
     async _discoverSinglePlugin(name) {
         const pluginPath = path.join(process.cwd(), 'src', 'plugins', name, 'index.js');
         if (existsSync(pluginPath)) {
-            const pluginModule = await import(\`file://\${pluginPath}\`);
+            const pluginModule = await import(`file://${pluginPath}`);
             const plugin = pluginModule.default || pluginModule;
             if (plugin && plugin.name) {
                 this.register(plugin);
