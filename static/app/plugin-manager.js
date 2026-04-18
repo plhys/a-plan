@@ -162,17 +162,17 @@ export async function togglePlugin(pluginName, enabled) {
  */
 export async function installPlugin(pluginName) {
     try {
-        showToast('正在安装', \`正在从市场获取 \${pluginName}...\`, 'info');
+        showToast('正在安装', `正在从市场获取 ${pluginName}...`, 'info');
         await apiRequest(`/api/plugins/${encodeURIComponent(pluginName)}/install`, {
             method: 'POST'
         });
         
-        showToast(t('common.success'), \`插件 \${pluginName} 安装成功！\`, 'success');
+        showToast(t('common.success'), `插件 ${pluginName} 安装成功！`, 'success');
         loadPlugins();
         showToast(t('common.info'), '请在启用插件后重启服务。', 'info');
     } catch (error) {
-        console.error(\`Failed to install plugin \${pluginName}:\`, error);
-        showToast(t('common.error'), \`安装失败: \${error.message}\`, 'error');
+        console.error(`Failed to install plugin ${pluginName}:`, error);
+        showToast(t('common.error'), `安装失败: ${error.message}`, 'error');
     }
 }
 
@@ -180,7 +180,7 @@ export async function installPlugin(pluginName) {
  * 卸载插件
  */
 export async function uninstallPlugin(pluginName) {
-    if (!confirm(\`确定要卸载插件 \${pluginName} 吗？此操作将删除该插件的所有本地文件。\`)) {
+    if (!confirm(`确定要卸载插件 ${pluginName} 吗？此操作将删除该插件的所有本地文件。`)) {
         return;
     }
     
@@ -189,10 +189,10 @@ export async function uninstallPlugin(pluginName) {
             method: 'DELETE'
         });
         
-        showToast(t('common.success'), \`插件 \${pluginName} 已卸载。\`, 'success');
+        showToast(t('common.success'), `插件 ${pluginName} 已卸载。`, 'success');
         loadPlugins();
     } catch (error) {
-        console.error(\`Failed to uninstall plugin \${pluginName}:\`, error);
-        showToast(t('common.error'), \`卸载失败: \${error.message}\`, 'error');
+        console.error(`Failed to uninstall plugin ${pluginName}:`, error);
+        showToast(t('common.error'), `卸载失败: ${error.message}`, 'error');
     }
 }
