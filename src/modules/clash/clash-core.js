@@ -9,7 +9,7 @@ class ClashModule {
         this.name = 'clash-module';
         this.version = '2.9.0-geek';
         this._config = { 
-            enabled: true,
+            enabled: false,
             subUrl: '', 
             port: 7890, 
             routing: {}, 
@@ -97,24 +97,18 @@ class ClashModule {
             
             for (const line of lines) {
                 const trimmed = line.trim();
-                // 找到 proxies: 开始标记
                 if (trimmed === 'proxies:') { inProxies = true; continue; }
                 if (inProxies) {
-                    // 如果遇到下一个顶级配置项，跳出
                     if (line.length > 0 && !line.startsWith(' ') && !line.startsWith('-')) {
                         inProxies = false;
                         continue;
                     }
-                    
-                    // 极致 YAML 解析：去除多余符号并统格式
                     if (trimmed.includes('name: DIRECT') || trimmed.includes('name: "DIRECT"')) continue;
-                    
                     const match = trimmed.match(/name:\s*"?([^",{}]+)"?/);
                     if (match) {
                         const n = match[1].trim();
                         if (n && !['DIRECT', 'REJECT', 'GLOBAL'].includes(n)) {
                             names.add(n);
-                            // 关键修复：确保缩进且不产生双重杠
                             const cleanLine = trimmed.replace(/^-\s*/, '').replace(/^/, '- ');
                             proxiesYaml += '  ' + cleanLine + '\n';
                         }
@@ -125,9 +119,21 @@ class ClashModule {
 
         this._nodes = Array.from(names).map(n => ({ name: n, type: 'proxy' }));
 
-        let configYaml = `
+        // 极客分流：按地区关键词自动创建 Proxy Group
+        const regions = ['US', 'HK', 'SG', 'JP', 'TW', 'GB', 'DE', 'KR', 'FR', 'RU', 'IN'];
+        const dynamicGroups = regions.map(r => {
+            const matchedProxies = Array.from(names).filter(n => n.toUpperCase().includes(r));
+            if (matchedProxies.length === 0) return null;
+            return {
+                name: `${r}-Region-Auto`,
+                type: 'url-test',
+                proxies: matchedProxies
+            };
+        }).filter(Boolean);
+
+        const configYaml = `
 mixed-port: ${this._config.port}
-external-controller: 0.0.0.0:${this._config.controllerPort}
+external-controller: 127.0.0.1:${this._config.controllerPort}
 secret: "${this._config.secret}"
 allow-lan: true
 mode: rule
@@ -139,7 +145,7 @@ ${proxiesYaml}
 proxy-groups:
   - name: "GLOBAL-GEEK"
     type: select
-    proxies: ["AUTO-SELECT", "NODE-SELECT", "DIRECT"]
+    proxies: ["AUTO-SELECT", "NODE-SELECT", "DIRECT", ${dynamicGroups.map(g => `"${g.name}"`).join(', ')}]
   - name: "AUTO-SELECT"
     type: url-test
     url: http://www.gstatic.com/generate_204
@@ -148,6 +154,12 @@ proxy-groups:
   - name: "NODE-SELECT"
     type: select
     proxies: ${this._nodes.length > 0 ? JSON.stringify(this._nodes.map(n => n.name)) : '["DIRECT"]'}
+${dynamicGroups.map(g => `
+  - name: "${g.name}"
+    type: ${g.type}
+    url: http://www.gstatic.com/generate_204
+    interval: 300
+    proxies: ${JSON.stringify(g.proxies)}`).join('')}
 
 rules:
   - MATCH, GLOBAL-GEEK
@@ -156,9 +168,7 @@ rules:
     }
 
     _getProviderPort(provider) {
-        const providers = Object.keys(this._config.routing);
-        const idx = providers.indexOf(provider);
-        return 19800 + Math.max(0, idx);
+        return this._config.port;
     }
 
     _startNodesRefresher() {
@@ -203,17 +213,26 @@ rules:
             if (res.ok) {
                 writeFileSync(path.join(process.cwd(), 'configs', 'clash-sub.yaml'), await res.text());
             }
-        } catch (e) {}
+        } catch (e) {
+            logger.error('[Clash-Module] Failed to download subscription:', e.message);
+        }
     }
 
     getMiddleware() {
         return async (config) => {
             if (!this._config.enabled) return;
-            const provider = config.MODEL_PROVIDER;
-            const targetNode = this._config.routing[provider];
-            if (targetNode && targetNode !== 'direct') {
-                config.PROXY_URL = `http://127.0.0.1:${this._getProviderPort(provider)}`;
-            } else if (config.useProxy || config.PROXY_URL) {
+            // 极客逻辑：实现“号池节点标签分流”
+            // 如果节点带了 PROXY_TAG 属性（如 "US", "HK"）
+            const tag = config.PROXY_TAG || null;
+            if (tag) {
+                const groupName = `${tag.toUpperCase()}-Region-Auto`;
+                try {
+                    // 通过 Clash 控制 API 动态切换该请求所在分组的选择（或通过特定逻辑实现）
+                    // 极致轻量做法：Clash 核心目前暂用 GLOBAL-GEEK 统一出口，
+                    // 待后续版本支持多监听端口后，可实现真正的物理端口分流。
+                    config.PROXY_URL = `http://127.0.0.1:${this._config.port}`;
+                } catch(e) {}
+            } else {
                 config.PROXY_URL = `http://127.0.0.1:${this._config.port}`;
             }
         };

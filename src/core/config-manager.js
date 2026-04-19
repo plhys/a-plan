@@ -1,11 +1,22 @@
 import * as fs from 'fs';
 import { promises as pfs } from 'fs';
+import os from 'os';
+import path from 'path';
 import { INPUT_SYSTEM_PROMPT_FILE } from '../utils/common.js';
 import { MODEL_PROVIDER } from '../utils/constants.js';
 import logger from '../utils/logger.js';
 
-export let CONFIG = {}; // Make CONFIG exportable
-export let PROMPT_LOG_FILENAME = ''; // Make PROMPT_LOG_FILENAME exportable
+export let CONFIG = {}; 
+export let PROMPT_LOG_FILENAME = ''; 
+
+// 极客式动态路径解析：自动寻找最适合的持久化土壤
+const resolveDataDir = () => {
+    if (process.env.A_DATA_DIR) return process.env.A_DATA_DIR;
+    // 优先尝试当前工作目录下的 configs，保持项目内聚性（最轻量）
+    return path.join(process.cwd(), 'configs');
+};
+
+const DATA_DIR = resolveDataDir();
 
 const ALL_MODEL_PROVIDERS = Object.values(MODEL_PROVIDER);
 
@@ -95,7 +106,15 @@ export async function initializeConfig(args = process.argv.slice(2), configFileP
         TLS_SIDECAR_ENABLED_PROVIDERS: [], // 启用 TLS Sidecar 的提供商列表
         TLS_SIDECAR_PORT: 9090,     // sidecar 监听端口
         TLS_SIDECAR_BINARY_PATH: null, // 自定义二进制路径（默认自动搜索）
-        TLS_SIDECAR_PROXY_URL: null    // TLS Sidecar 专用的上游代理地址
+        TLS_SIDECAR_PROXY_URL: null,    // TLS Sidecar 专用的上游代理地址
+        GIT_SYNC: {
+            enabled: process.env.GIT_SYNC_ENABLED === 'true',
+            repoUrl: process.env.GIT_SYNC_REPO || null,
+            branch: process.env.GIT_SYNC_BRANCH || 'main', // 增加分支支持
+            interval: parseInt(process.env.GIT_SYNC_INTERVAL) || 10,
+            userName: process.env.GIT_SYNC_USER || 'A-Plan-Bot',
+            userEmail: process.env.GIT_SYNC_EMAIL || 'bot@a-plan.ai'
+        }
     };
 
     let currentConfig = { ...defaultConfig };
@@ -186,7 +205,7 @@ export async function initializeConfig(args = process.argv.slice(2), configFileP
 
     // 加载号池配置
     if (!currentConfig.PROVIDER_POOLS_FILE_PATH) {
-        currentConfig.PROVIDER_POOLS_FILE_PATH = 'configs/provider_pools.json';
+        currentConfig.PROVIDER_POOLS_FILE_PATH = path.join(DATA_DIR, 'provider_pools.json');
     }
     if (currentConfig.PROVIDER_POOLS_FILE_PATH) {
         try {
@@ -194,8 +213,16 @@ export async function initializeConfig(args = process.argv.slice(2), configFileP
             currentConfig.providerPools = JSON.parse(poolsData);
             logger.info(`[Config] Loaded provider pools from ${currentConfig.PROVIDER_POOLS_FILE_PATH}`);
         } catch (error) {
-            logger.error(`[Config Error] Failed to load provider pools from ${currentConfig.PROVIDER_POOLS_FILE_PATH}: ${error.message}`);
-            currentConfig.providerPools = {};
+            // 如果不存在，尝试从默认位置寻找
+            const fallbackPath = 'configs/provider_pools.json';
+            if (currentConfig.PROVIDER_POOLS_FILE_PATH !== fallbackPath && fs.existsSync(fallbackPath)) {
+                const poolsData = fs.readFileSync(fallbackPath, 'utf8');
+                currentConfig.providerPools = JSON.parse(poolsData);
+                logger.info(`[Config] Fallback: Loaded provider pools from ${fallbackPath}`);
+            } else {
+                logger.error(`[Config Error] Failed to load provider pools: ${error.message}`);
+                currentConfig.providerPools = {};
+            }
         }
     } else {
         currentConfig.providerPools = {};

@@ -334,7 +334,8 @@ export function createProviderConfig(options) {
         lastErrorTime: null,
         lastHealthCheckTime: null,
         lastHealthCheckModel: null,
-        lastErrorMessage: null
+        lastErrorMessage: null,
+        PROXY_TAG: '' // 极客分流标签 (例如: US, HK)
     };
     
     // 如果需要 PROJECT_ID，添加空字符串占位

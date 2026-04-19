@@ -1,6 +1,6 @@
 {
-  "enabled": true,
-  "subUrl": "https://vpn-ebp.pages.dev/sub?token=76cad2c042dd4715e97f8a2e4c0f5a62",
+  "enabled": false,
+  "subUrl": "",
   "port": 7890,
   "routing": {},
   "secret": "geek-clash-secret",

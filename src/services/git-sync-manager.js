@@ -36,28 +36,28 @@ class GitSyncManager {
 
     async setupGit() {
         try {
-            const { userEmail, userName, repoUrl } = this.config.GIT_SYNC;
+            const { userEmail, userName, repoUrl, branch } = this.config.GIT_SYNC;
+            const targetBranch = branch || 'main';
             
-            // 使用数组传参，彻底杜绝 Shell 注入
             if (userEmail) await execAsync(`git config --global user.email ${JSON.stringify(userEmail)}`);
             if (userName) await execAsync(`git config --global user.name ${JSON.stringify(userName)}`);
 
-            // 检查远程仓库地址
+            // 检查并设置远程地址
             try {
                 await execAsync('git remote get-url origin');
-                if (repoUrl) {
-                    await execAsync(`git remote set-url origin ${JSON.stringify(repoUrl)}`);
-                }
+                if (repoUrl) await execAsync(`git remote set-url origin ${JSON.stringify(repoUrl)}`);
             } catch (e) {
-                if (repoUrl) {
-                    await execAsync(`git remote add origin ${JSON.stringify(repoUrl)}`);
-                }
+                if (repoUrl) await execAsync(`git remote add origin ${JSON.stringify(repoUrl)}`);
             }
 
-            // Ensure we are on main branch
+            // 分支处理：切换到指定分支，如果不存在则创建
             try {
-                await execAsync('git branch -M main');
-            } catch (e) {}
+                await execAsync(`git fetch origin ${targetBranch}`);
+                await execAsync(`git checkout ${targetBranch}`);
+            } catch (e) {
+                logger.info(`[GitSync] Branch ${targetBranch} not found, creating...`);
+                await execAsync(`git checkout -b ${targetBranch}`);
+            }
 
         } catch (error) {
             logger.error('[GitSync] Failed to setup git:', error.message);
@@ -82,28 +82,26 @@ class GitSyncManager {
 
     async pull() {
         try {
-            logger.info('[GitSync] Pulling latest configurations from remote...');
-            // Stash local changes to avoid conflicts if any non-config files changed
+            const targetBranch = this.config.GIT_SYNC.branch || 'main';
+            logger.info(`[GitSync] Pulling latest from branch: ${targetBranch}`);
             await execAsync('git stash');
-            await execAsync('git pull origin main --rebase');
+            await execAsync(`git pull origin ${targetBranch} --rebase`);
             await execAsync('git stash pop || true');
         } catch (error) {
-            logger.warn('[GitSync] Pull failed (might be first time or no remote changes):', error.message);
+            logger.warn('[GitSync] Pull failed:', error.message);
         }
     }
 
     async push() {
         try {
-            // Check for changes in configs/ and pwd
+            const targetBranch = this.config.GIT_SYNC.branch || 'main';
             const { stdout } = await execAsync('git status --porcelain configs/ pwd');
             if (stdout.trim()) {
-                logger.info('[GitSync] Detected local configuration changes, pushing to remote...');
+                logger.info(`[GitSync] Pushing changes to branch: ${targetBranch}`);
                 await execAsync('git add configs/*.json pwd');
-                await execAsync('git commit -m "Auto-sync: configurations updated via Web UI"');
-                await execAsync('git push origin main');
+                await execAsync('git commit -m "Auto-sync: config update"');
+                await execAsync(`git push origin ${targetBranch}`);
                 logger.info('[GitSync] Push successful.');
-            } else {
-                logger.debug('[GitSync] No configuration changes detected.');
             }
         } catch (error) {
             logger.error('[GitSync] Push failed:', error.message);

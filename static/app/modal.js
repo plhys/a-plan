@@ -1240,7 +1240,7 @@ function renderProviderConfig(provider) {
  * @returns {Array} 字段名数组
  */
 function getFieldOrder(provider) {
-    const orderedFields = ['customName', 'checkModelName', 'checkHealth', 'concurrencyLimit', 'queueLimit'];
+    const orderedFields = ['customName', 'PROXY_TAG', 'checkModelName', 'checkHealth', 'concurrencyLimit', 'queueLimit'];
     
     // 需要排除的内部状态字段
     const excludedFields = [
@@ -1670,6 +1670,10 @@ function showAddProviderForm(providerType) {
                 <label><span data-i18n="modal.provider.queueLimit">队列限制</span> <span class="optional-mark" data-i18n="config.optional">(选填)</span></label>
                 <input type="number" id="newQueueLimit" placeholder="默认0不限制">
             </div>
+            <div class="form-group">
+                <label><span>分流标签 (PROXY_TAG)</span> <span class="optional-mark">(选填)</span></label>
+                <input type="text" id="newProxyTag" placeholder="例如: US, HK, SG">
+            </div>
         </div>
         <div id="dynamicConfigFields">
             <!-- 动态配置字段将在这里显示 -->
@@ -1847,13 +1851,15 @@ async function addProvider(providerType) {
     const checkHealth = document.getElementById('newCheckHealth')?.value === 'true';
     const concurrencyLimit = parseInt(document.getElementById('newConcurrencyLimit')?.value || '0');
     const queueLimit = parseInt(document.getElementById('newQueueLimit')?.value || '0');
+    const PROXY_TAG = document.getElementById('newProxyTag')?.value || '';
     
     const providerConfig = {
         customName: customName || '', // 允许为空
         checkModelName: checkModelName || '', // 允许为空
         checkHealth,
         concurrencyLimit,
-        queueLimit
+        queueLimit,
+        PROXY_TAG
     };
     
     // 根据提供商类型动态收集配置字段（自动匹配 utils.js 中的定义）

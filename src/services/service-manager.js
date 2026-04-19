@@ -284,8 +284,8 @@ export async function initApiService(config, isReady = false) {
         });
         logger.info('[Initialization] ProviderPoolManager initialized.');
         
-        // --- 初始化 Clash 核心模块 ---
-        clashModule.init().catch(e => logger.error('[Clash-Module] Start Failed:', e.message));
+        // --- 初始化 Clash 核心模块 (极客模式：默认跳过，由插件或手动开启) ---
+        // clashModule.init().catch(e => logger.error('[Clash-Module] Start Failed:', e.message));
     }
 
     if (config.providerPools && Object.keys(config.providerPools).length > 0) {
@@ -421,6 +421,10 @@ export async function getApiService(config, requestedModel = null, options = {})
         
         // --- 执行 Clash 模块分流中间件 ---
         const clashMiddleware = clashModule.getMiddleware();
+        // 如果节点自带了 PROXY_TAG，将其注入到当前请求的 config 中供中间件使用
+        if (selectedProviderConfig && selectedProviderConfig.PROXY_TAG) {
+            config.PROXY_TAG = selectedProviderConfig.PROXY_TAG;
+        }
         await clashMiddleware(config);
         
         // selectProvider 现在是异步的，使用链式锁确保并发安全
