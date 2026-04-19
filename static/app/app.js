@@ -89,8 +89,7 @@ import {
 } from './tutorial-manager.js';
 
 import {
-    initClashManager,
-    updateClashUIState
+    initClashManager
 } from './clash-manager.js';
 
 import {
@@ -136,8 +135,8 @@ export function initApp() {
     initTutorialManager(); // 初始化教程管理功能
     initClashManager(); // 初始化 Clash 管理功能
     
-    // 初始化 Clash 原子开关逻辑
-    initClashAtomicControl();
+    // 初始化 Clash 模块控制
+    initClashModuleControl();
     
     // 初始化自定义模型管理
     window.customModelsManager = new CustomModelsManager();
@@ -219,6 +218,45 @@ function initMobileMenu() {
         }
     });
 }
+
+/**
+ * 初始化 Clash 模块控制逻辑 (V2.2 极客模块版)
+ */
+async function initClashModuleControl() {
+    try {
+        const data = await window.apiClient.get('/clash/info');
+        const toggle = document.getElementById('clashModuleToggle');
+        if (toggle) {
+            toggle.checked = data.config.enabled;
+            console.log('[Clash Module] 初始化开关状态:', data.config.enabled);
+        }
+    } catch (e) {
+        console.error('[Clash Module] 状态初始化失败:', e);
+    }
+}
+
+/**
+ * 处理 Clash 模块开关切换
+ */
+window.handleClashModuleToggle = async function(enabled) {
+    const toggle = document.getElementById('clashModuleToggle');
+    try {
+        await window.apiClient.post('/clash/config', { enabled });
+        showToast(enabled ? '模块已插入' : '模块已拔出', '代理核心状态已异步更新', 'success');
+        
+        // 极客优化：静默更新 UI 状态，不刷新页面，不返回首页
+        if (typeof window.updateClashUIState === 'function') {
+            await window.updateClashUIState();
+        } else if (window.location.hash === '#clash') {
+            // 如果在当前页，仅触发局部数据重载
+            const { initClashManager } = await import('./clash-manager.js');
+            await initClashManager();
+        }
+    } catch (e) {
+        showToast('插拔失败', e.message, 'error');
+        toggle.checked = !enabled;
+    }
+};
 
 /**
  * 初始化 Clash 原子开关控制

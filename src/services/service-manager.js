@@ -15,6 +15,8 @@ import {
 } from '../utils/provider-utils.js';
 import { MODEL_PROVIDER } from '../utils/constants.js';
 
+import { clashModule } from '../modules/clash/clash-core.js';
+
 // 存储 ProviderPoolManager 实例
 let providerPoolManager = null;
 
@@ -281,6 +283,9 @@ export async function initApiService(config, isReady = false) {
             providerFallbackChain: config.providerFallbackChain || {},
         });
         logger.info('[Initialization] ProviderPoolManager initialized.');
+        
+        // --- 初始化 Clash 核心模块 ---
+        clashModule.init().catch(e => logger.error('[Clash-Module] Start Failed:', e.message));
     }
 
     if (config.providerPools && Object.keys(config.providerPools).length > 0) {
@@ -413,7 +418,11 @@ export async function getApiService(config, requestedModel = null, options = {})
     let serviceConfig = config;
     const isPoolable = PROVIDER_MAPPINGS.some(m => m.providerType === config.MODEL_PROVIDER);
     if (providerPoolManager && ((config.providerPools && config.providerPools[config.MODEL_PROVIDER]) || isPoolable)) {
-        // 如果有号池管理器，并且当前模型提供者类型有对应的号池（或属于号池类型提供商），则从号池中选择一个提供者配置
+        
+        // --- 执行 Clash 模块分流中间件 ---
+        const clashMiddleware = clashModule.getMiddleware();
+        await clashMiddleware(config);
+        
         // selectProvider 现在是异步的，使用链式锁确保并发安全
         const selectedProviderConfig = await providerPoolManager.selectProvider(config.MODEL_PROVIDER, actualModelName, { ...options, skipUsageCount: true });
         if (selectedProviderConfig) {

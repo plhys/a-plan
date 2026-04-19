@@ -13,6 +13,7 @@ import * as updateApi from '../ui-modules/update-api.js';
 import * as oauthApi from '../ui-modules/oauth-api.js';
 import * as customModelsApi from '../ui-modules/custom-models-api.js';
 import * as eventBroadcast from '../ui-modules/event-broadcast.js';
+import { clashModule } from '../modules/clash/clash-core.js';
 
 // Re-export from event-broadcast module
 export { broadcastEvent, initializeUIManagement, handleUploadOAuthCredentials, upload } from '../ui-modules/event-broadcast.js';
@@ -127,6 +128,39 @@ export async function handleUIApiRequests(method, pathParam, req, res, currentCo
     // Get configuration
     if (method === 'GET' && pathParam === '/api/config') {
         return await configApi.handleGetConfig(req, res, currentConfig);
+    }
+    
+    // Clash 模块管理路由 (V2.1 模块化版)
+    if (pathParam === '/api/clash/info') {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(clashModule.getStatus()));
+        return true;
+    }
+    if (pathParam === '/api/clash/config' && method === 'POST') {
+        const body = await new Promise(r => { 
+            let b=''; 
+            req.on('data', c=>b+=c); 
+            req.on('end', () => {
+                try { r(JSON.parse(b)); } catch(e) { r({}); }
+            }); 
+        });
+        await clashModule.updateConfig(body);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true }));
+        return true;
+    }
+    if (pathParam === '/api/clash/route' && method === 'POST') {
+        const body = await new Promise(r => { 
+            let b=''; 
+            req.on('data', c=>b+=c); 
+            req.on('end', () => {
+                try { r(JSON.parse(b)); } catch(e) { r({}); }
+            }); 
+        });
+        await clashModule.updateConfig({ routing: { [body.provider]: body.node } });
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true }));
+        return true;
     }
 
     // Update configuration

@@ -1,0 +1,418 @@
+
+mixed-port: 7890
+external-controller: 0.0.0.0:9090
+secret: "geek-clash-secret"
+allow-lan: true
+mode: rule
+log-level: info
+
+proxies:
+  - {name: CF官方优选1, server: 173.245.59.138, port: 8443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选2, server: 172.67.67.33, port: 8443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选3, server: 162.159.153.100, port: 443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选4, server: 8.35.211.7, port: 2053, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选5, server: 8.39.125.56, port: 2083, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选6, server: 162.159.153.20, port: 443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选7, server: 162.159.153.61, port: 2096, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选8, server: 8.35.211.255, port: 2087, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选9, server: 172.64.229.9, port: 2053, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选10, server: 173.245.59.177, port: 2083, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选11, server: 172.64.144.107, port: 2053, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选12, server: 172.67.71.64, port: 2087, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选13, server: 173.245.59.216, port: 2087, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选14, server: 172.64.145.10, port: 2053, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选15, server: 172.64.146.67, port: 443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选16, server: 173.245.59.211, port: 443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选17, server: 172.64.144.27, port: 2083, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选18, server: 172.64.228.164, port: 2053, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选19, server: 8.39.125.233, port: 8443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选20, server: 172.64.229.113, port: 2096, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选21, server: 104.19.38.146, port: 2087, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选22, server: 162.159.153.144, port: 2087, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选23, server: 104.18.39.47, port: 2087, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选24, server: 108.162.198.171, port: 2083, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选25, server: 104.26.0.212, port: 443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选26, server: 104.19.40.155, port: 8443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选27, server: 162.159.33.106, port: 2083, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选28, server: 104.26.1.92, port: 2087, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选29, server: 172.67.64.33, port: 2096, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选30, server: 172.64.145.245, port: 8443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选31, server: 162.159.33.98, port: 443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选32, server: 104.19.48.72, port: 8443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选33, server: 104.26.15.165, port: 8443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选34, server: 162.159.44.3, port: 443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选35, server: 172.67.65.182, port: 2096, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选36, server: 162.159.41.138, port: 2053, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选37, server: 104.26.1.234, port: 2053, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选38, server: 104.19.54.144, port: 443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选39, server: 162.159.152.111, port: 2096, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选40, server: 172.64.145.147, port: 2083, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选41, server: 173.245.58.179, port: 443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选42, server: 172.64.146.132, port: 2083, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选43, server: 104.18.41.210, port: 2096, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选44, server: 8.35.211.206, port: 2087, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选45, server: 172.64.229.217, port: 8443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选46, server: 104.26.14.165, port: 2053, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选47, server: 8.39.125.148, port: 2083, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选48, server: 8.39.125.30, port: 2096, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选49, server: 162.159.42.128, port: 2087, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: CF官方优选50, server: 172.67.76.221, port: 2083, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - ♻️ 自动选择
+  - 🔯 故障转移
+  - 🔮 负载均衡
+  - DIRECT
+  - CF官方优选1
+  - CF官方优选2
+  - CF官方优选3
+  - CF官方优选4
+  - CF官方优选5
+  - CF官方优选6
+  - CF官方优选7
+  - CF官方优选8
+  - CF官方优选9
+  - CF官方优选10
+  - CF官方优选11
+  - CF官方优选12
+  - CF官方优选13
+  - CF官方优选14
+  - CF官方优选15
+  - CF官方优选16
+  - CF官方优选17
+  - CF官方优选18
+  - CF官方优选19
+  - CF官方优选20
+  - CF官方优选21
+  - CF官方优选22
+  - CF官方优选23
+  - CF官方优选24
+  - CF官方优选25
+  - CF官方优选26
+  - CF官方优选27
+  - CF官方优选28
+  - CF官方优选29
+  - CF官方优选30
+  - CF官方优选31
+  - CF官方优选32
+  - CF官方优选33
+  - CF官方优选34
+  - CF官方优选35
+  - CF官方优选36
+  - CF官方优选37
+  - CF官方优选38
+  - CF官方优选39
+  - CF官方优选40
+  - CF官方优选41
+  - CF官方优选42
+  - CF官方优选43
+  - CF官方优选44
+  - CF官方优选45
+  - CF官方优选46
+  - CF官方优选47
+  - CF官方优选48
+  - CF官方优选49
+  - CF官方优选50
+  - name: ♻️ 自动选择
+  - type: url-test
+  - url: http://www.gstatic.com/generate_204
+  - interval: 300
+  - tolerance: 50
+  - CF官方优选1
+  - CF官方优选2
+  - CF官方优选3
+  - CF官方优选4
+  - CF官方优选5
+  - CF官方优选6
+  - CF官方优选7
+  - CF官方优选8
+  - CF官方优选9
+  - CF官方优选10
+  - CF官方优选11
+  - CF官方优选12
+  - CF官方优选13
+  - CF官方优选14
+  - CF官方优选15
+  - CF官方优选16
+  - CF官方优选17
+  - CF官方优选18
+  - CF官方优选19
+  - CF官方优选20
+  - CF官方优选21
+  - CF官方优选22
+  - CF官方优选23
+  - CF官方优选24
+  - CF官方优选25
+  - CF官方优选26
+  - CF官方优选27
+  - CF官方优选28
+  - CF官方优选29
+  - CF官方优选30
+  - CF官方优选31
+  - CF官方优选32
+  - CF官方优选33
+  - CF官方优选34
+  - CF官方优选35
+  - CF官方优选36
+  - CF官方优选37
+  - CF官方优选38
+  - CF官方优选39
+  - CF官方优选40
+  - CF官方优选41
+  - CF官方优选42
+  - CF官方优选43
+  - CF官方优选44
+  - CF官方优选45
+  - CF官方优选46
+  - CF官方优选47
+  - CF官方优选48
+  - CF官方优选49
+  - CF官方优选50
+  - name: 🔯 故障转移
+  - type: fallback
+  - url: http://www.gstatic.com/generate_204
+  - interval: 180
+  - CF官方优选1
+  - CF官方优选2
+  - CF官方优选3
+  - CF官方优选4
+  - CF官方优选5
+  - CF官方优选6
+  - CF官方优选7
+  - CF官方优选8
+  - CF官方优选9
+  - CF官方优选10
+  - CF官方优选11
+  - CF官方优选12
+  - CF官方优选13
+  - CF官方优选14
+  - CF官方优选15
+  - CF官方优选16
+  - CF官方优选17
+  - CF官方优选18
+  - CF官方优选19
+  - CF官方优选20
+  - CF官方优选21
+  - CF官方优选22
+  - CF官方优选23
+  - CF官方优选24
+  - CF官方优选25
+  - CF官方优选26
+  - CF官方优选27
+  - CF官方优选28
+  - CF官方优选29
+  - CF官方优选30
+  - CF官方优选31
+  - CF官方优选32
+  - CF官方优选33
+  - CF官方优选34
+  - CF官方优选35
+  - CF官方优选36
+  - CF官方优选37
+  - CF官方优选38
+  - CF官方优选39
+  - CF官方优选40
+  - CF官方优选41
+  - CF官方优选42
+  - CF官方优选43
+  - CF官方优选44
+  - CF官方优选45
+  - CF官方优选46
+  - CF官方优选47
+  - CF官方优选48
+  - CF官方优选49
+  - CF官方优选50
+  - name: 🔮 负载均衡
+  - type: load-balance
+  - strategy: consistent-hashing
+  - url: http://www.gstatic.com/generate_204
+  - interval: 180
+  - CF官方优选1
+  - CF官方优选2
+  - CF官方优选3
+  - CF官方优选4
+  - CF官方优选5
+  - CF官方优选6
+  - CF官方优选7
+  - CF官方优选8
+  - CF官方优选9
+  - CF官方优选10
+  - CF官方优选11
+  - CF官方优选12
+  - CF官方优选13
+  - CF官方优选14
+  - CF官方优选15
+  - CF官方优选16
+  - CF官方优选17
+  - CF官方优选18
+  - CF官方优选19
+  - CF官方优选20
+  - CF官方优选21
+  - CF官方优选22
+  - CF官方优选23
+  - CF官方优选24
+  - CF官方优选25
+  - CF官方优选26
+  - CF官方优选27
+  - CF官方优选28
+  - CF官方优选29
+  - CF官方优选30
+  - CF官方优选31
+  - CF官方优选32
+  - CF官方优选33
+  - CF官方优选34
+  - CF官方优选35
+  - CF官方优选36
+  - CF官方优选37
+  - CF官方优选38
+  - CF官方优选39
+  - CF官方优选40
+  - CF官方优选41
+  - CF官方优选42
+  - CF官方优选43
+  - CF官方优选44
+  - CF官方优选45
+  - CF官方优选46
+  - CF官方优选47
+  - CF官方优选48
+  - CF官方优选49
+  - CF官方优选50
+  - name: 🎯 全球直连
+  - type: select
+  - DIRECT
+  - 🚀 节点选择
+  - ♻️ 自动选择
+  - name: 🛑 全球拦截
+  - type: select
+  - REJECT
+  - DIRECT
+  - name: 🐟 漏网之鱼
+  - type: select
+  - 🚀 节点选择
+  - 🎯 全球直连
+  - ♻️ 自动选择
+  - 🔯 故障转移
+  - 🔮 负载均衡
+  - CF官方优选1
+  - CF官方优选2
+  - CF官方优选3
+  - CF官方优选4
+  - CF官方优选5
+  - CF官方优选6
+  - CF官方优选7
+  - CF官方优选8
+  - CF官方优选9
+  - CF官方优选10
+  - CF官方优选11
+  - CF官方优选12
+  - CF官方优选13
+  - CF官方优选14
+  - CF官方优选15
+  - CF官方优选16
+  - CF官方优选17
+  - CF官方优选18
+  - CF官方优选19
+  - CF官方优选20
+  - CF官方优选21
+  - CF官方优选22
+  - CF官方优选23
+  - CF官方优选24
+  - CF官方优选25
+  - CF官方优选26
+  - CF官方优选27
+  - CF官方优选28
+  - CF官方优选29
+  - CF官方优选30
+  - CF官方优选31
+  - CF官方优选32
+  - CF官方优选33
+  - CF官方优选34
+  - CF官方优选35
+  - CF官方优选36
+  - CF官方优选37
+  - CF官方优选38
+  - CF官方优选39
+  - CF官方优选40
+  - CF官方优选41
+  - CF官方优选42
+  - CF官方优选43
+  - CF官方优选44
+  - CF官方优选45
+  - CF官方优选46
+  - CF官方优选47
+  - CF官方优选48
+  - CF官方优选49
+  - CF官方优选50
+  - name: ☁️ CloudFlareCDN
+  - type: select
+  - 🐟 漏网之鱼
+  - 🚀 节点选择
+  - 🎯 全球直连
+  - ♻️ 自动选择
+  - 🔯 故障转移
+  - 🔮 负载均衡
+  - CF官方优选1
+  - CF官方优选2
+  - CF官方优选3
+  - CF官方优选4
+  - CF官方优选5
+  - CF官方优选6
+  - CF官方优选7
+  - CF官方优选8
+  - CF官方优选9
+  - CF官方优选10
+  - CF官方优选11
+  - CF官方优选12
+  - CF官方优选13
+  - CF官方优选14
+  - CF官方优选15
+  - CF官方优选16
+  - CF官方优选17
+  - CF官方优选18
+  - CF官方优选19
+  - CF官方优选20
+  - CF官方优选21
+  - CF官方优选22
+  - CF官方优选23
+  - CF官方优选24
+  - CF官方优选25
+  - CF官方优选26
+  - CF官方优选27
+  - CF官方优选28
+  - CF官方优选29
+  - CF官方优选30
+  - CF官方优选31
+  - CF官方优选32
+  - CF官方优选33
+  - CF官方优选34
+  - CF官方优选35
+  - CF官方优选36
+  - CF官方优选37
+  - CF官方优选38
+  - CF官方优选39
+  - CF官方优选40
+  - CF官方优选41
+  - CF官方优选42
+  - CF官方优选43
+  - CF官方优选44
+  - CF官方优选45
+  - CF官方优选46
+  - CF官方优选47
+  - CF官方优选48
+  - CF官方优选49
+  - CF官方优选50
+
+
+proxy-groups:
+  - name: "GLOBAL-GEEK"
+    type: select
+    proxies: ["AUTO-SELECT", "NODE-SELECT", "DIRECT"]
+  - name: "AUTO-SELECT"
+    type: url-test
+    url: http://www.gstatic.com/generate_204
+    interval: 300
+    proxies: ["CF官方优选1","CF官方优选2","CF官方优选3","CF官方优选4","CF官方优选5","CF官方优选6","CF官方优选7","CF官方优选8","CF官方优选9","CF官方优选10","CF官方优选11","CF官方优选12","CF官方优选13","CF官方优选14","CF官方优选15","CF官方优选16","CF官方优选17","CF官方优选18","CF官方优选19","CF官方优选20","CF官方优选21","CF官方优选22","CF官方优选23","CF官方优选24","CF官方优选25","CF官方优选26","CF官方优选27","CF官方优选28","CF官方优选29","CF官方优选30","CF官方优选31","CF官方优选32","CF官方优选33","CF官方优选34","CF官方优选35","CF官方优选36","CF官方优选37","CF官方优选38","CF官方优选39","CF官方优选40","CF官方优选41","CF官方优选42","CF官方优选43","CF官方优选44","CF官方优选45","CF官方优选46","CF官方优选47","CF官方优选48","CF官方优选49","CF官方优选50","♻️ 自动选择","🔯 故障转移","🔮 负载均衡","🎯 全球直连","🛑 全球拦截","🐟 漏网之鱼","☁️ CloudFlareCDN"]
+  - name: "NODE-SELECT"
+    type: select
+    proxies: ["CF官方优选1","CF官方优选2","CF官方优选3","CF官方优选4","CF官方优选5","CF官方优选6","CF官方优选7","CF官方优选8","CF官方优选9","CF官方优选10","CF官方优选11","CF官方优选12","CF官方优选13","CF官方优选14","CF官方优选15","CF官方优选16","CF官方优选17","CF官方优选18","CF官方优选19","CF官方优选20","CF官方优选21","CF官方优选22","CF官方优选23","CF官方优选24","CF官方优选25","CF官方优选26","CF官方优选27","CF官方优选28","CF官方优选29","CF官方优选30","CF官方优选31","CF官方优选32","CF官方优选33","CF官方优选34","CF官方优选35","CF官方优选36","CF官方优选37","CF官方优选38","CF官方优选39","CF官方优选40","CF官方优选41","CF官方优选42","CF官方优选43","CF官方优选44","CF官方优选45","CF官方优选46","CF官方优选47","CF官方优选48","CF官方优选49","CF官方优选50","♻️ 自动选择","🔯 故障转移","🔮 负载均衡","🎯 全球直连","🛑 全球拦截","🐟 漏网之鱼","☁️ CloudFlareCDN"]
+
+rules:
+  - MATCH, GLOBAL-GEEK

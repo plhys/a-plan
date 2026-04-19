@@ -8,10 +8,6 @@
       "enabled": false,
       "config": {}
     },
-    "clash-guardian": {
-      "enabled": true,
-      "config": {}
-    },
     "default-auth": {
       "enabled": true,
       "config": {}

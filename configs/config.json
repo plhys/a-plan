@@ -1,5 +1,5 @@
 {
-  "SERVER_PORT": 3000,
+  "SERVER_PORT": 18788,
   "REQUIRED_API_KEY": "admin123",
   "MODEL_PROVIDER": "gemini-cli-oauth",
   "MAX_ERROR_COUNT": 3,
