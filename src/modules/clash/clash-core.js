@@ -236,11 +236,62 @@ rules:
         try {
             const res = await fetch(this._config.subUrl, { headers: { 'User-Agent': 'ClashMeta' } });
             if (res.ok) {
-                writeFileSync(path.join(process.cwd(), 'configs', 'clash-sub.yaml'), await res.text());
+                let content = await res.text();
+                
+                // --- 极客增强：Base64 自动识别与 VLESS 转换 ---
+                if (!content.includes('proxies:') && !content.includes('port:')) {
+                    try {
+                        const decoded = Buffer.from(content, 'base64').toString('utf8');
+                        if (decoded.includes('://')) {
+                            logger.info('[Clash-Module] Detected Base64 subscription, converting nodes...');
+                            content = this._convertVlessToYaml(decoded);
+                        }
+                    } catch (e) {
+                        logger.warn('[Clash-Module] Content not YAML, and Base64 decode failed.');
+                    }
+                }
+                
+                writeFileSync(path.join(process.cwd(), 'configs', 'clash-sub.yaml'), content);
+                logger.info('[Clash-Module] Subscription synchronized.');
             }
         } catch (e) {
             logger.error('[Clash-Module] Failed to download subscription:', e.message);
         }
+    }
+
+    /**
+     * 极客转换器：将原始链接列表转为 Clash YAML
+     */
+    _convertVlessToYaml(raw) {
+        const lines = raw.split('\n').filter(l => l.trim());
+        const proxies = [];
+        lines.forEach((line, i) => {
+            try {
+                if (line.startsWith('vless://')) {
+                    const url = new URL(line);
+                    const query = new URLSearchParams(url.search);
+                    const p = {
+                        name: decodeURIComponent(url.hash.substring(1)) || `VLESS-Node-${i}`,
+                        type: 'vless',
+                        server: url.hostname,
+                        port: parseInt(url.port),
+                        uuid: url.username,
+                        tls: query.get('security') === 'tls',
+                        'skip-cert-verify': true,
+                        servername: query.get('sni') || url.hostname,
+                        network: query.get('type') || 'tcp'
+                    };
+                    if (query.get('type') === 'ws') {
+                        p['ws-opts'] = { 
+                            path: query.get('path') || '/', 
+                            headers: { Host: query.get('host') || url.hostname } 
+                        };
+                    }
+                    proxies.push(p);
+                }
+            } catch (e) {}
+        });
+        return `proxies:\n${proxies.map(p => `  - ${JSON.stringify(p)}`).join('\n')}`;
     }
 
     getMiddleware() {
@@ -272,7 +323,13 @@ rules:
     }
 
     getStatus() {
-        return { config: this._config, nodes: this._nodes, status: this._nodes.length > 0 ? 'running' : 'initializing' };
+        return { 
+            config: this._config, 
+            nodes: this._nodes, 
+            status: this._nodes.length > 0 ? 'running' : (this._process ? 'initializing' : 'stopped'),
+            pid: this._process ? this._process.pid : null,
+            uptime: this._process ? Math.floor(process.uptime()) : 0
+        };
     }
 }
 

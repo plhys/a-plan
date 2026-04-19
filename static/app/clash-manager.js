@@ -44,12 +44,19 @@ async function loadClashDetails() {
 }
 
 async function renderClashUI(clashData, pData) {
-    // 1. 更新状态徽章
+    // 1. 更新状态徽章 (增强：增加 PID 显示)
     const statusBadge = document.getElementById('clashStatusBadge');
     if (statusBadge) {
-        statusBadge.innerHTML = clashData.status === 'running' 
-            ? '<span class="badge badge-success" style="background:#059669;padding:2px 8px;border-radius:4px;color:white;">核心已就绪</span>' 
-            : '<span class="badge badge-warning" style="background:#f59e0b;padding:2px 8px;border-radius:4px;color:white;">核心初始化中...</span>';
+        if (clashData.status === 'running') {
+            statusBadge.innerHTML = `
+                <span class="badge badge-success" style="background:#059669;padding:2px 8px;border-radius:4px;color:white;">核心已就绪</span>
+                <span style="font-family:monospace; font-size:12px; margin-left:10px; color:var(--text-secondary);">PID: ${clashData.pid}</span>
+            `;
+        } else if (clashData.status === 'initializing') {
+            statusBadge.innerHTML = '<span class="badge badge-warning" style="background:#f59e0b;padding:2px 8px;border-radius:4px;color:white;">核心初始化中...</span>';
+        } else {
+            statusBadge.innerHTML = '<span class="badge" style="background:#6b7280;padding:2px 8px;border-radius:4px;color:white;">核心已停止</span>';
+        }
     }
 
     // 2. 预定义区域分流选项

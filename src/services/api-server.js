@@ -112,12 +112,12 @@ async function startServer() {
     });
 
     serverInstance.listen(PORT, HOST, () => {
-        logger.info(`🚀 [A-Plan v4.2.1] Port ${PORT} occupied. Hydrating core...`);
+        logger.info(`🚀 [A-Plan v4.2.2] Port ${PORT} occupied. Hydrating core...`);
         
         // 3. 在端口开启后的“背景音”里，异步执行重型初始化
         bootstrapCore().catch(err => {
             global.BOOTSTRAP_ERROR = err;
-            logger.error('[A-Plan v4.2.1] Critical Bootstrap Failure:', err.message);
+            logger.error('[A-Plan v4.2.2] Critical Bootstrap Failure:', err.message);
         });
     });
 }
