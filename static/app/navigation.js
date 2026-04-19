@@ -11,28 +11,44 @@ function initNavigation() {
         return;
     }
 
-    // 【新增】处理初始页面加载时的锚点路由
+    // 【极客修复】处理初始页面加载时的锚点路由
     const handleInitialRoute = () => {
         const hash = window.location.hash.substring(1);
+        console.log('[Navigation] 初始路由检测, Hash:', hash);
+        
+        // 强制清理所有硬编码的 active 类，防止首页遮挡
+        if (elements.navItems) elements.navItems.forEach(i => i.classList.remove('active'));
+        if (elements.sections) elements.sections.forEach(s => s.classList.remove('active'));
+
         if (hash) {
-            console.log('[Navigation] 正在路由到:', hash);
+            console.log('[Navigation] 正在通过锚点恢复页面:', hash);
             switchToSection(hash);
+        } else {
+            // 如果没有 hash，默认跳转到 dashboard
+            switchToSection('dashboard');
         }
     };
 
     elements.navItems.forEach(item => {
         item.addEventListener('click', (e) => {
-            e.preventDefault();
+            // 如果是 a 标签且 href 以 # 开头，我们允许 hash 变化
             const sectionId = item.dataset.section;
-            window.location.hash = sectionId; // 更新锚点以便刷新后能回来
-            switchToSection(sectionId);
+            if (sectionId) {
+                // e.preventDefault(); // 不再阻止默认行为，让 hash 自动更新
+                switchToSection(sectionId);
+            }
         });
     });
 
-    // 监听组件加载完成事件后再执行路由
-    window.addEventListener('componentsLoaded', handleInitialRoute);
-    // 同时也监听 hash 变化
-    window.addEventListener('hashchange', handleInitialRoute);
+    // 监听 hash 变化 (支持浏览器后退/前进)
+    window.addEventListener('hashchange', () => {
+        const hash = window.location.hash.substring(1);
+        if (hash) switchToSection(hash);
+    });
+
+    // 因为 initNavigation 是在 initializeComponents 之后执行的，
+    // 我们直接执行路由检测。
+    handleInitialRoute();
 }
 
 /**
@@ -40,8 +56,11 @@ function initNavigation() {
  * @param {string} sectionId - 章节ID
  */
 function switchToSection(sectionId) {
+    console.log('[Navigation] 切换到章节:', sectionId);
+    
     // 更新导航状态
-    elements.navItems.forEach(nav => {
+    const navItems = elements.navItems;
+    navItems.forEach(nav => {
         nav.classList.remove('active');
         if (nav.dataset.section === sectionId) {
             nav.classList.add('active');
@@ -49,7 +68,8 @@ function switchToSection(sectionId) {
     });
 
     // 显示对应章节
-    elements.sections.forEach(section => {
+    const sections = elements.sections;
+    sections.forEach(section => {
         section.classList.remove('active');
         if (section.id === sectionId) {
             section.classList.add('active');
@@ -74,13 +94,10 @@ function switchToSection(sectionId) {
  * 滚动到页面顶部
  */
 function scrollToTop() {
-    // 尝试滚动内容区域
     const contentContainer = document.getElementById('content-container');
     if (contentContainer) {
         contentContainer.scrollTop = 0;
     }
-    
-    // 同时滚动窗口到顶部
     window.scrollTo(0, 0);
 }
 
@@ -88,14 +105,14 @@ function scrollToTop() {
  * 切换到仪表盘页面
  */
 function switchToDashboard() {
-    switchToSection('dashboard');
+    window.location.hash = 'dashboard';
 }
 
 /**
  * 切换到提供商页面
  */
 function switchToProviders() {
-    switchToSection('providers');
+    window.location.hash = 'providers';
 }
 
 export {
