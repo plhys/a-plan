@@ -250,6 +250,11 @@ rules:
 
     async updateConfig(newConfig) {
         const wasEnabled = this._config.enabled;
+        // 支持嵌套更新 routing 对象，而不是简单覆盖
+        if (newConfig.routing && typeof newConfig.routing === 'object') {
+            this._config.routing = { ...this._config.routing, ...newConfig.routing };
+            delete newConfig.routing;
+        }
         this._config = { ...this._config, ...newConfig };
         this._saveConfig();
         if (this._config.enabled) {
@@ -327,28 +332,27 @@ rules:
 
     getMiddleware() {
         return async (config) => {
-            // 1. 如果 Clash 模块未启用或未启动核心进程，直接退回核心逻辑，保留核心配置中的原始 PROXY_URL
+            // 1. 如果 Clash 模块未启用或未启动核心进程，直接返回
             if (!this._config.enabled || !this._process) return;
 
             // 2. 获取当前请求的供应商类型 (例如: gemini-cli-oauth)
             const providerType = config.MODEL_PROVIDER;
             
             // 3. 优先级路由逻辑：
-            const targetTag = this._config.routing?.[providerType];
+            // 优先级 A: 节点配置中显式指定的 PROXY_TAG (针对具体号)
+            // 优先级 B: Clash 模块配置中的路由映射 (针对供应商类型)
+            const targetTag = config.PROXY_TAG || this._config.routing?.[providerType];
             
             if (targetTag === 'DIRECT') {
-                // 极客指令：这个供应商必须直连，无视任何代理设置
                 config.PROXY_URL = null; 
                 logger.info(`[Clash-Route] ${providerType} -> DIRECT (Force)`);
             } else if (targetTag && targetTag !== 'GLOBAL') {
-                // 极客指令：定向到特定区域
+                // 定向到特定区域的 Listener 端口
                 config.PROXY_URL = `http://127.0.0.1:${this._getProviderPort(targetTag)}`;
                 logger.info(`[Clash-Route] ${providerType} -> Regional Node: ${targetTag} (port: ${this._getProviderPort(targetTag)})`);
             } else {
-                // 默认逻辑：走 Clash 模块的默认混合端口 (7890)
-                // 这样当 Clash 开启时，它会自动“接管”掉 config.json 里的全局设置
+                // 默认：走 Clash 模块的默认混合端口 (7890)
                 config.PROXY_URL = `http://127.0.0.1:${this._config.port}`;
-                // logger.debug(`[Clash-Route] ${providerType} -> Default Module Proxy (7890)`);
             }
         };
     }

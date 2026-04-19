@@ -646,9 +646,9 @@ export async function handleStreamRequest(res, service, model, requestBody, from
         
         // 如果底层未标记，且不跳过错误计数，则在此处标记
         if (!credentialMarkedUnhealthy && !skipErrorCount && providerPoolManager && pooluuid) {
-            // 400 报错码通常是请求参数问题，不记录为提供商错误
-            if (error.response?.status === 400) {
-                logger.info(`[Provider Pool] Skipping unhealthy marking for ${toProvider} (${pooluuid}) due to status 400 (client error)`);
+            // 400 (Bad Request) 和 404 (Not Found) 通常是请求参数或模型问题，不记录为提供商错误
+            if (error.response?.status === 400 || error.response?.status === 404) {
+                logger.info(`[Provider Pool] Skipping unhealthy marking for ${toProvider} (${pooluuid}) due to status ${error.response?.status} (client error)`);
             } else {
                 logger.info(`[Provider Pool] Marking ${toProvider} as unhealthy due to stream error (status: ${status || 'unknown'})`);
                 // 如果是号池模式，并且请求处理失败，则标记当前使用的提供者为不健康
@@ -848,9 +848,9 @@ export async function handleUnaryRequest(res, service, model, requestBody, fromP
         
         // 如果底层未标记，且不跳过错误计数，则在此处标记
         if (!credentialMarkedUnhealthy && !skipErrorCount && providerPoolManager && pooluuid) {
-            // 400 报错码通常是请求参数问题，不记录为提供商错误
-            if (error.response?.status === 400) {
-                logger.info(`[Provider Pool] Skipping unhealthy marking for ${toProvider} (${pooluuid}) due to status 400 (client error)`);
+            // 400 (Bad Request) 和 404 (Not Found) 通常是请求参数或模型问题，不记录为提供商错误
+            if (error.response?.status === 400 || error.response?.status === 404) {
+                logger.info(`[Provider Pool] Skipping unhealthy marking for ${toProvider} (${pooluuid}) due to status ${error.response?.status} (client error)`);
             } else {
                 logger.info(`[Provider Pool] Marking ${toProvider} as unhealthy due to unary error (status: ${status || 'unknown'})`);
                 // 如果是号池模式，并且请求处理失败，则标记当前使用的提供者为不健康
@@ -1667,13 +1667,31 @@ export function formatToLocal(dateInput) {
  */
 function createErrorResponse(error, fromProvider) {
     const protocolPrefix = getProtocolPrefix(fromProvider);
-    const statusCode = error.status || error.code || 500;
-    const errorMessage = error.message || "An error occurred during processing.";
-    
+    const statusCode = error.status || error.code || (error.response && error.response.status) || 500;
+    let errorMessage = error.message || "An error occurred during processing.";
+    let suggestions = [];
+
+    // [极客模式] 语义化错误增强
+    if (statusCode === 404) {
+        errorMessage = `[A-Plan] 模型或路径未找到 (404)。如果您在调用生图模型，请确保该供应商已正确配置。错误信息: ${errorMessage}`;
+        suggestions = [
+            '检查模型名称是否拼写正确 (如 gpt-4o)',
+            '确认当前供应商池是否支持该模型',
+            '访问 /v1/models 查看所有可用模型'
+        ];
+    } else if (statusCode === 400) {
+        errorMessage = `[A-Plan] 请求无效 (400)。可能是参数格式不对或触发了安全过滤。错误信息: ${errorMessage}`;
+        suggestions = [
+            '检查请求体是否为合法的 JSON',
+            '确保包含了 messages 或 contents 字段'
+        ];
+    }
+
     // 根据 HTTP 状态码映射错误类型
     const getErrorType = (code) => {
         if (code === 401) return 'authentication_error';
         if (code === 403) return 'permission_error';
+        if (code === 404) return 'invalid_model_error';
         if (code === 429) return 'rate_limit_error';
         if (code >= 500) return 'server_error';
         return 'invalid_request_error';
@@ -1697,7 +1715,8 @@ function createErrorResponse(error, fromProvider) {
                 error: {
                     message: errorMessage,
                     type: getErrorType(statusCode),
-                    code: getErrorType(statusCode)  // OpenAI 使用 code 字段作为核心判断
+                    code: getErrorType(statusCode),
+                    suggestions: suggestions.length > 0 ? suggestions : undefined
                 }
             };
             
@@ -1707,7 +1726,8 @@ function createErrorResponse(error, fromProvider) {
                 error: {
                     type: getErrorType(statusCode),
                     message: errorMessage,
-                    code: getErrorType(statusCode)
+                    code: getErrorType(statusCode),
+                    suggestions: suggestions.length > 0 ? suggestions : undefined
                 }
             };
             
@@ -1717,7 +1737,8 @@ function createErrorResponse(error, fromProvider) {
                 type: "error",  // 核心区分标记
                 error: {
                     type: getErrorType(statusCode),  // Claude 使用 error.type 作为核心判断
-                    message: errorMessage
+                    message: errorMessage,
+                    suggestions: suggestions.length > 0 ? suggestions : undefined
                 }
             };
             
@@ -1727,7 +1748,8 @@ function createErrorResponse(error, fromProvider) {
                 error: {
                     code: statusCode,
                     message: errorMessage,
-                    status: getGeminiStatus(statusCode)  // Gemini 使用 status 作为核心判断
+                    status: getGeminiStatus(statusCode),  // Gemini 使用 status 作为核心判断
+                    suggestions: suggestions.length > 0 ? suggestions : undefined
                 }
             };
             
@@ -1737,7 +1759,8 @@ function createErrorResponse(error, fromProvider) {
                 error: {
                     message: errorMessage,
                     type: getErrorType(statusCode),
-                    code: getErrorType(statusCode)
+                    code: getErrorType(statusCode),
+                    suggestions: suggestions.length > 0 ? suggestions : undefined
                 }
             };
     }
@@ -1751,13 +1774,31 @@ function createErrorResponse(error, fromProvider) {
  */
 function createStreamErrorResponse(error, fromProvider) {
     const protocolPrefix = getProtocolPrefix(fromProvider);
-    const statusCode = error.status || error.code || 500;
-    const errorMessage = error.message || "An error occurred during streaming.";
+    const statusCode = error.status || error.code || (error.response && error.response.status) || 500;
+    let errorMessage = error.message || "An error occurred during streaming.";
+    let suggestions = [];
+
+    // [极客模式] 语义化错误增强
+    if (statusCode === 404) {
+        errorMessage = `[A-Plan] 模型或路径未找到 (404)。如果您在调用生图模型，请确保该供应商已正确配置。错误信息: ${errorMessage}`;
+        suggestions = [
+            '检查模型名称是否拼写正确 (如 gpt-4o)',
+            '确认当前供应商池是否支持该模型',
+            '访问 /v1/models 查看所有可用模型'
+        ];
+    } else if (statusCode === 400) {
+        errorMessage = `[A-Plan] 请求无效 (400)。可能是参数格式不对或触发了安全过滤。错误信息: ${errorMessage}`;
+        suggestions = [
+            '检查请求体是否为合法的 JSON',
+            '确保包含了 messages 或 contents 字段'
+        ];
+    }
     
     // 根据 HTTP 状态码映射错误类型
     const getErrorType = (code) => {
         if (code === 401) return 'authentication_error';
         if (code === 403) return 'permission_error';
+        if (code === 404) return 'invalid_model_error';
         if (code === 429) return 'rate_limit_error';
         if (code >= 500) return 'server_error';
         return 'invalid_request_error';
@@ -1781,7 +1822,8 @@ function createStreamErrorResponse(error, fromProvider) {
                 error: {
                     message: errorMessage,
                     type: getErrorType(statusCode),
-                    code: null
+                    code: getErrorType(statusCode),
+                    suggestions: suggestions.length > 0 ? suggestions : undefined
                 }
             };
             return `data: ${JSON.stringify(openaiError)}\n\n`;
@@ -1795,7 +1837,8 @@ function createStreamErrorResponse(error, fromProvider) {
                 error: {
                     type: getErrorType(statusCode),
                     message: errorMessage,
-                    code: getErrorType(statusCode)
+                    code: getErrorType(statusCode),
+                    suggestions: suggestions.length > 0 ? suggestions : undefined
                 }
             };
             return `event: error\ndata: ${JSON.stringify(responsesError)}\n\n`;
@@ -1806,7 +1849,8 @@ function createStreamErrorResponse(error, fromProvider) {
                 type: "error",
                 error: {
                     type: getErrorType(statusCode),
-                    message: errorMessage
+                    message: errorMessage,
+                    suggestions: suggestions.length > 0 ? suggestions : undefined
                 }
             };
             return `event: error\ndata: ${JSON.stringify(claudeError)}\n\n`;
@@ -1819,7 +1863,8 @@ function createStreamErrorResponse(error, fromProvider) {
                 error: {
                     code: statusCode,
                     message: errorMessage,
-                    status: getGeminiStatus(statusCode)
+                    status: getGeminiStatus(statusCode),
+                    suggestions: suggestions.length > 0 ? suggestions : undefined
                 }
             };
             return `data: ${JSON.stringify(geminiError)}\n\n`;
@@ -1830,7 +1875,8 @@ function createStreamErrorResponse(error, fromProvider) {
                 error: {
                     message: errorMessage,
                     type: getErrorType(statusCode),
-                    code: null
+                    code: getErrorType(statusCode),
+                    suggestions: suggestions.length > 0 ? suggestions : undefined
                 }
             };
             return `data: ${JSON.stringify(defaultError)}\n\n`;

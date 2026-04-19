@@ -29,56 +29,62 @@ mode: rule
 log-level: info
 external-controller: 127.0.0.1:9090
 proxies:
-  - {name: CF官方优选1, server: 104.19.39.81, port: 2096, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选2, server: 104.18.36.215, port: 8443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选3, server: 104.26.9.31, port: 2083, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选4, server: 104.19.52.124, port: 2096, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选5, server: 173.245.58.136, port: 2083, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选6, server: 104.18.36.75, port: 443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选7, server: 198.41.223.17, port: 8443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选8, server: 172.64.145.28, port: 8443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选9, server: 173.245.59.210, port: 8443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选10, server: 104.19.56.116, port: 8443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选11, server: 172.67.72.48, port: 2087, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选12, server: 104.18.34.92, port: 2087, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选13, server: 104.19.57.183, port: 2083, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选14, server: 104.19.35.12, port: 2087, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选15, server: 172.64.146.215, port: 2083, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选16, server: 172.64.229.108, port: 8443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选17, server: 198.41.223.141, port: 2083, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选18, server: 162.159.46.197, port: 2053, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选19, server: 162.159.152.189, port: 8443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选20, server: 104.26.3.92, port: 2087, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选21, server: 108.162.198.95, port: 2087, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选22, server: 172.64.229.27, port: 443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选23, server: 172.64.229.83, port: 2083, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选24, server: 104.18.43.51, port: 2096, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选25, server: 162.159.33.153, port: 2083, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选26, server: 108.162.198.96, port: 2096, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选27, server: 8.35.211.61, port: 443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选28, server: 172.64.228.255, port: 2096, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选29, server: 172.64.228.5, port: 2087, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选30, server: 8.35.211.130, port: 443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选31, server: 104.26.11.164, port: 2096, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选32, server: 108.162.198.20, port: 2087, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选33, server: 162.159.46.216, port: 2083, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选34, server: 104.19.51.185, port: 2087, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选35, server: 198.41.223.252, port: 443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选36, server: 104.19.35.228, port: 2083, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选37, server: 172.67.65.30, port: 8443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选38, server: 173.245.59.145, port: 2053, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选39, server: 173.245.58.205, port: 2087, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选40, server: 198.41.223.107, port: 2087, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选41, server: 198.41.223.179, port: 443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选42, server: 172.64.228.6, port: 2087, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选43, server: 173.245.58.79, port: 2087, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选44, server: 108.162.198.59, port: 2053, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选45, server: 172.64.146.171, port: 443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选46, server: 104.19.35.208, port: 443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选47, server: 108.162.198.201, port: 2083, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选48, server: 8.39.125.74, port: 2053, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选49, server: 8.39.125.193, port: 8443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
-  - {name: CF官方优选50, server: 173.245.58.118, port: 2083, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: 天诚🌐官方🌐订阅🌐群组HKG™️™️™️：t.me/zyssadmin🐲™️【免费共享】, server: 43.161.222.233, port: 443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: 天诚🌐官方🌐更新🌐群组HKG™️™️™️：t.me/zyssadmin🐲™️【免费共享】, server: 34.92.187.216, port: 443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: 天诚🌐官方🌐发布🌐频道HKG™️™️™️：t.me/cloudflareorg🐲™️【免费共享】, server: 43.154.131.189, port: 443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: 天诚🌐官方🌐极搜🌐群组HKG™️™️™️：t.me/ssoadmin🐲™️【免费共享】, server: 95.40.61.115, port: 443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: 天诚🌐官方🌐搜索🌐群组HKG™️™️™️：t.me/zyssorg🐲™️【免费共享】, server: 154.38.116.8, port: 443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: HK🐲™️【免费共享】, server: 47.76.218.163, port: 443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: HK🐲™️【免费共享】 2, server: 103.96.74.18, port: 16000, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: HK🐲™️【免费共享】 3, server: 8.210.96.197, port: 12902, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: HK🐲™️【免费共享】 4, server: 58.176.95.46, port: 443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: SG🐲™️【免费共享】, server: 43.128.111.158, port: 4439, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: SG🐲™️【免费共享】 2, server: 27.50.48.255, port: 8443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: SG🐲™️【免费共享】 3, server: 43.160.244.124, port: 443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: SG🐲™️【免费共享】 4, server: 47.130.35.116, port: 8888, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: SG🐲™️【免费共享】 5, server: 8.219.155.125, port: 443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: SG🐲™️【免费共享】 6, server: 92.243.74.4, port: 8443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: SG🐲™️【免费共享】 7, server: 27.50.48.69, port: 2083, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: SG🐲™️【免费共享】 8, server: 178.128.80.43, port: 443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: SG🐲™️【免费共享】 9, server: 27.50.48.114, port: 2083, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: SG🐲™️【免费共享】 10, server: 139.180.159.133, port: 443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: JP🐲™️【免费共享】, server: 153.121.45.101, port: 443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: JP🐲™️【免费共享】 2, server: 103.232.213.87, port: 2053, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: JP🐲™️【免费共享】 3, server: 217.142.227.105, port: 20071, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: JP🐲™️【免费共享】 4, server: 172.105.197.52, port: 20205, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: JP🐲™️【免费共享】 5, server: 47.79.145.241, port: 4439, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: JP🐲™️【免费共享】 6, server: 139.162.83.77, port: 20205, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: JP🐲™️【免费共享】 7, server: 47.79.42.30, port: 18443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: JP🐲™️【免费共享】 8, server: 43.167.157.65, port: 12345, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: JP🐲™️【免费共享】 9, server: 172.105.197.52, port: 386, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: JP🐲™️【免费共享】 10, server: 47.79.94.192, port: 443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: TW🐲™️【免费共享】, server: 43.212.202.45, port: 443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: TW🐲™️【免费共享】 2, server: 165.154.226.214, port: 27017, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: TW🐲™️【免费共享】 3, server: 60.251.232.240, port: 995, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: TW🐲™️【免费共享】 4, server: 114.32.9.249, port: 51443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: TW🐲™️【免费共享】 5, server: 82.152.90.213, port: 8080, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: TW🐲™️【免费共享】 6, server: 166.0.198.81, port: 28017, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: TW🐲™️【免费共享】 7, server: 122.116.105.15, port: 995, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: KR🐲™️【免费共享】, server: 121.180.172.11, port: 11002, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: KR🐲™️【免费共享】 2, server: 125.135.243.6, port: 12172, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: KR🐲™️【免费共享】 3, server: 121.133.182.173, port: 12434, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: KR🐲™️【免费共享】 4, server: 112.166.95.230, port: 50008, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: KR🐲™️【免费共享】 5, server: 112.166.95.230, port: 12323, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: KR🐲™️【免费共享】 6, server: 183.105.125.181, port: 12129, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: KR🐲™️【免费共享】 7, server: 183.102.218.139, port: 10943, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: KR🐲™️【免费共享】 8, server: 112.173.18.134, port: 12280, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: KR🐲™️【免费共享】 9, server: 59.6.239.208, port: 32788, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: KR🐲™️【免费共享】 10, server: 121.133.182.173, port: 10397, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: US🐲™️【免费共享】, server: 103.99.179.119, port: 441, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: US🐲™️【免费共享】 2, server: 216.167.14.53, port: 30882, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: US🐲™️【免费共享】 3, server: 154.201.88.178, port: 8443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: US🐲™️【免费共享】 4, server: 172.235.54.221, port: 443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: US🐲™️【免费共享】 5, server: 166.117.184.30, port: 443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: US🐲™️【免费共享】 6, server: 74.208.150.213, port: 443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: US🐲™️【免费共享】 7, server: 104.168.87.155, port: 5432, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: US🐲™️【免费共享】 8, server: 154.17.227.191, port: 443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: US🐲™️【免费共享】 9, server: 193.9.44.49, port: 443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
+  - {name: US🐲™️【免费共享】 10, server: 38.207.171.30, port: 443, type: vless, uuid: a039c938-0792-424a-8a8a-d0508c7fcab1, tls: true, skip-cert-verify: false, servername: vpn-ebp.pages.dev, client-fingerprint: chrome, network: ws, ws-opts: {path: /, headers: {Host: vpn-ebp.pages.dev}}}
 proxy-groups:
   - name: 🚀 节点选择
     type: select
@@ -87,223 +93,247 @@ proxy-groups:
       - 🔯 故障转移
       - 🔮 负载均衡
       - DIRECT
-      - CF官方优选1
-      - CF官方优选2
-      - CF官方优选3
-      - CF官方优选4
-      - CF官方优选5
-      - CF官方优选6
-      - CF官方优选7
-      - CF官方优选8
-      - CF官方优选9
-      - CF官方优选10
-      - CF官方优选11
-      - CF官方优选12
-      - CF官方优选13
-      - CF官方优选14
-      - CF官方优选15
-      - CF官方优选16
-      - CF官方优选17
-      - CF官方优选18
-      - CF官方优选19
-      - CF官方优选20
-      - CF官方优选21
-      - CF官方优选22
-      - CF官方优选23
-      - CF官方优选24
-      - CF官方优选25
-      - CF官方优选26
-      - CF官方优选27
-      - CF官方优选28
-      - CF官方优选29
-      - CF官方优选30
-      - CF官方优选31
-      - CF官方优选32
-      - CF官方优选33
-      - CF官方优选34
-      - CF官方优选35
-      - CF官方优选36
-      - CF官方优选37
-      - CF官方优选38
-      - CF官方优选39
-      - CF官方优选40
-      - CF官方优选41
-      - CF官方优选42
-      - CF官方优选43
-      - CF官方优选44
-      - CF官方优选45
-      - CF官方优选46
-      - CF官方优选47
-      - CF官方优选48
-      - CF官方优选49
-      - CF官方优选50
+      - 天诚🌐官方🌐订阅🌐群组HKG™️™️™️：t.me/zyssadmin🐲™️【免费共享】
+      - 天诚🌐官方🌐更新🌐群组HKG™️™️™️：t.me/zyssadmin🐲™️【免费共享】
+      - 天诚🌐官方🌐发布🌐频道HKG™️™️™️：t.me/cloudflareorg🐲™️【免费共享】
+      - 天诚🌐官方🌐极搜🌐群组HKG™️™️™️：t.me/ssoadmin🐲™️【免费共享】
+      - 天诚🌐官方🌐搜索🌐群组HKG™️™️™️：t.me/zyssorg🐲™️【免费共享】
+      - HK🐲™️【免费共享】
+      - HK🐲™️【免费共享】 2
+      - HK🐲™️【免费共享】 3
+      - HK🐲™️【免费共享】 4
+      - SG🐲™️【免费共享】
+      - SG🐲™️【免费共享】 2
+      - SG🐲™️【免费共享】 3
+      - SG🐲™️【免费共享】 4
+      - SG🐲™️【免费共享】 5
+      - SG🐲™️【免费共享】 6
+      - SG🐲™️【免费共享】 7
+      - SG🐲™️【免费共享】 8
+      - SG🐲™️【免费共享】 9
+      - SG🐲™️【免费共享】 10
+      - JP🐲™️【免费共享】
+      - JP🐲™️【免费共享】 2
+      - JP🐲™️【免费共享】 3
+      - JP🐲™️【免费共享】 4
+      - JP🐲™️【免费共享】 5
+      - JP🐲™️【免费共享】 6
+      - JP🐲™️【免费共享】 7
+      - JP🐲™️【免费共享】 8
+      - JP🐲™️【免费共享】 9
+      - JP🐲™️【免费共享】 10
+      - TW🐲™️【免费共享】
+      - TW🐲™️【免费共享】 2
+      - TW🐲™️【免费共享】 3
+      - TW🐲™️【免费共享】 4
+      - TW🐲™️【免费共享】 5
+      - TW🐲™️【免费共享】 6
+      - TW🐲™️【免费共享】 7
+      - KR🐲™️【免费共享】
+      - KR🐲™️【免费共享】 2
+      - KR🐲™️【免费共享】 3
+      - KR🐲™️【免费共享】 4
+      - KR🐲™️【免费共享】 5
+      - KR🐲™️【免费共享】 6
+      - KR🐲™️【免费共享】 7
+      - KR🐲™️【免费共享】 8
+      - KR🐲™️【免费共享】 9
+      - KR🐲™️【免费共享】 10
+      - US🐲™️【免费共享】
+      - US🐲™️【免费共享】 2
+      - US🐲™️【免费共享】 3
+      - US🐲™️【免费共享】 4
+      - US🐲™️【免费共享】 5
+      - US🐲™️【免费共享】 6
+      - US🐲™️【免费共享】 7
+      - US🐲™️【免费共享】 8
+      - US🐲™️【免费共享】 9
+      - US🐲™️【免费共享】 10
   - name: ♻️ 自动选择
     type: url-test
     url: http://www.gstatic.com/generate_204
     interval: 300
     tolerance: 50
     proxies:
-      - CF官方优选1
-      - CF官方优选2
-      - CF官方优选3
-      - CF官方优选4
-      - CF官方优选5
-      - CF官方优选6
-      - CF官方优选7
-      - CF官方优选8
-      - CF官方优选9
-      - CF官方优选10
-      - CF官方优选11
-      - CF官方优选12
-      - CF官方优选13
-      - CF官方优选14
-      - CF官方优选15
-      - CF官方优选16
-      - CF官方优选17
-      - CF官方优选18
-      - CF官方优选19
-      - CF官方优选20
-      - CF官方优选21
-      - CF官方优选22
-      - CF官方优选23
-      - CF官方优选24
-      - CF官方优选25
-      - CF官方优选26
-      - CF官方优选27
-      - CF官方优选28
-      - CF官方优选29
-      - CF官方优选30
-      - CF官方优选31
-      - CF官方优选32
-      - CF官方优选33
-      - CF官方优选34
-      - CF官方优选35
-      - CF官方优选36
-      - CF官方优选37
-      - CF官方优选38
-      - CF官方优选39
-      - CF官方优选40
-      - CF官方优选41
-      - CF官方优选42
-      - CF官方优选43
-      - CF官方优选44
-      - CF官方优选45
-      - CF官方优选46
-      - CF官方优选47
-      - CF官方优选48
-      - CF官方优选49
-      - CF官方优选50
+      - 天诚🌐官方🌐订阅🌐群组HKG™️™️™️：t.me/zyssadmin🐲™️【免费共享】
+      - 天诚🌐官方🌐更新🌐群组HKG™️™️™️：t.me/zyssadmin🐲™️【免费共享】
+      - 天诚🌐官方🌐发布🌐频道HKG™️™️™️：t.me/cloudflareorg🐲™️【免费共享】
+      - 天诚🌐官方🌐极搜🌐群组HKG™️™️™️：t.me/ssoadmin🐲™️【免费共享】
+      - 天诚🌐官方🌐搜索🌐群组HKG™️™️™️：t.me/zyssorg🐲™️【免费共享】
+      - HK🐲™️【免费共享】
+      - HK🐲™️【免费共享】 2
+      - HK🐲™️【免费共享】 3
+      - HK🐲™️【免费共享】 4
+      - SG🐲™️【免费共享】
+      - SG🐲™️【免费共享】 2
+      - SG🐲™️【免费共享】 3
+      - SG🐲™️【免费共享】 4
+      - SG🐲™️【免费共享】 5
+      - SG🐲™️【免费共享】 6
+      - SG🐲™️【免费共享】 7
+      - SG🐲™️【免费共享】 8
+      - SG🐲™️【免费共享】 9
+      - SG🐲™️【免费共享】 10
+      - JP🐲™️【免费共享】
+      - JP🐲™️【免费共享】 2
+      - JP🐲™️【免费共享】 3
+      - JP🐲™️【免费共享】 4
+      - JP🐲™️【免费共享】 5
+      - JP🐲™️【免费共享】 6
+      - JP🐲™️【免费共享】 7
+      - JP🐲™️【免费共享】 8
+      - JP🐲™️【免费共享】 9
+      - JP🐲™️【免费共享】 10
+      - TW🐲™️【免费共享】
+      - TW🐲™️【免费共享】 2
+      - TW🐲™️【免费共享】 3
+      - TW🐲™️【免费共享】 4
+      - TW🐲™️【免费共享】 5
+      - TW🐲™️【免费共享】 6
+      - TW🐲™️【免费共享】 7
+      - KR🐲™️【免费共享】
+      - KR🐲™️【免费共享】 2
+      - KR🐲™️【免费共享】 3
+      - KR🐲™️【免费共享】 4
+      - KR🐲™️【免费共享】 5
+      - KR🐲™️【免费共享】 6
+      - KR🐲™️【免费共享】 7
+      - KR🐲™️【免费共享】 8
+      - KR🐲™️【免费共享】 9
+      - KR🐲™️【免费共享】 10
+      - US🐲™️【免费共享】
+      - US🐲™️【免费共享】 2
+      - US🐲™️【免费共享】 3
+      - US🐲™️【免费共享】 4
+      - US🐲™️【免费共享】 5
+      - US🐲™️【免费共享】 6
+      - US🐲™️【免费共享】 7
+      - US🐲™️【免费共享】 8
+      - US🐲™️【免费共享】 9
+      - US🐲™️【免费共享】 10
   - name: 🔯 故障转移
     type: fallback
     url: http://www.gstatic.com/generate_204
     interval: 180
     proxies:
-      - CF官方优选1
-      - CF官方优选2
-      - CF官方优选3
-      - CF官方优选4
-      - CF官方优选5
-      - CF官方优选6
-      - CF官方优选7
-      - CF官方优选8
-      - CF官方优选9
-      - CF官方优选10
-      - CF官方优选11
-      - CF官方优选12
-      - CF官方优选13
-      - CF官方优选14
-      - CF官方优选15
-      - CF官方优选16
-      - CF官方优选17
-      - CF官方优选18
-      - CF官方优选19
-      - CF官方优选20
-      - CF官方优选21
-      - CF官方优选22
-      - CF官方优选23
-      - CF官方优选24
-      - CF官方优选25
-      - CF官方优选26
-      - CF官方优选27
-      - CF官方优选28
-      - CF官方优选29
-      - CF官方优选30
-      - CF官方优选31
-      - CF官方优选32
-      - CF官方优选33
-      - CF官方优选34
-      - CF官方优选35
-      - CF官方优选36
-      - CF官方优选37
-      - CF官方优选38
-      - CF官方优选39
-      - CF官方优选40
-      - CF官方优选41
-      - CF官方优选42
-      - CF官方优选43
-      - CF官方优选44
-      - CF官方优选45
-      - CF官方优选46
-      - CF官方优选47
-      - CF官方优选48
-      - CF官方优选49
-      - CF官方优选50
+      - 天诚🌐官方🌐订阅🌐群组HKG™️™️™️：t.me/zyssadmin🐲™️【免费共享】
+      - 天诚🌐官方🌐更新🌐群组HKG™️™️™️：t.me/zyssadmin🐲™️【免费共享】
+      - 天诚🌐官方🌐发布🌐频道HKG™️™️™️：t.me/cloudflareorg🐲™️【免费共享】
+      - 天诚🌐官方🌐极搜🌐群组HKG™️™️™️：t.me/ssoadmin🐲™️【免费共享】
+      - 天诚🌐官方🌐搜索🌐群组HKG™️™️™️：t.me/zyssorg🐲™️【免费共享】
+      - HK🐲™️【免费共享】
+      - HK🐲™️【免费共享】 2
+      - HK🐲™️【免费共享】 3
+      - HK🐲™️【免费共享】 4
+      - SG🐲™️【免费共享】
+      - SG🐲™️【免费共享】 2
+      - SG🐲™️【免费共享】 3
+      - SG🐲™️【免费共享】 4
+      - SG🐲™️【免费共享】 5
+      - SG🐲™️【免费共享】 6
+      - SG🐲™️【免费共享】 7
+      - SG🐲™️【免费共享】 8
+      - SG🐲™️【免费共享】 9
+      - SG🐲™️【免费共享】 10
+      - JP🐲™️【免费共享】
+      - JP🐲™️【免费共享】 2
+      - JP🐲™️【免费共享】 3
+      - JP🐲™️【免费共享】 4
+      - JP🐲™️【免费共享】 5
+      - JP🐲™️【免费共享】 6
+      - JP🐲™️【免费共享】 7
+      - JP🐲™️【免费共享】 8
+      - JP🐲™️【免费共享】 9
+      - JP🐲™️【免费共享】 10
+      - TW🐲™️【免费共享】
+      - TW🐲™️【免费共享】 2
+      - TW🐲™️【免费共享】 3
+      - TW🐲™️【免费共享】 4
+      - TW🐲™️【免费共享】 5
+      - TW🐲™️【免费共享】 6
+      - TW🐲™️【免费共享】 7
+      - KR🐲™️【免费共享】
+      - KR🐲™️【免费共享】 2
+      - KR🐲™️【免费共享】 3
+      - KR🐲™️【免费共享】 4
+      - KR🐲™️【免费共享】 5
+      - KR🐲™️【免费共享】 6
+      - KR🐲™️【免费共享】 7
+      - KR🐲™️【免费共享】 8
+      - KR🐲™️【免费共享】 9
+      - KR🐲™️【免费共享】 10
+      - US🐲™️【免费共享】
+      - US🐲™️【免费共享】 2
+      - US🐲™️【免费共享】 3
+      - US🐲™️【免费共享】 4
+      - US🐲™️【免费共享】 5
+      - US🐲™️【免费共享】 6
+      - US🐲™️【免费共享】 7
+      - US🐲™️【免费共享】 8
+      - US🐲™️【免费共享】 9
+      - US🐲™️【免费共享】 10
   - name: 🔮 负载均衡
     type: load-balance
     strategy: consistent-hashing
     url: http://www.gstatic.com/generate_204
     interval: 180
     proxies:
-      - CF官方优选1
-      - CF官方优选2
-      - CF官方优选3
-      - CF官方优选4
-      - CF官方优选5
-      - CF官方优选6
-      - CF官方优选7
-      - CF官方优选8
-      - CF官方优选9
-      - CF官方优选10
-      - CF官方优选11
-      - CF官方优选12
-      - CF官方优选13
-      - CF官方优选14
-      - CF官方优选15
-      - CF官方优选16
-      - CF官方优选17
-      - CF官方优选18
-      - CF官方优选19
-      - CF官方优选20
-      - CF官方优选21
-      - CF官方优选22
-      - CF官方优选23
-      - CF官方优选24
-      - CF官方优选25
-      - CF官方优选26
-      - CF官方优选27
-      - CF官方优选28
-      - CF官方优选29
-      - CF官方优选30
-      - CF官方优选31
-      - CF官方优选32
-      - CF官方优选33
-      - CF官方优选34
-      - CF官方优选35
-      - CF官方优选36
-      - CF官方优选37
-      - CF官方优选38
-      - CF官方优选39
-      - CF官方优选40
-      - CF官方优选41
-      - CF官方优选42
-      - CF官方优选43
-      - CF官方优选44
-      - CF官方优选45
-      - CF官方优选46
-      - CF官方优选47
-      - CF官方优选48
-      - CF官方优选49
-      - CF官方优选50
+      - 天诚🌐官方🌐订阅🌐群组HKG™️™️™️：t.me/zyssadmin🐲™️【免费共享】
+      - 天诚🌐官方🌐更新🌐群组HKG™️™️™️：t.me/zyssadmin🐲™️【免费共享】
+      - 天诚🌐官方🌐发布🌐频道HKG™️™️™️：t.me/cloudflareorg🐲™️【免费共享】
+      - 天诚🌐官方🌐极搜🌐群组HKG™️™️™️：t.me/ssoadmin🐲™️【免费共享】
+      - 天诚🌐官方🌐搜索🌐群组HKG™️™️™️：t.me/zyssorg🐲™️【免费共享】
+      - HK🐲™️【免费共享】
+      - HK🐲™️【免费共享】 2
+      - HK🐲™️【免费共享】 3
+      - HK🐲™️【免费共享】 4
+      - SG🐲™️【免费共享】
+      - SG🐲™️【免费共享】 2
+      - SG🐲™️【免费共享】 3
+      - SG🐲™️【免费共享】 4
+      - SG🐲™️【免费共享】 5
+      - SG🐲™️【免费共享】 6
+      - SG🐲™️【免费共享】 7
+      - SG🐲™️【免费共享】 8
+      - SG🐲™️【免费共享】 9
+      - SG🐲™️【免费共享】 10
+      - JP🐲™️【免费共享】
+      - JP🐲™️【免费共享】 2
+      - JP🐲™️【免费共享】 3
+      - JP🐲™️【免费共享】 4
+      - JP🐲™️【免费共享】 5
+      - JP🐲™️【免费共享】 6
+      - JP🐲™️【免费共享】 7
+      - JP🐲™️【免费共享】 8
+      - JP🐲™️【免费共享】 9
+      - JP🐲™️【免费共享】 10
+      - TW🐲™️【免费共享】
+      - TW🐲™️【免费共享】 2
+      - TW🐲™️【免费共享】 3
+      - TW🐲™️【免费共享】 4
+      - TW🐲™️【免费共享】 5
+      - TW🐲™️【免费共享】 6
+      - TW🐲™️【免费共享】 7
+      - KR🐲™️【免费共享】
+      - KR🐲™️【免费共享】 2
+      - KR🐲™️【免费共享】 3
+      - KR🐲™️【免费共享】 4
+      - KR🐲™️【免费共享】 5
+      - KR🐲™️【免费共享】 6
+      - KR🐲™️【免费共享】 7
+      - KR🐲™️【免费共享】 8
+      - KR🐲™️【免费共享】 9
+      - KR🐲™️【免费共享】 10
+      - US🐲™️【免费共享】
+      - US🐲™️【免费共享】 2
+      - US🐲™️【免费共享】 3
+      - US🐲™️【免费共享】 4
+      - US🐲™️【免费共享】 5
+      - US🐲™️【免费共享】 6
+      - US🐲™️【免费共享】 7
+      - US🐲™️【免费共享】 8
+      - US🐲™️【免费共享】 9
+      - US🐲™️【免费共享】 10
   - name: 🎯 全球直连
     type: select
     proxies:
@@ -323,56 +353,62 @@ proxy-groups:
       - ♻️ 自动选择
       - 🔯 故障转移
       - 🔮 负载均衡
-      - CF官方优选1
-      - CF官方优选2
-      - CF官方优选3
-      - CF官方优选4
-      - CF官方优选5
-      - CF官方优选6
-      - CF官方优选7
-      - CF官方优选8
-      - CF官方优选9
-      - CF官方优选10
-      - CF官方优选11
-      - CF官方优选12
-      - CF官方优选13
-      - CF官方优选14
-      - CF官方优选15
-      - CF官方优选16
-      - CF官方优选17
-      - CF官方优选18
-      - CF官方优选19
-      - CF官方优选20
-      - CF官方优选21
-      - CF官方优选22
-      - CF官方优选23
-      - CF官方优选24
-      - CF官方优选25
-      - CF官方优选26
-      - CF官方优选27
-      - CF官方优选28
-      - CF官方优选29
-      - CF官方优选30
-      - CF官方优选31
-      - CF官方优选32
-      - CF官方优选33
-      - CF官方优选34
-      - CF官方优选35
-      - CF官方优选36
-      - CF官方优选37
-      - CF官方优选38
-      - CF官方优选39
-      - CF官方优选40
-      - CF官方优选41
-      - CF官方优选42
-      - CF官方优选43
-      - CF官方优选44
-      - CF官方优选45
-      - CF官方优选46
-      - CF官方优选47
-      - CF官方优选48
-      - CF官方优选49
-      - CF官方优选50
+      - 天诚🌐官方🌐订阅🌐群组HKG™️™️™️：t.me/zyssadmin🐲™️【免费共享】
+      - 天诚🌐官方🌐更新🌐群组HKG™️™️™️：t.me/zyssadmin🐲™️【免费共享】
+      - 天诚🌐官方🌐发布🌐频道HKG™️™️™️：t.me/cloudflareorg🐲™️【免费共享】
+      - 天诚🌐官方🌐极搜🌐群组HKG™️™️™️：t.me/ssoadmin🐲™️【免费共享】
+      - 天诚🌐官方🌐搜索🌐群组HKG™️™️™️：t.me/zyssorg🐲™️【免费共享】
+      - HK🐲™️【免费共享】
+      - HK🐲™️【免费共享】 2
+      - HK🐲™️【免费共享】 3
+      - HK🐲™️【免费共享】 4
+      - SG🐲™️【免费共享】
+      - SG🐲™️【免费共享】 2
+      - SG🐲™️【免费共享】 3
+      - SG🐲™️【免费共享】 4
+      - SG🐲™️【免费共享】 5
+      - SG🐲™️【免费共享】 6
+      - SG🐲™️【免费共享】 7
+      - SG🐲™️【免费共享】 8
+      - SG🐲™️【免费共享】 9
+      - SG🐲™️【免费共享】 10
+      - JP🐲™️【免费共享】
+      - JP🐲™️【免费共享】 2
+      - JP🐲™️【免费共享】 3
+      - JP🐲™️【免费共享】 4
+      - JP🐲™️【免费共享】 5
+      - JP🐲™️【免费共享】 6
+      - JP🐲™️【免费共享】 7
+      - JP🐲™️【免费共享】 8
+      - JP🐲™️【免费共享】 9
+      - JP🐲™️【免费共享】 10
+      - TW🐲™️【免费共享】
+      - TW🐲™️【免费共享】 2
+      - TW🐲™️【免费共享】 3
+      - TW🐲™️【免费共享】 4
+      - TW🐲™️【免费共享】 5
+      - TW🐲™️【免费共享】 6
+      - TW🐲™️【免费共享】 7
+      - KR🐲™️【免费共享】
+      - KR🐲™️【免费共享】 2
+      - KR🐲™️【免费共享】 3
+      - KR🐲™️【免费共享】 4
+      - KR🐲™️【免费共享】 5
+      - KR🐲™️【免费共享】 6
+      - KR🐲™️【免费共享】 7
+      - KR🐲™️【免费共享】 8
+      - KR🐲™️【免费共享】 9
+      - KR🐲™️【免费共享】 10
+      - US🐲™️【免费共享】
+      - US🐲™️【免费共享】 2
+      - US🐲™️【免费共享】 3
+      - US🐲™️【免费共享】 4
+      - US🐲™️【免费共享】 5
+      - US🐲™️【免费共享】 6
+      - US🐲™️【免费共享】 7
+      - US🐲™️【免费共享】 8
+      - US🐲™️【免费共享】 9
+      - US🐲™️【免费共享】 10
   - name: ☁️ CloudFlareCDN
     type: select
     proxies:
@@ -382,56 +418,62 @@ proxy-groups:
       - ♻️ 自动选择
       - 🔯 故障转移
       - 🔮 负载均衡
-      - CF官方优选1
-      - CF官方优选2
-      - CF官方优选3
-      - CF官方优选4
-      - CF官方优选5
-      - CF官方优选6
-      - CF官方优选7
-      - CF官方优选8
-      - CF官方优选9
-      - CF官方优选10
-      - CF官方优选11
-      - CF官方优选12
-      - CF官方优选13
-      - CF官方优选14
-      - CF官方优选15
-      - CF官方优选16
-      - CF官方优选17
-      - CF官方优选18
-      - CF官方优选19
-      - CF官方优选20
-      - CF官方优选21
-      - CF官方优选22
-      - CF官方优选23
-      - CF官方优选24
-      - CF官方优选25
-      - CF官方优选26
-      - CF官方优选27
-      - CF官方优选28
-      - CF官方优选29
-      - CF官方优选30
-      - CF官方优选31
-      - CF官方优选32
-      - CF官方优选33
-      - CF官方优选34
-      - CF官方优选35
-      - CF官方优选36
-      - CF官方优选37
-      - CF官方优选38
-      - CF官方优选39
-      - CF官方优选40
-      - CF官方优选41
-      - CF官方优选42
-      - CF官方优选43
-      - CF官方优选44
-      - CF官方优选45
-      - CF官方优选46
-      - CF官方优选47
-      - CF官方优选48
-      - CF官方优选49
-      - CF官方优选50
+      - 天诚🌐官方🌐订阅🌐群组HKG™️™️™️：t.me/zyssadmin🐲™️【免费共享】
+      - 天诚🌐官方🌐更新🌐群组HKG™️™️™️：t.me/zyssadmin🐲™️【免费共享】
+      - 天诚🌐官方🌐发布🌐频道HKG™️™️™️：t.me/cloudflareorg🐲™️【免费共享】
+      - 天诚🌐官方🌐极搜🌐群组HKG™️™️™️：t.me/ssoadmin🐲™️【免费共享】
+      - 天诚🌐官方🌐搜索🌐群组HKG™️™️™️：t.me/zyssorg🐲™️【免费共享】
+      - HK🐲™️【免费共享】
+      - HK🐲™️【免费共享】 2
+      - HK🐲™️【免费共享】 3
+      - HK🐲™️【免费共享】 4
+      - SG🐲™️【免费共享】
+      - SG🐲™️【免费共享】 2
+      - SG🐲™️【免费共享】 3
+      - SG🐲™️【免费共享】 4
+      - SG🐲™️【免费共享】 5
+      - SG🐲™️【免费共享】 6
+      - SG🐲™️【免费共享】 7
+      - SG🐲™️【免费共享】 8
+      - SG🐲™️【免费共享】 9
+      - SG🐲™️【免费共享】 10
+      - JP🐲™️【免费共享】
+      - JP🐲™️【免费共享】 2
+      - JP🐲™️【免费共享】 3
+      - JP🐲™️【免费共享】 4
+      - JP🐲™️【免费共享】 5
+      - JP🐲™️【免费共享】 6
+      - JP🐲™️【免费共享】 7
+      - JP🐲™️【免费共享】 8
+      - JP🐲™️【免费共享】 9
+      - JP🐲™️【免费共享】 10
+      - TW🐲™️【免费共享】
+      - TW🐲™️【免费共享】 2
+      - TW🐲™️【免费共享】 3
+      - TW🐲™️【免费共享】 4
+      - TW🐲™️【免费共享】 5
+      - TW🐲™️【免费共享】 6
+      - TW🐲™️【免费共享】 7
+      - KR🐲™️【免费共享】
+      - KR🐲™️【免费共享】 2
+      - KR🐲™️【免费共享】 3
+      - KR🐲™️【免费共享】 4
+      - KR🐲™️【免费共享】 5
+      - KR🐲™️【免费共享】 6
+      - KR🐲™️【免费共享】 7
+      - KR🐲™️【免费共享】 8
+      - KR🐲™️【免费共享】 9
+      - KR🐲™️【免费共享】 10
+      - US🐲™️【免费共享】
+      - US🐲™️【免费共享】 2
+      - US🐲™️【免费共享】 3
+      - US🐲™️【免费共享】 4
+      - US🐲™️【免费共享】 5
+      - US🐲™️【免费共享】 6
+      - US🐲™️【免费共享】 7
+      - US🐲™️【免费共享】 8
+      - US🐲™️【免费共享】 9
+      - US🐲™️【免费共享】 10
 rules:
   - DOMAIN-SUFFIX,acl4.ssr,🎯 全球直连
   - DOMAIN-SUFFIX,ip6-localhost,🎯 全球直连

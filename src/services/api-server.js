@@ -200,9 +200,17 @@ function setupBackgroundTasks(heartbeatAndRefreshToken) {
 
     const poolManager = getProviderPoolManager();
     if (poolManager) {
-        poolManager.performInitialHealthChecks();
+        // [极客模式] 启动时延迟执行健康检查，避免 POD 重建瞬间的网络风暴
+        const initialCheckDelay = (CONFIG.SCHEDULED_HEALTH_CHECK?.initialDelay || 60000);
+        setTimeout(() => {
+            if (CONFIG.SCHEDULED_HEALTH_CHECK?.enabled) {
+                poolManager.performInitialHealthChecks();
+            }
+        }, initialCheckDelay);
+
         setInterval(async () => {
             if (isTaskRunning.healthCheck) return;
+            if (!CONFIG.SCHEDULED_HEALTH_CHECK?.enabled) return;
             isTaskRunning.healthCheck = true;
             try { await poolManager.performHealthChecks(); } finally { isTaskRunning.healthCheck = false; }
         }, (CONFIG.SCHEDULED_HEALTH_CHECK?.interval || 300000));

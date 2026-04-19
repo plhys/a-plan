@@ -746,12 +746,14 @@ export class ProviderPoolManager {
                     
                     // --- V3: 统计数据管理 ---
                     if (isColdStart) {
-                        // 冷启动：清空所有统计数据
+                        // 冷启动：清空所有统计数据，并强制恢复健康（极客模式：重启即复活）
+                        providerConfig.isHealthy = true;
                         providerConfig.lastUsed = null;
                         providerConfig.usageCount = 0;
                         providerConfig.errorCount = 0;
                         providerConfig.lastErrorTime = null;
                         providerConfig.lastErrorMessage = null;
+                        providerConfig.scheduledRecoveryTime = null;
                     } else if (existing) {
                         // 热重载：从旧状态中恢复统计数据，避免被配置文件中的旧数据覆盖
                         providerConfig.lastUsed = existing.config.lastUsed;
@@ -934,7 +936,24 @@ export class ProviderPoolManager {
         
         try {
             // 在锁内部执行同步选择
-            return this._doSelectProvider(providerType, requestedModel, options);
+            const selectedConfig = this._doSelectProvider(providerType, requestedModel, options);
+            
+            // [极客模式] 懒加载：如果选中的节点标记为需要刷新，则在此刻进行刷新
+            if (selectedConfig && selectedConfig.needsRefresh) {
+                this._log('info', `Lazy loading: node ${selectedConfig.uuid} needs refresh, refreshing now...`);
+                try {
+                    const providerStatus = this._findProvider(providerType, selectedConfig.uuid);
+                    if (providerStatus) {
+                        await this._refreshNodeToken(providerType, providerStatus, true);
+                    }
+                } catch (e) {
+                    this._log('error', `Lazy refresh failed for ${selectedConfig.uuid}: ${e.message}`);
+                    // 如果刷新失败，重新选择一次（防止死循环，由 _doSelectProvider 负责过滤不健康节点）
+                    return this.selectProvider(providerType, requestedModel, options);
+                }
+            }
+            
+            return selectedConfig;
         } finally {
             this._isSelecting[providerType] = false;
         }
@@ -957,7 +976,7 @@ export class ProviderPoolManager {
         const minSeq = Math.min(...availableProviders.map(p => p.config._lastSelectionSeq || 0));
 
         let availableAndHealthyProviders = availableProviders.filter(p =>
-            p.config.isHealthy && !p.config.isDisabled && !p.config.needsRefresh
+            p.config.isHealthy && !p.config.isDisabled
         );
 
         // 如果指定了模型，则排除不支持该模型的提供商
@@ -1857,6 +1876,20 @@ export class ProviderPoolManager {
                         config.scheduledRecoveryTime = null; // 清除恢复时间
                         
                         // 保存更改
+                        this._debouncedSave(type);
+                    }
+                } else if (!config.isHealthy && config.lastErrorTime) {
+                    // [极客模式] 自动微复活：如果是不健康状态，且距离上次错误已超过 2 分钟，尝试恢复一次
+                    const lastError = new Date(config.lastErrorTime);
+                    const recoveryInterval = (this.globalConfig?.AUTO_RECOVERY_INTERVAL_MS || 120000); // 默认 2 分钟隔离期
+                    if (now.getTime() - lastError.getTime() > recoveryInterval) {
+                        this._log('info', `Auto-recovering provider ${config.uuid} (${type}) after isolation period.`);
+                        
+                        config.isHealthy = true;
+                        config.errorCount = 0;
+                        // 不清除 lastErrorTime，以便下次报错时依然能计算间隔，但标记为已试运行
+                        // config.lastErrorTime = null; 
+                        
                         this._debouncedSave(type);
                     }
                 }
