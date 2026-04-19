@@ -419,22 +419,24 @@ export async function getApiService(config, requestedModel = null, options = {})
     const isPoolable = PROVIDER_MAPPINGS.some(m => m.providerType === config.MODEL_PROVIDER);
     if (providerPoolManager && ((config.providerPools && config.providerPools[config.MODEL_PROVIDER]) || isPoolable)) {
         
-        // --- 执行 Clash 模块分流中间件 ---
-        const clashMiddleware = clashModule.getMiddleware();
-        // 如果节点自带了 PROXY_TAG，将其注入到当前请求的 config 中供中间件使用
-        if (selectedProviderConfig && selectedProviderConfig.PROXY_TAG) {
-            config.PROXY_TAG = selectedProviderConfig.PROXY_TAG;
-        }
-        await clashMiddleware(config);
-        
         // selectProvider 现在是异步的，使用链式锁确保并发安全
         const selectedProviderConfig = await providerPoolManager.selectProvider(config.MODEL_PROVIDER, actualModelName, { ...options, skipUsageCount: true });
+        
         if (selectedProviderConfig) {
             // 合并选中的提供者配置到当前请求的 config 中
             serviceConfig = deepMerge(config, selectedProviderConfig);
             delete serviceConfig.providerPools; // 移除 providerPools 属性
             config.uuid = serviceConfig.uuid;
             config.customName = serviceConfig.customName;
+            
+            // --- 执行 Clash 模块分流中间件 ---
+            const clashMiddleware = clashModule.getMiddleware();
+            // 如果节点自带了 PROXY_TAG，将其注入到当前请求的 config 中供中间件使用
+            if (selectedProviderConfig.PROXY_TAG) {
+                serviceConfig.PROXY_TAG = selectedProviderConfig.PROXY_TAG;
+            }
+            await clashMiddleware(serviceConfig);
+
             const customNameDisplay = serviceConfig.customName ? ` (${serviceConfig.customName})` : '';
             logger.info(`[API Service] Using pooled configuration for ${config.MODEL_PROVIDER}: ${serviceConfig.uuid}${customNameDisplay}${actualModelName ? ` (model: ${actualModelName})` : ''}`);
         } else {
@@ -475,7 +477,7 @@ export async function getApiServiceWithFallback(config, requestedModel = null, o
     const isPoolable = PROVIDER_MAPPINGS.some(m => m.providerType === config.MODEL_PROVIDER);
     if (providerPoolManager && ((config.providerPools && config.providerPools[config.MODEL_PROVIDER]) || isPoolable)) {
         // selectProviderWithFallback 现在是异步的，使用链式锁确保并发安全
-        // 如果开启了并发限制，则使用 acquireSlot 进行选择和占位
+        // 如果开启了并发限制，则使用 acquireSlot 进行选择 and 占位
         const useAcquire = options.acquireSlot === true;
         let selectedResult;
         
@@ -510,6 +512,13 @@ export async function getApiServiceWithFallback(config, requestedModel = null, o
             if (isFallback) {
                 serviceConfig.MODEL_PROVIDER = actualProviderType;
             }
+
+            // --- 执行 Clash 模块分流中间件 ---
+            const clashMiddleware = clashModule.getMiddleware();
+            if (selectedProviderConfig.PROXY_TAG) {
+                serviceConfig.PROXY_TAG = selectedProviderConfig.PROXY_TAG;
+            }
+            await clashMiddleware(serviceConfig);
         } else {
             const errorMsg = `[API Service] No healthy provider found in pool for ${config.MODEL_PROVIDER}${actualModelName ? ` supporting model: ${actualModelName}` : ''}`;
             logger.error(errorMsg);

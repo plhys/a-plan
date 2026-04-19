@@ -119,7 +119,6 @@ class ClashModule {
 
         this._nodes = Array.from(names).map(n => ({ name: n, type: 'proxy' }));
 
-        // 极客分流：按地区关键词自动创建 Proxy Group
         const regions = ['US', 'HK', 'SG', 'JP', 'TW', 'GB', 'DE', 'KR', 'FR', 'RU', 'IN'];
         const dynamicGroups = regions.map(r => {
             const matchedProxies = Array.from(names).filter(n => n.toUpperCase().includes(r));
@@ -137,7 +136,13 @@ external-controller: 127.0.0.1:${this._config.controllerPort}
 secret: "${this._config.secret}"
 allow-lan: true
 mode: rule
-log-level: info
+log-level: silent
+
+listeners:
+${dynamicGroups.map((g, i) => `  - name: listener-${g.name.toLowerCase()}
+    type: mixed
+    port: ${19000 + i}
+    proxy: "${g.name}"`).join('\n')}
 
 proxies:
 ${proxiesYaml}
@@ -167,7 +172,12 @@ rules:
         writeFileSync(this._configPath, configYaml);
     }
 
-    _getProviderPort(provider) {
+    _getProviderPort(tag) {
+        const regions = ['US', 'HK', 'SG', 'JP', 'TW', 'GB', 'DE', 'KR', 'FR', 'RU', 'IN'];
+        const idx = regions.indexOf(tag.toUpperCase());
+        if (idx !== -1) {
+            return 19000 + idx; 
+        }
         return this._config.port;
     }
 
@@ -221,17 +231,10 @@ rules:
     getMiddleware() {
         return async (config) => {
             if (!this._config.enabled) return;
-            // 极客逻辑：实现“号池节点标签分流”
-            // 如果节点带了 PROXY_TAG 属性（如 "US", "HK"）
             const tag = config.PROXY_TAG || null;
             if (tag) {
-                const groupName = `${tag.toUpperCase()}-Region-Auto`;
-                try {
-                    // 通过 Clash 控制 API 动态切换该请求所在分组的选择（或通过特定逻辑实现）
-                    // 极致轻量做法：Clash 核心目前暂用 GLOBAL-GEEK 统一出口，
-                    // 待后续版本支持多监听端口后，可实现真正的物理端口分流。
-                    config.PROXY_URL = `http://127.0.0.1:${this._config.port}`;
-                } catch(e) {}
+                config.PROXY_URL = `http://127.0.0.1:${this._getProviderPort(tag)}`;
+                logger.info(`[Clash-Route] Routing via regional listener: ${tag} (port: ${this._getProviderPort(tag)})`);
             } else {
                 config.PROXY_URL = `http://127.0.0.1:${this._config.port}`;
             }

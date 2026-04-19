@@ -1013,7 +1013,7 @@ function renderProviderConfig(provider) {
     
     // 先渲染基础配置字段（customName、checkModelName 和 checkHealth）
     let html = '<div class="form-grid">';
-    const baseFields = ['customName', 'checkModelName', 'checkHealth', 'concurrencyLimit', 'queueLimit'];
+    const baseFields = ['customName', 'PROXY_TAG', 'checkModelName', 'checkHealth', 'concurrencyLimit', 'queueLimit'];
     
     baseFields.forEach(fieldKey => {
         const displayLabel = getFieldLabel(fieldKey);
