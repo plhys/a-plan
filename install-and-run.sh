@@ -1,12 +1,18 @@
 #!/bin/bash
 
 # 获取脚本所在目录并切换到该目录，确保在任何位置运行都能正常工作
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-cd "$SCRIPT_DIR"
+# 兼容直接运行和 pipe 到 bash 两种方式
+if [ -n "$BASH_SOURCE[0]" ] && [ -f "$BASH_SOURCE[0]" ]; then
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    cd "$SCRIPT_DIR"
+else
+    # pipe 方式运行，使用当前目录
+    cd "$(pwd)"
+fi
 
-# 设置中文环境
-export LC_ALL=zh_CN.UTF-8
-export LANG=zh_CN.UTF-8
+# 设置中文环境（静默失败）
+export LC_ALL=C 2>/dev/null
+export LANG=C 2>/dev/null
 
 echo "========================================"
 echo "  A计划 快速安装启动脚本"
@@ -98,11 +104,11 @@ echo "[成功] 项目文件检查完成"
 # 启动应用程序
 echo
 echo "========================================"
-echo "  启动AIClient2API服务器..."
+echo "  启动A计划服务器..."
 echo "========================================"
 echo
-echo "服务器将在 http://localhost:3000 启动"
-echo "访问 http://localhost:3000 查看管理界面"
+echo "服务器将在 http://localhost:$PORT 启动"
+echo "访问 http://localhost:$PORT 查看管理界面"
 echo "按 Ctrl+C 停止服务器"
 echo
 
