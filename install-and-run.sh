@@ -41,6 +41,6 @@ else
     pnpm install || npm install
 fi
 
-export PORT=${PORT:-3000}
+export PORT=${PORT:-18781}
 echo "启动服务器 on http://localhost:$PORT"
 node src/core/master.js
