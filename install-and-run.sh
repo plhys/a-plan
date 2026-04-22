@@ -5,7 +5,29 @@
 #  支持：离线安装、国内镜像、智能回退
 # ============================================
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# 检测是否通过 pipe 方式运行
+if [ -z "$SCRIPT_DIR" ]; then
+    if [ -t 0 ]; then
+        # 交互式运行，检查是否在项目目录
+        SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    else
+        # pipe 方式运行 (curl ... | bash)
+        SCRIPT_DIR="/tmp/a-plan"
+    fi
+fi
+
+# 如果目录不是项目目录，则克隆
+if [ ! -f "$SCRIPT_DIR/package.json" ]; then
+    echo "[提示] 正在自动克隆项目..."
+    rm -rf /tmp/a-plan
+    git clone https://github.com/plhys/a-plan.git /tmp/a-plan
+    if [ $? -ne 0 ]; then
+        echo "[错误] 克隆失败，请检查网络"
+        exit 1
+    fi
+    SCRIPT_DIR="/tmp/a-plan"
+fi
+
 cd "$SCRIPT_DIR"
 
 export LC_ALL=zh_CN.UTF-8
