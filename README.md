@@ -35,7 +35,7 @@ npm start
 ### 方式二：Docker（待实现）
 
 ```bash
-docker run -d -p 18788:18788 -e A_ADMIN_PASSWORD=123456 a-plan
+docker run -d -p 18781:18781 -e A_ADMIN_PASSWORD=123456 a-plan
 ```
 
 ---
@@ -46,16 +46,16 @@ docker run -d -p 18788:18788 -e A_ADMIN_PASSWORD=123456 a-plan
 
 | 变量名 | 默认值 | 说明 |
 |--------|--------|------|
-| `A_PORT` | 18788 | 服务端口 |
-| `A_ADMIN_PASSWORD` | abc123 | 管理后台密码 |
+| `A_PORT` | 18781 | 服务端口 |
+| `A_ADMIN_PASSWORD` | 123456 | 管理后台密码 |
 | `CORE_ONLY` | false | 开启极简模式（只启动 API，不加载 UI） |
 | `WORKER_COUNT` | 1 | API 处理进程数，可设为 `auto` 自动匹配 CPU 核心 |
 
 ### 管理后台
 
-启动后访问：`http://你的IP:18788`
+启动后访问：`http://你的IP:18781`
 
-- 默认密码：`abc123`
+- 默认密码：`123456`
 - 可以配置模型 Key、查看用量统计、管理渠道等
 
 ---
@@ -64,7 +64,7 @@ docker run -d -p 18788:18788 -e A_ADMIN_PASSWORD=123456 a-plan
 
 ```bash
 # 调用 ChatGPT 兼容接口
-curl -X POST http://localhost:18788/v1/chat/completions \
+curl -X POST http://localhost:18781/v1/chat/completions \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer 你的Key" \
   -d '{
@@ -98,6 +98,7 @@ a-plan/
 
 ## 📝 更新日志
 
+- **v4.2.8** - 极速版：精简核心依赖，仅5个（dotenv, ws, axios, uuid, lodash），安装几秒完成
 - **v4.2.6** - Geek Overhaul: Eradicated hardcoded '3000' zombie config and synchronized server startup logic for Port 18781. Evolution of providers: swapped DeepSeek with native Nvidia NIM support. Unified core logic and removed legacy reverse-proxy modules for extreme lightness. Integrated **Groq**, **SambaNova**, and **Github Models** for lightning-fast inference and robust failover.
 - **v4.2.5** - Environment Compatibility: POSIX-compliant `start.sh` for multi-shell support, refined logging semantics, and full-stack version alignment.
 - **v4.2.4** - Survivability Boost: JIT token refresh, 60s silent startup, 404/400 error filtering to prevent provider 'poisoning', 2-min node auto-recovery, and semantic error reporting.
