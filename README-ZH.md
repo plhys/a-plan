@@ -55,7 +55,17 @@
 git clone https://github.com/plhys/a-plan.git ~/a-plan && cd ~/a-plan && npm install && npm start
 ```
 
-仅 5 个核心依赖，安装几秒完成。启动后访问 Web UI，默认密码 `abc123`。
+或使用一键部署脚本：
+```bash
+curl -sSL https://raw.githubusercontent.com/plhys/a-plan/master/install-and-run.sh | PORT=18781 bash
+```
+
+**配置说明：**
+- 默认端口：`3000`（可通过 `PORT` 环境变量修改，如 `PORT=18781`）
+- 默认密码：`abc123`
+- 访问地址：`http://你的IP:端口`
+
+仅 5 个核心依赖，安装几秒完成。
 
 **需要其他 Provider 时：**
 在 Web UI 中添加对应渠道，手动安装所需依赖即可。
