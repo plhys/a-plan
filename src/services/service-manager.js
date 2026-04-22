@@ -648,6 +648,7 @@ export async function getProviderStatus(config, options = {}) {
         'openai-custom': 'OPENAI_BASE_URL',
         'openaiResponses-custom': 'OPENAI_BASE_URL',
         'gemini-cli-oauth': 'GEMINI_OAUTH_CREDS_FILE_PATH',
+        'gemini-api-key': 'GEMINI_API_KEY',
         'claude-custom': 'CLAUDE_BASE_URL',
         'claude-kiro-oauth': 'KIRO_OAUTH_CREDS_FILE_PATH',
         'openai-qwen-oauth': 'QWEN_OAUTH_CREDS_FILE_PATH',

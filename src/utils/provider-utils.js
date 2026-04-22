@@ -35,6 +35,17 @@ export const PROVIDER_MAPPINGS = [
         urlKeys: ['GEMINI_BASE_URL']
     },
     {
+        // Google AI Studio API Key 配置
+        dirName: 'gemini-key',
+        patterns: ['configs/gemini-key/', '/gemini-key/', 'configs/gemini-api-key/'],
+        providerType: 'gemini-api-key',
+        credPathKey: 'GEMINI_API_KEY',
+        defaultCheckModel: 'gemini-2.5-flash',
+        displayName: 'Google AI Studio (API Key)',
+        needsProjectId: false,
+        urlKeys: ['GEMINI_BASE_URL']
+    },
+    {
         // Qwen OAuth 配置
         dirName: 'qwen',
         patterns: ['configs/qwen/', '/qwen/'],

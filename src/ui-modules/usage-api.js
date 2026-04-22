@@ -6,7 +6,7 @@ import { readUsageCache, writeUsageCache, readProviderUsageCache, updateProvider
 import { PROVIDER_MAPPINGS } from '../utils/provider-utils.js';
 import path from 'path';
 
-const supportedProviders = ['claude-kiro-oauth', 'gemini-cli-oauth', 'gemini-antigravity', 'openai-codex-oauth', 'grok-custom'];
+const supportedProviders = ['claude-kiro-oauth', 'gemini-cli-oauth', 'gemini-api-key', 'gemini-antigravity', 'openai-codex-oauth', 'grok-custom'];
 
 
 /**
