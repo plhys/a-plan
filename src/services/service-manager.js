@@ -17,23 +17,7 @@ import { MODEL_PROVIDER } from '../utils/constants.js';
 
 // --- 极客重构：模块热插拔感知层 ---
 let clashModule = null;
-let shadowProxy = null;
 const CLASH_MODULE_PATH = path.join(process.cwd(), 'src', 'modules', 'clash', 'clash-core.js');
-const SHADOW_PROXY_PATH = path.join(process.cwd(), 'src', 'modules', 'proxy-shadow', 'shadow-core.js');
-
-async function getShadowProxy() {
-    if (shadowProxy) return shadowProxy;
-    if (fs.existsSync(SHADOW_PROXY_PATH)) {
-        try {
-            const mod = await import('../modules/proxy-shadow/shadow-core.js');
-            shadowProxy = mod.shadowProxy;
-            return shadowProxy;
-        } catch (e) {
-            logger.error('[Module] Failed to load shadow proxy module:', e.message);
-        }
-    }
-    return null;
-}
 
 // 动态加载逻辑：只在文件真实存在时才引入，彻底锯断硬编码依赖
 async function getClashModule() {
@@ -465,21 +449,10 @@ export async function getApiService(config, requestedModel = null, options = {})
             config.uuid = serviceConfig.uuid;
             config.customName = serviceConfig.customName;
             
-            // --- 执行影子代理分流中间件 (4.2.6 极客补强) ---
-            const sp = await getShadowProxy();
-            if (sp) {
-                const shadowMiddleware = sp.getMiddleware();
-                await shadowMiddleware(serviceConfig);
-            }
-
             // --- 执行 Clash 模块分流中间件 ---
             const clashMiddleware = await getClashModule();
             if (clashMiddleware) {
                 const middleware = clashMiddleware.getMiddleware();
-                // 如果节点自带了 PROXY_TAG，将其注入到当前请求的 config 中供中间件使用
-                if (selectedProviderConfig.PROXY_TAG) {
-                    serviceConfig.PROXY_TAG = selectedProviderConfig.PROXY_TAG;
-                }
                 await middleware(serviceConfig);
             }
 
@@ -559,13 +532,6 @@ export async function getApiServiceWithFallback(config, requestedModel = null, o
                 serviceConfig.MODEL_PROVIDER = actualProviderType;
             }
 
-            // --- 执行影子代理分流中间件 (4.2.6 极客补强) ---
-            const sp = await getShadowProxy();
-            if (sp) {
-                const shadowMiddleware = sp.getMiddleware();
-                await shadowMiddleware(serviceConfig);
-            }
-
             // --- 执行 Clash 模块分流中间件 (热插拔安全网) ---
             const cm = await getClashModule();
             if (cm) {
@@ -643,19 +609,9 @@ export async function getProviderStatus(config, options = {}) {
         'lastErrorMessage',
         'needsRefresh'
     ];
-    // identify 字段映射表
+    // identify 字段映射表（仅保留 OpenAI Custom）
     const identifyFieldMap = {
-        'openai-custom': 'OPENAI_BASE_URL',
-        'openaiResponses-custom': 'OPENAI_BASE_URL',
-        'gemini-cli-oauth': 'GEMINI_OAUTH_CREDS_FILE_PATH',
-        'gemini-api-key': 'GEMINI_API_KEY',
-        'claude-custom': 'CLAUDE_BASE_URL',
-        'claude-kiro-oauth': 'KIRO_OAUTH_CREDS_FILE_PATH',
-        'openai-qwen-oauth': 'QWEN_OAUTH_CREDS_FILE_PATH',
-        'gemini-antigravity': 'ANTIGRAVITY_OAUTH_CREDS_FILE_PATH',
-        'forward-api': 'FORWARD_BASE_URL',
-        'grok-custom': 'GROK_COOKIE_TOKEN',
-        'openai-codex-oauth': 'CODEX_OAUTH_CREDS_FILE_PATH'
+        'openai-custom': 'OPENAI_BASE_URL'
     };
     let providerPoolsSlim = [];
     let unhealthyProvideIdentifyList = [];

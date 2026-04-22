@@ -4,7 +4,7 @@ import { escapeHtml, showToast, getFieldLabel, getProviderTypeFields } from './u
 import { handleProviderPasswordToggle } from './event-handlers.js';
 import { t } from './i18n.js';
 
-const MANAGED_MODEL_LIST_PROVIDERS = new Set(['openai-custom', 'openaiResponses-custom', 'claude-custom']);
+const MANAGED_MODEL_LIST_PROVIDERS = new Set(['openai-custom']);
 
 // 分页配置
 const PROVIDERS_PER_PAGE = 5;
@@ -558,7 +558,7 @@ function getFilteredProviders() {
     if (!nodeSearchTerm) return currentProviders;
     const term = nodeSearchTerm.toLowerCase().trim();
     return currentProviders.filter(p => {
-        // 搜索字段：自定义名称、UUID、API Key、Base URL、OAuth 路径等
+        // 搜索字段：自定义名称、UUID、API Key、Base URL 等
         const searchFields = [
             p.customName,
             p.uuid,
@@ -566,13 +566,7 @@ function getFilteredProviders() {
             p.OPENAI_BASE_URL,
             p.CLAUDE_API_KEY,
             p.CLAUDE_BASE_URL,
-            p.GEMINI_OAUTH_CREDS_FILE_PATH,
             p.GEMINI_API_KEY,
-            p.KIRO_OAUTH_CREDS_FILE_PATH,
-            p.QWEN_OAUTH_CREDS_FILE_PATH,
-            p.ANTIGRAVITY_OAUTH_CREDS_FILE_PATH,
-            p.IFLOW_OAUTH_CREDS_FILE_PATH,
-            p.CODEX_OAUTH_CREDS_FILE_PATH,
             p.GROK_COOKIE_TOKEN,
             p.FORWARD_API_KEY,
             p.checkModelName
@@ -1014,7 +1008,7 @@ function renderProviderConfig(provider) {
     
     // 先渲染基础配置字段（customName、checkModelName 和 checkHealth）
     let html = '<div class="form-grid">';
-    const baseFields = ['customName', 'PROXY_TAG', 'checkModelName', 'checkHealth', 'concurrencyLimit', 'queueLimit'];
+    const baseFields = ['customName', 'checkModelName', 'checkHealth', 'concurrencyLimit', 'queueLimit'];
     
     baseFields.forEach(fieldKey => {
         const displayLabel = getFieldLabel(fieldKey);
@@ -1081,7 +1075,6 @@ function renderProviderConfig(provider) {
         const field1Label = getFieldLabel(field1Key);
         const field1Value = provider[field1Key];
         const field1IsPassword = field1Key.toLowerCase().includes('key') || field1Key.toLowerCase().includes('password');
-        const field1IsOAuthFilePath = field1Key.includes('OAUTH_CREDS_FILE_PATH');
         const field1DisplayValue = field1IsPassword && field1Value ? '••••••••' : ((field1Value !== undefined && field1Value !== null) ? field1Value : '');
         const field1Def = fieldConfigs.find(f => f.id === field1Key) || fieldConfigs.find(f => f.id.toUpperCase() === field1Key.toUpperCase()) || {};
         
@@ -1100,27 +1093,6 @@ function renderProviderConfig(provider) {
                             <i class="fas fa-eye"></i>
                         </button>
                     </div>
-                </div>
-            `;
-        } else if (field1IsOAuthFilePath) {
-            // OAuth凭据文件路径字段，添加上传按钮
-            const field1IsKiro = field1Key.includes('KIRO');
-            html += `
-                <div class="config-item">
-                    <label>${field1Label}</label>
-                    <div class="file-input-group">
-                        <input type="text"
-                               id="edit-${provider.uuid}-${field1Key}"
-                               value="${(field1Value !== undefined && field1Value !== null) ? field1Value : ''}"
-                               readonly
-                               data-config-key="${field1Key}"
-                               data-config-value="${(field1Value !== undefined && field1Value !== null) ? field1Value : ''}"
-                               placeholder="${field1Def.placeholder || ''}">
-                       <button type="button" class="btn btn-outline upload-btn" data-target="edit-${provider.uuid}-${field1Key}" aria-label="上传文件" disabled>
-                            <i class="fas fa-upload"></i>
-                        </button>
-                    </div>
-                    ${field1IsKiro ? '<small class="form-text"><i class="fas fa-info-circle"></i> ' + t('modal.provider.kiroAuthHint') + '</small>' : ''}
                 </div>
             `;
         } else {
@@ -1143,7 +1115,6 @@ function renderProviderConfig(provider) {
             const field2Label = getFieldLabel(field2Key);
             const field2Value = provider[field2Key];
             const field2IsPassword = field2Key.toLowerCase().includes('key') || field2Key.toLowerCase().includes('password');
-            const field2IsOAuthFilePath = field2Key.includes('OAUTH_CREDS_FILE_PATH');
             const field2DisplayValue = field2IsPassword && field2Value ? '••••••••' : ((field2Value !== undefined && field2Value !== null) ? field2Value : '');
             const field2Def = fieldConfigs.find(f => f.id === field2Key) || fieldConfigs.find(f => f.id.toUpperCase() === field2Key.toUpperCase()) || {};
             
@@ -1162,27 +1133,6 @@ function renderProviderConfig(provider) {
                                 <i class="fas fa-eye"></i>
                             </button>
                         </div>
-                    </div>
-                `;
-            } else if (field2IsOAuthFilePath) {
-                // OAuth凭据文件路径字段，添加上传按钮
-                const field2IsKiro = field2Key.includes('KIRO');
-                html += `
-                    <div class="config-item">
-                        <label>${field2Label}</label>
-                        <div class="file-input-group">
-                            <input type="text"
-                                   id="edit-${provider.uuid}-${field2Key}"
-                                   value="${(field2Value !== undefined && field2Value !== null) ? field2Value : ''}"
-                                   readonly
-                                   data-config-key="${field2Key}"
-                                   data-config-value="${(field2Value !== undefined && field2Value !== null) ? field2Value : ''}"
-                                   placeholder="${field2Def.placeholder || ''}">
-                            <button type="button" class="btn btn-outline upload-btn" data-target="edit-${provider.uuid}-${field2Key}" aria-label="上传文件" disabled>
-                                <i class="fas fa-upload"></i>
-                            </button>
-                        </div>
-                        ${field2IsKiro ? '<small class="form-text"><i class="fas fa-info-circle"></i> ' + t('modal.provider.kiroAuthHint') + '</small>' : ''}
                     </div>
                 `;
             } else {
@@ -1241,7 +1191,7 @@ function renderProviderConfig(provider) {
  * @returns {Array} 字段名数组
  */
 function getFieldOrder(provider) {
-    const orderedFields = ['customName', 'PROXY_TAG', 'checkModelName', 'checkHealth', 'concurrencyLimit', 'queueLimit'];
+    const orderedFields = ['customName', 'checkModelName', 'checkHealth', 'concurrencyLimit', 'queueLimit'];
     
     // 需要排除的内部状态字段
     const excludedFields = [
@@ -1260,20 +1210,8 @@ function getFieldOrder(provider) {
             providerType = 'openai-custom';
         } else if (provider.CLAUDE_API_KEY && provider.CLAUDE_BASE_URL) {
             providerType = 'claude-custom';
-        } else if (provider.GEMINI_OAUTH_CREDS_FILE_PATH) {
-            providerType = 'gemini-cli-oauth';
         } else if (provider.GEMINI_API_KEY) {
             providerType = 'gemini-api-key';
-        } else if (provider.KIRO_OAUTH_CREDS_FILE_PATH) {
-            providerType = 'claude-kiro-oauth';
-        } else if (provider.QWEN_OAUTH_CREDS_FILE_PATH) {
-            providerType = 'openai-qwen-oauth';
-        } else if (provider.ANTIGRAVITY_OAUTH_CREDS_FILE_PATH) {
-            providerType = 'gemini-antigravity';
-        } else if (provider.IFLOW_OAUTH_CREDS_FILE_PATH) {
-            providerType = 'openai-iflow';
-        } else if (provider.CODEX_OAUTH_CREDS_FILE_PATH) {
-            providerType = 'openai-codex-oauth';
         } else if (provider.GROK_COOKIE_TOKEN) {
             providerType = 'grok-custom';
         } else if (provider.FORWARD_API_KEY) {
@@ -1617,31 +1555,9 @@ function showAddProviderForm(providerType) {
         return;
     }
     
-    // Codex OAuth 只支持授权添加，不支持手动添加
-    if (providerType === 'openai-codex-oauth') {
-        const form = document.createElement('div');
-        form.className = 'add-provider-form';
-        form.innerHTML = `
-            <h4 data-i18n="modal.provider.addTitle"><i class="fas fa-plus"></i> 添加新提供商配置</h4>
-            <div class="oauth-only-notice" style="padding: 20px; background: #fef3c7; border: 1px solid #fcd34d; border-radius: 8px; margin: 15px 0;">
-                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-                    <i class="fas fa-info-circle" style="color: #d97706; font-size: 24px;"></i>
-                    <strong style="color: #92400e;">Codex 仅支持 OAuth 授权添加</strong>
-                </div>
-                <p style="color: #b45309; margin: 0 0 15px 0;">
-                    OpenAI Codex 需要通过 OAuth 授权获取访问令牌，无法手动填写凭据。请点击下方按钮进行授权。
-                </p>
-                <button class="btn btn-primary" onclick="window.handleGenerateAuthUrl && window.handleGenerateAuthUrl('openai-codex-oauth'); this.closest('.add-provider-form').remove();">
-                    <i class="fas fa-key"></i> 开始 OAuth 授权
-                </button>
-                <button class="btn btn-secondary" style="margin-left: 10px;" onclick="this.closest('.add-provider-form').remove()">
-                    <i class="fas fa-times"></i> <span data-i18n="modal.provider.cancel">取消</span>
-                </button>
-            </div>
-        `;
-        
-        const providerList = modal.querySelector('.provider-list');
-        providerList.parentNode.insertBefore(form, providerList);
+    // OAuth 授权功能已移除，不支持 OAuth 提供商
+    if (providerType && providerType.includes('oauth')) {
+        showToast(t('common.info'), 'OAuth 授权功能已移除', 'info');
         return;
     }
     
@@ -1673,11 +1589,7 @@ function showAddProviderForm(providerType) {
                 <label><span data-i18n="modal.provider.queueLimit">队列限制</span> <span class="optional-mark" data-i18n="config.optional">(选填)</span></label>
                 <input type="number" id="newQueueLimit" placeholder="默认0不限制">
             </div>
-            <div class="form-group">
-                <label><span>分流标签 (PROXY_TAG)</span> <span class="optional-mark">(选填)</span></label>
-                <input type="text" id="newProxyTag" placeholder="例如: US, HK, SG">
             </div>
-        </div>
         <div id="dynamicConfigFields">
             <!-- 动态配置字段将在这里显示 -->
         </div>
@@ -1727,8 +1639,6 @@ function addDynamicConfigFields(form, providerType) {
             const field1 = filteredFields[i];
             // 检查是否为密码类型字段
             const isPassword1 = field1.type === 'password';
-            // 检查是否为OAuth凭据文件路径字段（兼容两种命名方式）
-            const isOAuthFilePath1 = field1.id.includes('OAUTH_CREDS_FILE_PATH') || field1.id.includes('OauthCredsFilePath');
             
             if (isPassword1) {
                 fields += `
@@ -1742,21 +1652,6 @@ function addDynamicConfigFields(form, providerType) {
                         </div>
                     </div>
                 `;
-            } else if (isOAuthFilePath1) {
-                // OAuth凭据文件路径字段，添加上传按钮
-                const isKiroField = field1.id.includes('KIRO');
-    fields += `
-        <div class="form-group">
-            <label>${field1.label}</label>
-            <div class="file-input-group">
-                <input type="text" id="new${field1.id}" class="form-control" placeholder="${field1.placeholder || ''}" value="${field1.value || ''}">
-                <button type="button" class="btn btn-outline upload-btn" data-target="new${field1.id}" aria-label="上传文件">
-                    <i class="fas fa-upload"></i>
-                </button>
-            </div>
-            ${isKiroField ? '<small class="form-text"><i class="fas fa-info-circle"></i> ' + t('modal.provider.kiroAuthHint') + '</small>' : ''}
-        </div>
-    `;
             } else {
                 fields += `
                     <div class="form-group">
@@ -1770,8 +1665,6 @@ function addDynamicConfigFields(form, providerType) {
             if (field2) {
                 // 检查是否为密码类型字段
                 const isPassword2 = field2.type === 'password';
-                // 检查是否为OAuth凭据文件路径字段（兼容两种命名方式）
-                const isOAuthFilePath2 = field2.id.includes('OAUTH_CREDS_FILE_PATH') || field2.id.includes('OauthCredsFilePath');
                 
                 if (isPassword2) {
                     fields += `
@@ -1785,21 +1678,6 @@ function addDynamicConfigFields(form, providerType) {
                             </div>
                         </div>
                     `;
-                } else if (isOAuthFilePath2) {
-                    // OAuth凭据文件路径字段，添加上传按钮
-                    const isKiroField = field2.id.includes('KIRO');
-    fields += `
-        <div class="form-group">
-            <label>${field2.label}</label>
-            <div class="file-input-group">
-                <input type="text" id="new${field2.id}" class="form-control" placeholder="${field2.placeholder || ''}" value="${field2.value || ''}">
-                <button type="button" class="btn btn-outline upload-btn" data-target="new${field2.id}" aria-label="上传文件">
-                    <i class="fas fa-upload"></i>
-                </button>
-            </div>
-            ${isKiroField ? '<small class="form-text"><i class="fas fa-info-circle"></i> ' + t('modal.provider.kiroAuthHint') + '</small>' : ''}
-        </div>
-    `;
                 } else {
                     fields += `
                         <div class="form-group">
@@ -1854,15 +1732,13 @@ async function addProvider(providerType) {
     const checkHealth = document.getElementById('newCheckHealth')?.value === 'true';
     const concurrencyLimit = parseInt(document.getElementById('newConcurrencyLimit')?.value || '0');
     const queueLimit = parseInt(document.getElementById('newQueueLimit')?.value || '0');
-    const PROXY_TAG = document.getElementById('newProxyTag')?.value || '';
     
     const providerConfig = {
         customName: customName || '', // 允许为空
         checkModelName: checkModelName || '', // 允许为空
         checkHealth,
         concurrencyLimit,
-        queueLimit,
-        PROXY_TAG
+        queueLimit
     };
     
     // 根据提供商类型动态收集配置字段（自动匹配 utils.js 中的定义）

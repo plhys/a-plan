@@ -10,12 +10,10 @@ import * as pluginApi from '../ui-modules/plugin-api.js';
 import * as uploadConfigApi from '../ui-modules/upload-config-api.js';
 import * as systemApi from '../ui-modules/system-api.js';
 import * as updateApi from '../ui-modules/update-api.js';
-import * as oauthApi from '../ui-modules/oauth-api.js';
 import * as customModelsApi from '../ui-modules/custom-models-api.js';
 import * as eventBroadcast from '../ui-modules/event-broadcast.js';
 // --- 极客重构：模块热插拔感知层 ---
 let clashModule = null;
-let shadowProxy = null;
 async function getClashModule() {
     if (clashModule) return clashModule;
     try {
@@ -24,18 +22,10 @@ async function getClashModule() {
         return clashModule;
     } catch (e) { return null; }
 }
-async function getShadowProxy() {
-    if (shadowProxy) return shadowProxy;
-    try {
-        const mod = await import('../modules/proxy-shadow/shadow-core.js');
-        shadowProxy = mod.shadowProxy;
-        return shadowProxy;
-    } catch (e) { return null; }
-}
 // ---------------------------------
 
 // Re-export from event-broadcast module
-export { broadcastEvent, initializeUIManagement, handleUploadOAuthCredentials, upload } from '../ui-modules/event-broadcast.js';
+export { broadcastEvent, initializeUIManagement, upload } from '../ui-modules/event-broadcast.js';
 
 /**
  * Serve static files for the UI
@@ -134,10 +124,7 @@ export async function handleUIApiRequests(method, pathParam, req, res, currentCo
         }
     }
 
-    // 文件上传API
-    if (method === 'POST' && pathParam === '/api/upload-oauth-credentials') {
-        return await eventBroadcast.handleUploadOAuthCredentials(req, res);
-    }
+    
 
     // Update admin password
     if (method === 'POST' && pathParam === '/api/admin-password') {
@@ -149,102 +136,6 @@ export async function handleUIApiRequests(method, pathParam, req, res, currentCo
         return await configApi.handleGetConfig(req, res, currentConfig);
     }
     
-    // Shadow Proxy 影子代理管理路由 (v4.2.6 极客定制版)
-    if (pathParam.startsWith('/api/shadow-proxy/')) {
-        const sp = await getShadowProxy();
-        if (!sp) {
-            res.writeHead(404, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ error: { message: 'Shadow proxy module not installed' } }));
-            return true;
-        }
-
-        // 4.2.6 极客补强：路由绑定接口
-        if (pathParam === '/api/shadow-proxy/route' && method === 'POST') {
-            const body = await new Promise(r => { 
-                let b=''; req.on('data', c=>b+=c); req.on('end', () => { try { r(JSON.parse(b)); } catch(e) { r({}); } }); 
-            });
-            if (body.provider && body.nodeId) {
-                const spMod = await getShadowProxy();
-                spMod.updateRoute(body.provider, body.nodeId);
-                res.writeHead(200, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ success: true }));
-                return true;
-            }
-        }
-
-        if (pathParam === '/api/shadow-proxy/config' && method === 'POST') {
-            const body = await new Promise(r => { 
-                let b=''; req.on('data', c=>b+=c); req.on('end', () => { try { r(JSON.parse(b)); } catch(e) { r({}); } }); 
-            });
-            const spMod = await getShadowProxy();
-            if (typeof body.enabled !== 'undefined') {
-                spMod._config.enabled = body.enabled;
-                if (body.enabled) await spMod.start();
-                else spMod._stopExisting();
-            }
-            spMod._saveConfig();
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ success: true }));
-            return true;
-        }
-
-        if (pathParam === '/api/shadow-proxy/info') {
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify(sp.getStatus()));
-            return true;
-        }
-
-        if (pathParam === '/api/shadow-proxy/test-ai' && method === 'POST') {
-            const spMod = await getShadowProxy();
-            spMod.runAIRadar().catch(e => logger.error('[Radar] Error:', e.message));
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ success: true, message: 'AI Radar scanning in background' }));
-            return true;
-        }
-        
-        // 4.2.6 极客补强：添加订阅接口
-        if (pathParam === '/api/shadow-proxy/subscription' && method === 'POST') {
-            const body = await new Promise(r => { 
-                let b=''; req.on('data', c=>b+=c); req.on('end', () => { try { r(JSON.parse(b)); } catch(e) { r({}); } }); 
-            });
-            if (body.url) {
-                const spMod = await getShadowProxy();
-                spMod._config.subscriptions.push({ 
-                    url: body.url, 
-                    name: body.name || 'New Sub',
-                    addedAt: new Date().toISOString()
-                });
-                spMod._saveConfig();
-                res.writeHead(200, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ success: true }));
-                return true;
-            }
-        }
-
-        // 4.2.7 极客补强：删除订阅接口
-        if (pathParam.startsWith('/api/shadow-proxy/subscription/') && method === 'DELETE') {
-            const index = parseInt(pathParam.split('/').pop());
-            const spMod = await getShadowProxy();
-            if (spMod && !isNaN(index) && spMod._config.subscriptions[index]) {
-                spMod._config.subscriptions.splice(index, 1);
-                spMod._saveConfig();
-                res.writeHead(200, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ success: true }));
-                return true;
-            }
-        }
-        // 4.2.7 极客补强：手动刷新节点
-        if (pathParam === '/api/shadow-proxy/refresh-nodes' && method === 'POST') {
-            const spMod = await getShadowProxy();
-            if (spMod) {
-                spMod.refreshNodes().catch(e => logger.error('[Shadow-Proxy] Refresh failed:', e.message));
-                res.writeHead(200, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ success: true }));
-                return true;
-            }
-        }
-    }
-
     // Clash 模块管理路由 (极客热插拔增强版)
     if (pathParam.startsWith('/api/clash/')) {
         const cm = await getClashModule();
@@ -435,17 +326,7 @@ export async function handleUIApiRequests(method, pathParam, req, res, currentCo
         return await providerApi.handleDeleteProvider(req, res, currentConfig, providerPoolManager, providerType, providerUuid);
     }
 
-    // Generate OAuth authorization URL for providers
-    const generateAuthUrlMatch = pathParam.match(/^\/api\/providers\/([^\/]+)\/generate-auth-url$/);
-    if (method === 'POST' && generateAuthUrlMatch) {
-        const providerType = decodeURIComponent(generateAuthUrlMatch[1]);
-        return await oauthApi.handleGenerateAuthUrl(req, res, currentConfig, providerType);
-    }
-
-    // Handle manual OAuth callback
-    if (method === 'POST' && pathParam === '/api/oauth/manual-callback') {
-        return await oauthApi.handleManualOAuthCallback(req, res);
-    }
+    
 
     // Server-Sent Events for real-time updates
     if (method === 'GET' && pathParam === '/api/events') {
@@ -542,23 +423,9 @@ export async function handleUIApiRequests(method, pathParam, req, res, currentCo
         return await systemApi.handleGetServiceMode(req, res);
     }
 
-    // Batch import Kiro refresh tokens with SSE (real-time progress)
-    if (method === 'POST' && pathParam === '/api/kiro/batch-import-tokens') {
-        return await oauthApi.handleBatchImportKiroTokens(req, res);
-    }
+    
 
-    if (method === 'POST' && pathParam === '/api/gemini/batch-import-tokens') {
-        return await oauthApi.handleBatchImportGeminiTokens(req, res);
-    }
-
-    if (method === 'POST' && pathParam === '/api/codex/batch-import-tokens') {
-        return await oauthApi.handleBatchImportCodexTokens(req, res);
-    }
-
-    // Import AWS SSO credentials for Kiro
-    if (method === 'POST' && pathParam === '/api/kiro/import-aws-credentials') {
-        return await oauthApi.handleImportAwsCredentials(req, res);
-    }
+    
 
     // Get plugins list
     if (method === 'GET' && pathParam === '/api/plugins') {

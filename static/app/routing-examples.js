@@ -3,6 +3,24 @@
 import { showToast } from './utils.js';
 import { t } from './i18n.js';
 
+// 生图模型关键词
+const IMAGE_MODEL_KEYWORDS = ['image', '图片', '生成', 'Image', 'IMAGE', 'Qwen-Image'];
+
+/**
+ * 检查是否有生图模型
+ * @param {Array} models - 模型列表
+ * @returns {boolean} 是否有生图模型
+ */
+function hasImageModel(models) {
+    if (!models || !Array.isArray(models)) return false;
+    return models.some(model => {
+        const modelId = model.id || model;
+        return IMAGE_MODEL_KEYWORDS.some(keyword => 
+            modelId.toLowerCase().includes(keyword.toLowerCase())
+        );
+    });
+}
+
 /**
  * 初始化路径路由示例功能
  */
@@ -156,7 +174,8 @@ function getAvailableRoutes() {
             name: 'OpenAI Custom',
             paths: {
                 openai: '/openai-custom/v1/chat/completions',
-                claude: '/openai-custom/v1/messages'
+                claude: '/openai-custom/v1/messages',
+                images: '/openai-custom/v1/images/generations'
             },
             description: t('dashboard.routing.official'),
             badge: t('dashboard.routing.official'),
@@ -443,7 +462,7 @@ async function copyCurlExample(provider, options = {}) {
  * 动态渲染路径路由示例
  * @param {Array} providerConfigs - 提供商配置列表
  */
-function renderRoutingExamples(providerConfigs) {
+async function renderRoutingExamples(providerConfigs) {
     const container = document.querySelector('.routing-examples-grid');
     if (!container) return;
 
@@ -451,6 +470,29 @@ function renderRoutingExamples(providerConfigs) {
     
     // 获取路由端点基础信息
     const routes = getAvailableRoutes();
+    
+    // 获取模型列表，检查是否有生图模型
+    let modelsData = null;
+    try {
+        // 使用 apiClient 获取模型数据（自动带认证和/api前缀）
+        modelsData = await window.apiClient.get('/provider-models');
+        console.log('[RoutingExamples] Models data:', modelsData);
+    } catch (e) {
+        console.log('[RoutingExamples] Cannot fetch models:', e.message);
+    }
+    
+    // 检查是否有生图模型
+    const providerHasImageModel = (providerId) => {
+        if (!modelsData) {
+            console.log('[RoutingExamples] No models data for:', providerId);
+            return false;
+        }
+        const providerModels = modelsData[providerId] || [];
+        console.log('[RoutingExamples] Checking provider:', providerId, 'models:', providerModels);
+        const result = hasImageModel(providerModels);
+        console.log('[RoutingExamples] Has image model:', result);
+        return result;
+    };
     
     // 图标映射
     const iconMap = {
@@ -553,6 +595,7 @@ function renderRoutingExamples(providerConfigs) {
                 <div class="protocol-tabs">
                     <button class="protocol-tab ${config.id === 'openai-codex-oauth' ? '' : 'active'}" data-protocol="openai" data-i18n="dashboard.routing.openai">${t('dashboard.routing.openai')}</button>
                     <button class="protocol-tab ${config.id === 'openai-codex-oauth' ? 'active' : ''}" data-protocol="claude" data-i18n="dashboard.routing.claude">${t('dashboard.routing.claude')}</button>
+                    ${providerHasImageModel(config.id) ? '<button class="protocol-tab" data-protocol="images">生图</button>' : ''}
                 </div>
                 
                 <div class="protocol-content ${config.id === 'openai-codex-oauth' ? '' : 'active'}" data-protocol="openai">
@@ -590,6 +633,26 @@ function renderRoutingExamples(providerConfigs) {
   }'</code></pre>
                     </div>
                 </div>
+
+                ${providerHasImageModel(config.id) ? `
+                <div class="protocol-content" data-protocol="images">
+                    <div class="endpoint-info">
+                        <label>端点</label>
+                        <code class="endpoint-path">${routeInfo.paths.images || '/' + config.id + '/v1/images/generations'}</code>
+                    </div>
+                    <div class="usage-example">
+                        <label>图片生成调用示例</label>
+                        <pre><code>curl -X POST ${hostname}/${config.id}/v1/images/generations \\
+  -H "Content-Type: application/json" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -d '{
+    "model": "Qwen-Image-2512-Lightning",
+    "prompt": "一只可爱的猫咪",
+    "n": 1,
+    "size": "1024x1024"
+  }'</code></pre>
+                    </div>
+                </div>` : ''}
             </div>
         `;
         

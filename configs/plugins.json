@@ -1,16 +1,20 @@
 {
   "plugins": {
+    "ai-monitor": {
+      "enabled": true,
+      "config": {}
+    },
     "api-potluck": {
-      "enabled": false,
-      "description": "API 大锅饭 - Key 管理和用量统计插件"
+      "enabled": true,
+      "config": {}
     },
     "default-auth": {
       "enabled": true,
-      "description": "默认 API Key 认证插件（内置）"
+      "config": {}
     },
     "model-usage-stats": {
-      "enabled": false,
-      "description": "模型用量统计插件"
+      "enabled": true,
+      "config": {}
     }
   }
 }

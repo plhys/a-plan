@@ -34,14 +34,6 @@
                 <div class="form-group pool-section">
                     <label data-i18n="config.modelProvider">模型提供商 (可多选)</label>
                     <div id="modelProvider" class="provider-tags">
-                        <button type="button" class="provider-tag" data-value="gemini-cli-oauth">
-                            <i class="fas fa-robot"></i>
-                            <span data-i18n="dashboard.routing.nodeName.gemini">Gemini CLI OAuth</span>
-                        </button>
-                        <button type="button" class="provider-tag" data-value="gemini-antigravity">
-                            <i class="fas fa-rocket"></i>
-                            <span data-i18n="dashboard.routing.nodeName.antigravity">Gemini Antigravity</span>
-                        </button>
                         <button type="button" class="provider-tag" data-value="openai-custom">
                             <i class="fas fa-brain"></i>
                             <span data-i18n="dashboard.routing.nodeName.openai">OpenAI Custom</span>
@@ -50,22 +42,9 @@
                             <i class="fas fa-comment-dots"></i>
                             <span data-i18n="dashboard.routing.nodeName.claude">Claude Custom</span>
                         </button>
-                        <button type="button" class="provider-tag" data-value="claude-kiro-oauth">
-                            <i class="fas fa-key"></i>
-                            <span data-i18n="dashboard.routing.nodeName.kiro">Claude Kiro OAuth</span>
-                        </button>
-                        <button type="button" class="provider-tag" data-value="openai-qwen-oauth">
-                            <i class="fas fa-cloud"></i>
-                            <span data-i18n="dashboard.routing.nodeName.qwen">Qwen OAuth</span>
-                        </button>
                         <button type="button" class="provider-tag" data-value="openaiResponses-custom">
                             <i class="fas fa-reply"></i>
                             <span>OpenAI Responses</span>
-                        </button>
-
-                        <button type="button" class="provider-tag" data-value="openai-codex-oauth">
-                            <i class="fas fa-code"></i>
-                            <span data-i18n="dashboard.routing.nodeName.codex">OpenAI Codex OAuth</span>
                         </button>
                         <button type="button" class="provider-tag" data-value="grok-custom">
                             <i class="fas fa-search"></i>
@@ -87,14 +66,6 @@
                 <div class="form-group pool-section">
                     <label data-i18n="config.proxy.enabledProviders">启用代理的提供商</label>
                     <div id="proxyProviders" class="provider-tags">
-                        <button type="button" class="provider-tag" data-value="gemini-cli-oauth">
-                            <i class="fas fa-robot"></i>
-                            <span>Gemini CLI OAuth</span>
-                        </button>
-                        <button type="button" class="provider-tag" data-value="gemini-antigravity">
-                            <i class="fas fa-rocket"></i>
-                            <span>Gemini Antigravity</span>
-                        </button>
                         <button type="button" class="provider-tag" data-value="openai-custom">
                             <i class="fas fa-brain"></i>
                             <span>OpenAI Custom</span>
@@ -103,22 +74,9 @@
                             <i class="fas fa-comment-dots"></i>
                             <span>Claude Custom</span>
                         </button>
-                        <button type="button" class="provider-tag" data-value="claude-kiro-oauth">
-                            <i class="fas fa-key"></i>
-                            <span>Claude Kiro OAuth</span>
-                        </button>
-                        <button type="button" class="provider-tag" data-value="openai-qwen-oauth">
-                            <i class="fas fa-cloud"></i>
-                            <span>Qwen OAuth</span>
-                        </button>
                         <button type="button" class="provider-tag" data-value="openaiResponses-custom">
                             <i class="fas fa-reply"></i>
                             <span>OpenAI Responses</span>
-                        </button>
-
-                        <button type="button" class="provider-tag" data-value="openai-codex-oauth">
-                            <i class="fas fa-code"></i>
-                            <span>OpenAI Codex OAuth</span>
                         </button>
                         <button type="button" class="provider-tag" data-value="grok-custom">
                             <i class="fas fa-search"></i>
@@ -199,28 +157,7 @@
                 </div>
             </div>
 
-            <!-- OAuth 与令牌 -->
-            <div class="config-group-section">
-                <h3 data-i18n="config.oauth.title"><i class="fas fa-key"></i> OAuth & 令牌</h3>
-                <div class="config-row">
-                    <div class="form-group">
-                        <label for="cronNearMinutes" data-i18n="config.advanced.cronInterval">令牌刷新间隔(分钟)</label>
-                        <input type="number" id="cronNearMinutes" class="form-control" min="1" max="60" value="1">
-                    </div>
-                     <div class="form-group">
-                        <label data-i18n="config.advanced.cronEnabled">启用自动刷新 (需重启)</label>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="cronRefreshToken">
-                            <span class="toggle-slider"></span>
-                        </label>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="loginExpiry" data-i18n="config.advanced.loginExpiry">登录过期时间(秒)</label>
-                    <input type="number" id="loginExpiry" class="form-control" min="60" value="3600">
-                    <small class="form-text" data-i18n="config.advanced.loginExpiryNote">管理后台登录后的 Token 有效期，默认 3600 秒 (1小时)</small>
-                </div>
-            </div>
+            
 
             <!-- 定时健康检查 -->
             <div class="config-group-section">

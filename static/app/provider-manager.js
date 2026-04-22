@@ -671,29 +671,8 @@ async function openProviderManager(providerType, searchTerm = '') {
  * @returns {string} 授权按钮HTML
  */
 function generateAuthButton(providerType) {
-    // 只为支持OAuth的提供商显示授权按钮
-    const oauthProviders = ['gemini-cli-oauth', 'gemini-antigravity', 'openai-qwen-oauth', 'claude-kiro-oauth', 'openai-iflow', 'openai-codex-oauth', 'deepseek-free'];
-
-    if (!oauthProviders.includes(providerType)) {
-        return '';
-    }
-
-    // Codex 提供商使用特殊图标
-    if (providerType === 'openai-codex-oauth') {
-        return `
-            <button class="generate-auth-btn" title="生成 Codex OAuth 授权链接">
-                <i class="fas fa-key"></i>
-                <span data-i18n="providers.auth.generate">${t('providers.auth.generate')}</span>
-            </button>
-        `;
-    }
-
-    return `
-        <button class="generate-auth-btn" title="生成OAuth授权链接">
-            <i class="fas fa-key"></i>
-            <span data-i18n="providers.auth.generate">${t('providers.auth.generate')}</span>
-        </button>
-    `;
+    // OAuth 授权功能已移除
+    return '';
 }
 
 /**
@@ -749,7 +728,7 @@ function showSimplePrompt(title, placeholder, callback) {
  * @returns {string} 按钮HTML
  */
 function generateAddGroupButton(providerType) {
-    const allowedTypes = ['claude-custom', 'openai-custom', 'openaiResponses-custom'];
+    const allowedTypes = ['openai-custom'];
     if (!allowedTypes.includes(providerType)) {
         return '';
     }
@@ -763,35 +742,13 @@ function generateAddGroupButton(providerType) {
 }
 
 /**
- * 处理生成授权链接
+ * 处理生成授权URL
  * @param {string} providerType - 提供商类型
  */
 async function handleGenerateAuthUrl(providerType) {
-    // 如果是 Kiro OAuth，先显示认证方式选择对话框
-    if (providerType === 'claude-kiro-oauth') {
-        showKiroAuthMethodSelector(providerType);
-        return;
-    }
-
-    // 如果是 Gemini OAuth 或 Antigravity，显示认证方式选择对话框
-    if (providerType === 'gemini-cli-oauth' || providerType === 'gemini-antigravity') {
-        showGeminiAuthMethodSelector(providerType);
-        return;
-    }
-
-    // 如果是 Codex OAuth，显示认证方式选择对话框
-    if (providerType === 'openai-codex-oauth') {
-        showCodexAuthMethodSelector(providerType);
-        return;
-    }
-
-    // 如果是 DeepSeek Free，显示一键捕获说明
-    if (providerType === 'deepseek-free') {
-        showDeepSeekAuthModal(providerType);
-        return;
-    }
-
-    await executeGenerateAuthUrl(providerType, {});
+    // OAuth 授权功能已移除
+    showToast(t('common.info'), 'OAuth 授权功能已移除', 'info');
+    return;
 }
 
 /**
@@ -900,73 +857,7 @@ function showDeepSeekAuthModal(providerType) {
  * @param {string} providerType - 提供商类型
  */
 function showCodexAuthMethodSelector(providerType) {
-    const modal = document.createElement('div');
-    modal.className = 'modal-overlay';
-    modal.style.display = 'flex';
-    
-    modal.innerHTML = `
-        <div class="modal-content" style="max-width: 500px;">
-            <div class="modal-header">
-                <h3><i class="fas fa-key"></i> <span data-i18n="oauth.gemini.selectMethod">${t('oauth.gemini.selectMethod')}</span></h3>
-                <button class="modal-close">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="auth-method-options" style="display: flex; flex-direction: column; gap: 12px;">
-                    <button class="auth-method-btn" data-method="oauth" style="display: flex; align-items: center; gap: 12px; padding: 16px; border: 2px solid #e0e0e0; border-radius: 8px; background: white; cursor: pointer; transition: all 0.2s;">
-                        <i class="fab fa-google" style="font-size: 24px; color: #4285f4;"></i>
-                        <div style="text-align: left;">
-                            <div style="font-weight: 600; color: #333;" data-i18n="oauth.gemini.oauth">${t('oauth.gemini.oauth')}</div>
-                            <div style="font-size: 12px; color: #666;" data-i18n="oauth.gemini.oauthDesc">${t('oauth.gemini.oauthDesc')}</div>
-                        </div>
-                    </button>
-                    <button class="auth-method-btn" data-method="batch-import" style="display: flex; align-items: center; gap: 12px; padding: 16px; border: 2px solid #e0e0e0; border-radius: 8px; background: white; cursor: pointer; transition: all 0.2s;">
-                        <i class="fas fa-file-import" style="font-size: 24px; color: #10b981;"></i>
-                        <div style="text-align: left;">
-                            <div style="font-weight: 600; color: #333;" data-i18n="oauth.codex.batchImport">${t('oauth.codex.batchImport')}</div>
-                            <div style="font-size: 12px; color: #666;" data-i18n="oauth.codex.batchImportDesc">${t('oauth.codex.batchImportDesc')}</div>
-                        </div>
-                    </button>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="modal-cancel" data-i18n="modal.provider.cancel">${t('modal.provider.cancel')}</button>
-            </div>
-        </div>
-    `;
-    
-    document.body.appendChild(modal);
-    
-    // 关闭按钮事件
-    const closeBtn = modal.querySelector('.modal-close');
-    const cancelBtn = modal.querySelector('.modal-cancel');
-    [closeBtn, cancelBtn].forEach(btn => {
-        btn.addEventListener('click', () => {
-            modal.remove();
-        });
-    });
-    
-    // 认证方式选择按钮事件
-    const methodBtns = modal.querySelectorAll('.auth-method-btn');
-    methodBtns.forEach(btn => {
-        btn.addEventListener('mouseenter', () => {
-            btn.style.borderColor = '#4285f4';
-            btn.style.background = '#f8faff';
-        });
-        btn.addEventListener('mouseleave', () => {
-            btn.style.borderColor = '#e0e0e0';
-            btn.style.background = 'white';
-        });
-        btn.addEventListener('click', async () => {
-            const method = btn.dataset.method;
-            modal.remove();
-            
-            if (method === 'batch-import') {
-                showCodexBatchImportModal(providerType);
-            } else {
-                await executeGenerateAuthUrl(providerType, {});
-            }
-        });
-    });
+    showToast(t('common.info'), 'OAuth 授权功能已移除', 'info');
 }
 
 /**
@@ -974,46 +865,31 @@ function showCodexAuthMethodSelector(providerType) {
  * @param {string} providerType - 提供商类型
  */
 function showCodexBatchImportModal(providerType) {
-    const modal = document.createElement('div');
-    modal.className = 'modal-overlay';
-    modal.style.display = 'flex';
-    
-    modal.innerHTML = `
-        <div class="modal-content" style="max-width: 600px;">
-            <div class="modal-header">
-                <h3><i class="fas fa-file-import"></i> <span data-i18n="oauth.codex.batchImport">${t('oauth.codex.batchImport')}</span></h3>
-                <button class="modal-close">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="batch-import-instructions" style="margin-bottom: 16px; padding: 12px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px;">
-                    <p style="margin: 0; font-size: 14px; color: #1e40af;">
-                        <i class="fas fa-info-circle"></i>
-                        <span data-i18n="oauth.codex.importInstructions">${t('oauth.codex.importInstructions')}</span>
-                    </p>
-                </div>
-                <div class="form-group">
-                    <label for="batchCodexTokens" style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151;">
-                        <span data-i18n="oauth.codex.tokensLabel">${t('oauth.codex.tokensLabel')}</span>
-                    </label>
-                    <textarea 
-                        id="batchCodexTokens" 
-                        rows="10" 
-                        style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-family: monospace; font-size: 13px; resize: vertical;"
-                        placeholder='${t('oauth.codex.tokensPlaceholder')}'
-                        data-i18n-placeholder="oauth.codex.tokensPlaceholder"
-                    ></textarea>
-                </div>
-                <div class="form-group" style="margin-top: 12px; margin-bottom: 16px;">
-                    <details style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px;">
-                        <summary style="padding: 12px; cursor: pointer; font-weight: 600; color: #374151; user-select: none;">
-                            <i class="fas fa-code" style="color: #4285f4; margin-right: 8px;"></i>
-                            <span data-i18n="oauth.codex.jsonExample">${t('oauth.codex.jsonExample')}</span>
-                        </summary>
-                        <div style="padding: 12px; background: #1f2937; border-radius: 0 0 8px 8px;">
-                            <div style="color: #10b981; font-family: monospace; font-size: 12px;">
-                                <div style="color: #9ca3af; margin-bottom: 8px;">// 单个凭据导入示例：</div>
-                                <pre style="margin: 0; white-space: pre; overflow-x: auto;">{
-  "access_token": "eyJhbG...",
+    showToast(t('common.info'), 'OAuth 授权功能已移除', 'info');
+}
+
+/**
+ * 显示 Kiro OAuth 认证方式选择对话框
+ * @param {string} providerType - 提供商类型
+ */
+function showKiroAuthMethodSelector(providerType) {
+    showToast(t('common.info'), 'OAuth 授权功能已移除', 'info');
+}
+
+/**
+ * 显示 Gemini OAuth 认证方式选择对话框
+ * @param {string} providerType - 提供商类型
+ */
+function showGeminiAuthMethodSelector(providerType) {
+    showToast(t('common.info'), 'OAuth 授权功能已移除', 'info');
+}
+
+/**
+ * 显示 Qwen OAuth 认证方式选择对话框
+ */
+
+/**
+ * 获取提供商的授权文件路径
   "id_token": "eyJhbG...",
   "refresh_token": "...",
   "token_type": "Bearer",
@@ -1263,108 +1139,11 @@ function showCodexBatchImportModal(providerType) {
 }
 
 /**
- * 显示 Kiro OAuth 认证方式选择对话框
+ * 执行生成认证 URL 请求
  * @param {string} providerType - 提供商类型
+ * @param {Object} options - 选项
  */
-function showKiroAuthMethodSelector(providerType) {
-    const modal = document.createElement('div');
-    modal.className = 'modal-overlay';
-    modal.style.display = 'flex';
-    
-    modal.innerHTML = `
-        <div class="modal-content" style="max-width: 550px;">
-            <div class="modal-header">
-                <h3><i class="fas fa-key"></i> <span data-i18n="oauth.kiro.selectMethod">${t('oauth.kiro.selectMethod')}</span></h3>
-                <button class="modal-close">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="auth-method-options" style="display: flex; flex-direction: column; gap: 12px;">
-                    <!-- <button class="auth-method-btn" data-method="google" style="display: flex; align-items: center; gap: 12px; padding: 16px; border: 2px solid #e0e0e0; border-radius: 8px; background: white; cursor: pointer; transition: all 0.2s;">
-                        <i class="fab fa-google" style="font-size: 24px; color: #4285f4;"></i>
-                        <div style="text-align: left;">
-                            <div style="font-weight: 600; color: #333;" data-i18n="oauth.kiro.google">${t('oauth.kiro.google')}</div>
-                            <div style="font-size: 12px; color: #666;" data-i18n="oauth.kiro.googleDesc">${t('oauth.kiro.googleDesc')}</div>
-                        </div>
-                    </button>
-                    <button class="auth-method-btn" data-method="github" style="display: flex; align-items: center; gap: 12px; padding: 16px; border: 2px solid #e0e0e0; border-radius: 8px; background: white; cursor: pointer; transition: all 0.2s;">
-                        <i class="fab fa-github" style="font-size: 24px; color: #333;"></i>
-                        <div style="text-align: left;">
-                            <div style="font-weight: 600; color: #333;" data-i18n="oauth.kiro.github">${t('oauth.kiro.github')}</div>
-                            <div style="font-size: 12px; color: #666;" data-i18n="oauth.kiro.githubDesc">${t('oauth.kiro.githubDesc')}</div>
-                        </div>
-                    </button> -->
-                    <button class="auth-method-btn" data-method="builder-id" style="display: flex; align-items: center; gap: 12px; padding: 16px; border: 2px solid #e0e0e0; border-radius: 8px; background: white; cursor: pointer; transition: all 0.2s;">
-                        <i class="fab fa-aws" style="font-size: 24px; color: #ff9900;"></i>
-                        <div style="text-align: left;">
-                            <div style="font-weight: 600; color: #333;" data-i18n="oauth.kiro.awsBuilder">${t('oauth.kiro.awsBuilder')}</div>
-                            <div style="font-size: 12px; color: #666;" data-i18n="oauth.kiro.awsBuilderDesc">${t('oauth.kiro.awsBuilderDesc')}</div>
-                        </div>
-                    </button>
-                    <button class="auth-method-btn" data-method="aws-import" style="display: flex; align-items: center; gap: 12px; padding: 16px; border: 2px solid #e0e0e0; border-radius: 8px; background: white; cursor: pointer; transition: all 0.2s;">
-                        <i class="fas fa-cloud-upload-alt" style="font-size: 24px; color: #ff9900;"></i>
-                        <div style="text-align: left;">
-                            <div style="font-weight: 600; color: #333;" data-i18n="oauth.kiro.awsImport">${t('oauth.kiro.awsImport')}</div>
-                            <div style="font-size: 12px; color: #666;" data-i18n="oauth.kiro.awsImportDesc">${t('oauth.kiro.awsImportDesc')}</div>
-                        </div>
-                    </button>
-                    <button class="auth-method-btn" data-method="batch-import" style="display: flex; align-items: center; gap: 12px; padding: 16px; border: 2px solid #e0e0e0; border-radius: 8px; background: white; cursor: pointer; transition: all 0.2s;">
-                        <i class="fas fa-file-import" style="font-size: 24px; color: #10b981;"></i>
-                        <div style="text-align: left;">
-                            <div style="font-weight: 600; color: #333;" data-i18n="oauth.kiro.batchImport">${t('oauth.kiro.batchImport')}</div>
-                            <div style="font-size: 12px; color: #666;" data-i18n="oauth.kiro.batchImportDesc">${t('oauth.kiro.batchImportDesc')}</div>
-                        </div>
-                    </button>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="modal-cancel" data-i18n="modal.provider.cancel">${t('modal.provider.cancel')}</button>
-            </div>
-        </div>
-    `;
-    
-    document.body.appendChild(modal);
-    
-    // 关闭按钮事件
-    const closeBtn = modal.querySelector('.modal-close');
-    const cancelBtn = modal.querySelector('.modal-cancel');
-    [closeBtn, cancelBtn].forEach(btn => {
-        btn.addEventListener('click', () => {
-            modal.remove();
-        });
-    });
-    
-    // 认证方式选择按钮事件
-    const methodBtns = modal.querySelectorAll('.auth-method-btn');
-    methodBtns.forEach(btn => {
-        btn.addEventListener('mouseenter', () => {
-            btn.style.borderColor = '#00a67e';
-            btn.style.background = '#f8fffe';
-        });
-        btn.addEventListener('mouseleave', () => {
-            btn.style.borderColor = '#e0e0e0';
-            btn.style.background = 'white';
-        });
-        btn.addEventListener('click', async () => {
-            const method = btn.dataset.method;
-            modal.remove();
-            
-            if (method === 'batch-import') {
-                showKiroBatchImportModal();
-            } else if (method === 'aws-import') {
-                showKiroAwsImportModal();
-            } else {
-                await executeGenerateAuthUrl(providerType, { method });
-            }
-        });
-    });
-}
-
-/**
- * 显示 Gemini OAuth 认证方式选择对话框
- * @param {string} providerType - 提供商类型
- */
-function showGeminiAuthMethodSelector(providerType) {
-    const modal = document.createElement('div');
+async function executeGenerateAuthUrl(providerType, options) {
     modal.className = 'modal-overlay';
     modal.style.display = 'flex';
     
@@ -2845,70 +2624,13 @@ function showKiroAwsImportModal() {
 }
 
 /**
- * 执行生成授权链接
- * @param {string} providerType - 提供商类型
- * @param {Object} extraOptions - 额外选项
- */
-async function executeGenerateAuthUrl(providerType, extraOptions = {}) {
-    try {
-        showToast(t('common.info'), t('modal.provider.auth.initializing'), 'info');
-        
-        // 使用 fileUploadHandler 中的 getProviderKey 获取目录名称
-        const providerDir = fileUploadHandler.getProviderKey(providerType);
-
-        const response = await window.apiClient.post(
-            `/providers/${encodeURIComponent(providerType)}/generate-auth-url`,
-            {
-                saveToConfigs: true,
-                providerDir: providerDir,
-                ...extraOptions
-            }
-        );
-        
-        if (response.success && response.authUrl) {
-            // 如果提供了 targetInputId，设置成功监听器
-            if (extraOptions.targetInputId) {
-                const targetInputId = extraOptions.targetInputId;
-                const handleSuccess = (e) => {
-                    const data = e.detail;
-                    if (data.provider === providerType && data.relativePath) {
-                        const input = document.getElementById(targetInputId);
-                        if (input) {
-                            input.value = data.relativePath;
-                            input.dispatchEvent(new Event('input', { bubbles: true }));
-                            showToast(t('common.success'), t('modal.provider.auth.success'), 'success');
-                        }
-                        window.removeEventListener('oauth_success_event', handleSuccess);
-                    }
-                };
-                window.addEventListener('oauth_success_event', handleSuccess);
-            }
-
-            // 显示授权信息模态框
-            showAuthModal(response.authUrl, response.authInfo);
-        } else {
-            showToast(t('common.error'), t('modal.provider.auth.failed'), 'error');
-        }
-    } catch (error) {
-        console.error('生成授权链接失败:', error);
-        showToast(t('common.error'), t('modal.provider.auth.failed') + `: ${error.message}`, 'error');
-    }
-}
-
-/**
  * 获取提供商的授权文件路径
  * @param {string} provider - 提供商类型
  * @returns {string} 授权文件路径
  */
 function getAuthFilePath(provider) {
-    const authFilePaths = {
-        'gemini-cli-oauth': '~/.gemini/oauth_creds.json',
-        'gemini-antigravity': '~/.antigravity/oauth_creds.json',
-        'openai-qwen-oauth': '~/.qwen/oauth_creds.json',
-        'claude-kiro-oauth': '~/.aws/sso/cache/kiro-auth-token.json',
-        'openai-iflow': '~/.iflow/oauth_creds.json'
-    };
-    return authFilePaths[provider] || (getCurrentLanguage() === 'en-US' ? 'Unknown Path' : '未知路径');
+    // OAuth 授权功能已移除
+    return getCurrentLanguage() === 'en-US' ? 'OAuth not supported' : 'OAuth 授权功能已移除';
 }
 
 /**
@@ -2917,23 +2639,41 @@ function getAuthFilePath(provider) {
  * @param {Object} authInfo - 授权信息
  */
 function showAuthModal(authUrl, authInfo) {
+    // OAuth 授权功能已移除
+    showToast(t('common.info'), 'OAuth 授权功能已移除', 'info');
+}
+
+/**
+ * 显示需要重启的提示模态框
+ * @param {string} version - 更新到的版本号
+ */
+function showRestartRequiredModal(version) {
     const modal = document.createElement('div');
-    modal.className = 'modal-overlay';
+    modal.className = 'modal-overlay restart-required-modal';
     modal.style.display = 'flex';
     
-    // 获取授权文件路径
-    const authFilePath = getAuthFilePath(authInfo.provider);
+    modal.innerHTML = `
+        <div class="modal-content restart-modal-content" style="max-width: 420px;">
+            <div class="modal-header restart-modal-header">
+                <h3><i class="fas fa-check-circle" style="color: #10b981;"></i> <span data-i18n="dashboard.update.restartTitle">${t('dashboard.update.restartTitle')}</span></h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body" style="text-align: center; padding: 20px;">
+                <p style="font-size: 1rem; color: #374151; margin: 0;" data-i18n="dashboard.update.restartMsg" data-i18n-params='{"version":"${version}"}'>${t('dashboard.update.restartMsg', { version })}</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="location.reload()">
+                    <i class="fas fa-sync"></i> <span data-i18n="common.reload">${t('common.reload')}</span>
+                </button>
+            </div>
+        </div>
+    `;
     
-    // 获取需要开放的端口号（从 authInfo 或当前页面 URL）
-    const requiredPort = authInfo.callbackPort || authInfo.port || window.location.port || '3000';
-    const isDeviceFlow = authInfo.provider === 'openai-qwen-oauth' || (authInfo.provider === 'claude-kiro-oauth' && authInfo.authMethod === 'builder-id');
+    document.body.appendChild(modal);
+}
 
-    let instructionsHtml = '';
-    if (authInfo.provider === 'openai-qwen-oauth') {
-        instructionsHtml = `
-            <div class="auth-instructions">
-                <h4 data-i18n="oauth.modal.steps">${t('oauth.modal.steps')}</h4>
-                <ol>
+/**
+ * 检查更新
                     <li data-i18n="oauth.modal.step1">${t('oauth.modal.step1')}</li>
                     <li data-i18n="oauth.modal.step2.qwen">${t('oauth.modal.step2.qwen')}</li>
                     <li data-i18n="oauth.modal.step3">${t('oauth.modal.step3')}</li>
@@ -3119,201 +2859,8 @@ function showAuthModal(authUrl, authInfo) {
         };
     }
 
-    // 复制链接按钮
-    const copyBtn = modal.querySelector('.copy-btn');
-    copyBtn.addEventListener('click', () => {
-        const input = modal.querySelector('.auth-url-input');
-        input.select();
-        document.execCommand('copy');
-        showToast(t('common.success'), t('oauth.success.msg'), 'success');
-    });
-    
-    // 在浏览器中打开按钮
-    const openBtn = modal.querySelector('.open-auth-btn');
-    openBtn.addEventListener('click', () => {
-        // 使用子窗口打开，以便监听 URL 变化
-        const width = 600;
-        const height = 700;
-        const left = (window.screen.width - width) / 2 + 600;
-        const top = (window.screen.height - height) / 2;
-        
-        const authWindow = window.open(
-            authUrl,
-            'OAuthAuthWindow',
-            `width=${width},height=${height},left=${left},top=${top},status=no,resizable=yes,scrollbars=yes`
-        );
-
-        let pollTimer = null;
-        const cleanupAuthListeners = () => {
-            if (pollTimer) {
-                clearInterval(pollTimer);
-                pollTimer = null;
-            }
-            window.removeEventListener('oauth_success_event', handleOAuthSuccess);
-            window.removeEventListener('message', handlePopupMessage);
-        };
-
-        // 监听 OAuth 成功事件，自动关闭窗口和模态框
-        const handleOAuthSuccess = () => {
-            if (authWindow && !authWindow.closed) {
-                authWindow.close();
-            }
-            modal.remove();
-            cleanupAuthListeners();
-            
-            // 授权成功后刷新配置和提供商列表
-            loadProviders();
-            loadConfigList();
-        };
-
-        // 回调页主动 postMessage 时，优先使用父页面关闭子窗口
-        const handlePopupMessage = (event) => {
-            if (event.origin !== window.location.origin) {
-                return;
-            }
-
-            const data = event.data;
-            if (!data || data.type !== 'oauth-popup-complete') {
-                return;
-            }
-
-            if (data.provider && data.provider !== authInfo.provider) {
-                return;
-            }
-
-            handleOAuthSuccess();
-        };
-
-        window.addEventListener('oauth_success_event', handleOAuthSuccess);
-        window.addEventListener('message', handlePopupMessage);
-        
-        if (authWindow) {
-            showToast(t('common.info'), t('oauth.window.opened'), 'info');
-            
-            // 添加手动输入回调 URL 的 UI
-            const urlSection = modal.querySelector('.auth-url-section');
-            if (urlSection && !modal.querySelector('.manual-callback-section')) {
-            const manualInputHtml = `
-                <div class="manual-callback-section" style="margin-top: 20px; padding: 15px; background: #fffbeb; border: 1px solid #fef3c7; border-radius: 8px;">
-                    <h4 style="color: #92400e; margin-bottom: 8px;"><i class="fas fa-exclamation-circle"></i> <span data-i18n="oauth.manual.title">${t('oauth.manual.title')}</span></h4>
-                    <p style="font-size: 0.875rem; color: #b45309; margin-bottom: 10px;" data-i18n-html="oauth.manual.desc">${t('oauth.manual.desc')}</p>
-                    <div class="auth-url-container" style="display: flex; gap: 5px;">
-                        <input type="text" class="manual-callback-input" data-i18n="oauth.manual.placeholder" placeholder="粘贴回调 URL (包含 code=...)" style="flex: 1; padding: 8px; border: 1px solid #fcd34d; border-radius: 4px; background: white; color: black;">
-                        <button class="btn btn-success apply-callback-btn" style="padding: 8px 15px; white-space: nowrap; background: #059669; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                            <i class="fas fa-check"></i> <span data-i18n="oauth.manual.submit">${t('oauth.manual.submit')}</span>
-                        </button>
-                    </div>
-                </div>
-            `;
-            urlSection.insertAdjacentHTML('afterend', manualInputHtml);
-            }
-
-            const manualInput = modal.querySelector('.manual-callback-input');
-            const applyBtn = modal.querySelector('.apply-callback-btn');
-
-            // 处理回调 URL 的核心逻辑
-            const processCallback = (urlStr, isManualInput = false) => {
-                try {
-                    // 尝试清理 URL（有些用户可能会复制多余的文字）
-                    const cleanUrlStr = urlStr.trim().match(/https?:\/\/[^\s]+/)?.[0] || urlStr.trim();
-                    const url = new URL(cleanUrlStr);
-                    
-                    if (url.searchParams.has('code') || url.searchParams.has('token')) {
-                        if (pollTimer) {
-                            clearInterval(pollTimer);
-                            pollTimer = null;
-                        }
-                        // 构造本地可处理的 URL，只修改 hostname，保持原始 URL 的端口号不变
-                        const localUrl = new URL(url.href);
-                        localUrl.hostname = window.location.hostname;
-                        localUrl.protocol = window.location.protocol;
-                        
-                        showToast(t('common.info'), t('oauth.processing'), 'info');
-                        
-                        // 如果是手动输入，直接通过 fetch 请求处理，然后关闭子窗口
-                        if (isManualInput) {
-                            // 通过服务端API处理手动输入的回调URL
-                            window.apiClient.post('/oauth/manual-callback', {
-                                provider: authInfo.provider,
-                                callbackUrl: url.href, //使用localhost访问
-                                authMethod: authInfo.authMethod
-                            })
-                                .then(response => {
-                                    if (response.success) {
-                                        console.log('OAuth 回调处理成功');
-                                        handleOAuthSuccess();
-                                        showToast(t('common.success'), t('oauth.success.msg'), 'success');
-                                    } else {
-                                        console.error('OAuth 回调处理失败:', response.error);
-                                        showToast(t('common.error'), response.error || t('oauth.error.process'), 'error');
-                                    }
-                                })
-                                .catch(err => {
-                                    console.error('OAuth 回调请求失败:', err);
-                                    showToast(t('common.error'), t('oauth.error.process'), 'error');
-                                });
-                        } else {
-                            // 自动监听模式：优先在子窗口中跳转（如果没关）
-                            if (authWindow && !authWindow.closed) {
-                                authWindow.location.href = localUrl.href;
-                            } else {
-                                // 备选方案：通过 fetch 请求
-                                // 通过 fetch 请求本地服务器处理回调
-                                fetch(localUrl.href)
-                                    .then(response => {
-                                        if (response.ok) {
-                                            console.log('OAuth 回调处理成功');
-                                        } else {
-                                            console.error('OAuth 回调处理失败:', response.status);
-                                        }
-                                    })
-                                    .catch(err => {
-                                        console.error('OAuth 回调请求失败:', err);
-                                    });
-                            }
-                        }
-                        
-                    } else {
-                        showToast(t('common.warning'), t('oauth.invalid.url'), 'warning');
-                    }
-                } catch (err) {
-                    console.error('处理回调失败:', err);
-                    showToast(t('common.error'), t('oauth.error.format'), 'error');
-                }
-            };
-
-            applyBtn.addEventListener('click', () => {
-                processCallback(manualInput.value, true);
-            });
-
-            // 启动定时器轮询子窗口 URL
-            pollTimer = setInterval(() => {
-                try {
-                    if (authWindow.closed) {
-                        cleanupAuthListeners();
-                        return;
-                    }
-                    // 如果能读到说明回到了同域
-                    const currentUrl = authWindow.location.href;
-                    if (currentUrl && (currentUrl.includes('code=') || currentUrl.includes('token='))) {
-                        processCallback(currentUrl);
-                    }
-                } catch (e) {
-                    // 跨域受限是正常的
-                }
-            }, 1000);
-        } else {
-            showToast(t('common.error'), t('oauth.window.blocked'), 'error');
-        }
-    });
-    
-}
-
 /**
- * 显示需要重启的提示模态框
- * @param {string} version - 更新到的版本号
- */
-function showRestartRequiredModal(version) {
+ * 检查更新
     const modal = document.createElement('div');
     modal.className = 'modal-overlay restart-required-modal';
     modal.style.display = 'flex';
@@ -3553,8 +3100,8 @@ function showAddProviderGroupModal(defaultBaseType = null) {
         // 1. 必须在后端支持的列表中
         const isSupported = cachedSupportedProviders.includes(config.id);
         
-        // 2. 限制只能添加特定类型的配置组 (Claude Custom, OpenAI Custom, OpenAI Responses)
-        const allowedTypes = ['claude-custom', 'openai-custom', 'openaiResponses-custom'];
+        // 2. 仅允许添加 OpenAI Custom
+        const allowedTypes = ['openai-custom'];
         const isAllowed = allowedTypes.includes(config.id);
         
         return isSupported && isAllowed;

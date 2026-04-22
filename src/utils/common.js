@@ -8,6 +8,7 @@ import { convertData, getOpenAIStreamChunkStop } from '../convert/convert.js';
 import { ProviderStrategyFactory } from './provider-strategies.js';
 import { getPluginManager } from '../core/plugin-manager.js';
 import { MODEL_PROTOCOL_PREFIX, MODEL_PROVIDER } from './constants.js';
+import { readRequestBody } from '../services/api-manager.js';
 
 // ==================== 网络错误处理 ====================
 
@@ -218,6 +219,7 @@ export const ENDPOINT_TYPE = {
     CLAUDE_MESSAGE: 'claude_message',
     OPENAI_MODEL_LIST: 'openai_model_list',
     GEMINI_MODEL_LIST: 'gemini_model_list',
+    OPENAI_IMAGES: 'openai_images',
 };
 
 export const FETCH_SYSTEM_PROMPT_FILE = path.join(process.cwd(), 'configs', 'fetch_system_prompt.txt');
@@ -1247,6 +1249,102 @@ function _extractModelAndStreamInfo(req, requestBody, fromProvider) {
 async function _applySystemPromptFromFile(config, requestBody, toProvider) {
     const strategy = ProviderStrategyFactory.getStrategy(getProtocolPrefix(toProvider));
     return strategy.applySystemPromptFromFile(config, requestBody);
+}
+
+/**
+ * Handle image generation requests (/v1/images/generations)
+ * Supports both text-to-image and image-to-image
+ */
+export async function handleImageGenerationRequest(req, res, CONFIG, providerPoolManager) {
+    const axios = (await import('axios')).default;
+    
+    let requestBody;
+    try {
+        const bodyStr = await readRequestBody(req);
+        requestBody = JSON.parse(bodyStr);
+    } catch (error) {
+        handleError(res, new Error('Failed to read request body'));
+        return;
+    }
+
+    const { model, prompt, n = 1, size = '1024x1024', image: inputImage } = requestBody;
+    
+    if (!model) {
+        handleError(res, new Error('Missing required parameter: model'));
+        return;
+    }
+    
+    if (!prompt && !inputImage) {
+        handleError(res, new Error('Missing required parameter: prompt or image'));
+        return;
+    }
+
+    try {
+        // Get provider from pool - try all available pools
+        const providerStatus = providerPoolManager.providerStatus;
+        let selectedProvider = null;
+        let providerType = null;
+        
+        // Find first available provider from any pool
+        for (const [type, pool] of Object.entries(providerStatus)) {
+            const available = pool.find(p => p.config.isHealthy && !p.config.isDisabled);
+            if (available) {
+                selectedProvider = available;
+                providerType = type;
+                break;
+            }
+        }
+        
+        // Fallback to first provider in first pool
+        if (!selectedProvider) {
+            const firstPool = Object.values(providerStatus)[0];
+            if (!firstPool || firstPool.length === 0) {
+                throw new Error('No available provider in any pool');
+            }
+            selectedProvider = firstPool[0];
+            providerType = Object.keys(providerStatus)[0];
+        }
+        
+        const providerConfig = selectedProvider.config;
+        
+        const baseURL = providerConfig.OPENAI_BASE_URL?.replace(/\/$/, '');
+        const apiKey = providerConfig.OPENAI_API_KEY;
+        
+        // Determine endpoint based on whether there's an input image
+        // baseURL already includes /v1, so we only add the remaining path
+        const isImageToImage = !!inputImage;
+        const endpoint = isImageToImage ? '/images/edits' : '/images/generations';
+        
+        // Build request payload
+        const payload = {
+            model,
+            prompt,
+            n,
+            size,
+            ...(isImageToImage && {
+                image: inputImage.image,
+                mask: inputImage.mask
+            })
+        };
+        
+        const response = await axios.post(`${baseURL}${endpoint}`, payload, {
+            headers: {
+                'Authorization': `Bearer ${apiKey}`,
+                'Content-Type': 'application/json'
+            },
+            timeout: 120000
+        });
+        
+        // Return OpenAI-compatible response
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(response.data));
+        
+        logger.info(`[Image Generation] ${isImageToImage ? 'Image-to-Image' : 'Text-to-Image'} generated ${response.data.data?.length || 0} images`);
+        
+    } catch (error) {
+        logger.error(`[Image Generation] Error: ${error.message}`);
+        handleError(res, error);
+    }
 }
 
 export async function _manageSystemPrompt(requestBody, provider) {

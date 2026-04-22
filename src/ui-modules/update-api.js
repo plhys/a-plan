@@ -6,28 +6,10 @@ import { exec } from 'child_process';
 import { promisify } from 'util';
 import axios from 'axios';
 import { CONFIG } from '../core/config-manager.js';
-import { parseProxyUrl } from '../utils/proxy-utils.js';
 import { getRequestBody } from '../utils/common.js';
 
 const execAsync = promisify(exec);
 const GITHUB_REPO = 'plhys/a-plan';
-
-function buildGitHubApiCandidates(repo) {
-    const apiPath = `repos/${repo}/tags`;
-    return [
-        {
-            name: 'github-direct',
-            url: `https://api.github.com/${apiPath}`
-        }
-    ];
-}
-
-/**
- * 获取更新检查使用的代理配置
- */
-function getUpdateProxyConfig() {
-    return null;
-}
 
 /**
  * 比较版本号

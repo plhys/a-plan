@@ -1097,51 +1097,19 @@ async function reloadConfig() {
  * @returns {Object|null} 提供商信息对象或null
  */
 function detectProviderFromPath(filePath) {
+    if (!filePath || typeof filePath !== 'string') {
+        return null;
+    }
+    
     const normalizedPath = filePath.replace(/\\/g, '/').toLowerCase();
     
-    // 定义目录到提供商的映射关系
+    // 定义目录到提供商的映射关系 - 仅保留 OpenAI Custom
     const providerMappings = [
         {
-            patterns: ['configs/kiro/', '/kiro/'],
-            providerType: 'claude-kiro-oauth',
-            displayName: 'Claude Kiro OAuth',
-            shortName: 'kiro-oauth'
-        },
-        {
-            patterns: ['configs/gemini/', '/gemini/', 'configs/gemini-cli/'],
-            providerType: 'gemini-cli-oauth',
-            displayName: 'Gemini CLI OAuth',
-            shortName: 'gemini-oauth'
-        },
-        {
-            patterns: ['configs/gemini-key/', '/gemini-key/', 'configs/gemini-api-key/'],
-            providerType: 'gemini-api-key',
-            displayName: 'Google AI Studio (API Key)',
-            shortName: 'gemini-key'
-        },
-        {
-            patterns: ['configs/qwen/', '/qwen/'],
-            providerType: 'openai-qwen-oauth',
-            displayName: 'Qwen OAuth',
-            shortName: 'qwen-oauth'
-        },
-        {
-            patterns: ['configs/antigravity/', '/antigravity/'],
-            providerType: 'gemini-antigravity',
-            displayName: 'Gemini Antigravity',
-            shortName: 'antigravity'
-        },
-        {
-            patterns: ['configs/codex/', '/codex/'],
-            providerType: 'openai-codex-oauth',
-            displayName: 'OpenAI Codex OAuth',
-            shortName: 'codex-oauth'
-        },
-        {
-            patterns: ['configs/iflow/', '/iflow/'],
-            providerType: 'openai-iflow',
-            displayName: 'OpenAI iFlow OAuth',
-            shortName: 'iflow-oauth'
+            patterns: ['configs/openai/', '/openai/'],
+            providerType: 'openai-custom',
+            displayName: 'OpenAI Custom',
+            shortName: 'openai'
         }
     ];
 

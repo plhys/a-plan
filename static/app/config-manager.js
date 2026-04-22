@@ -242,9 +242,6 @@ async function loadConfiguration() {
         const promptLogModeEl = document.getElementById('promptLogMode');
         const requestMaxRetriesEl = document.getElementById('requestMaxRetries');
         const requestBaseDelayEl = document.getElementById('requestBaseDelay');
-        const cronNearMinutesEl = document.getElementById('cronNearMinutes');
-        const cronRefreshTokenEl = document.getElementById('cronRefreshToken');
-        const loginExpiryEl = document.getElementById('loginExpiry');
         const providerPoolsFilePathEl = document.getElementById('providerPoolsFilePath');
 
         const maxErrorCountEl = document.getElementById('maxErrorCount');
@@ -264,9 +261,6 @@ async function loadConfiguration() {
         const credentialSwitchMaxRetriesEl = document.getElementById('credentialSwitchMaxRetries');
         if (credentialSwitchMaxRetriesEl) credentialSwitchMaxRetriesEl.value = data.CREDENTIAL_SWITCH_MAX_RETRIES || 5;
         
-        if (cronNearMinutesEl) cronNearMinutesEl.value = data.CRON_NEAR_MINUTES || 1;
-        if (cronRefreshTokenEl) cronRefreshTokenEl.checked = data.CRON_REFRESH_TOKEN || false;
-        if (loginExpiryEl) loginExpiryEl.value = data.LOGIN_EXPIRY || 3600;
         if (providerPoolsFilePathEl) providerPoolsFilePathEl.value = data.PROVIDER_POOLS_FILE_PATH || '';
         if (maxErrorCountEl) maxErrorCountEl.value = data.MAX_ERROR_COUNT || 10;
         if (warmupTargetEl) warmupTargetEl.value = data.WARMUP_TARGET || 0;
@@ -432,7 +426,7 @@ async function saveConfiguration() {
         REQUIRED_API_KEY: document.getElementById('apiKey')?.value || '',
         HOST: document.getElementById('host')?.value || '127.0.0.1',
         SERVER_PORT: parseInt(document.getElementById('port')?.value || 3000),
-        MODEL_PROVIDER: selectedProviders.length > 0 ? selectedProviders.join(',') : 'gemini-cli-oauth',
+        MODEL_PROVIDER: selectedProviders.length > 0 ? selectedProviders.join(',') : 'openai-custom',
         systemPrompt: document.getElementById('systemPrompt')?.value || '',
     };
 
@@ -460,9 +454,6 @@ async function saveConfiguration() {
     config.REQUEST_MAX_RETRIES = parseInt(document.getElementById('requestMaxRetries')?.value || 3);
     config.REQUEST_BASE_DELAY = parseInt(document.getElementById('requestBaseDelay')?.value || 1000);
     config.CREDENTIAL_SWITCH_MAX_RETRIES = parseInt(document.getElementById('credentialSwitchMaxRetries')?.value || 5);
-    config.CRON_NEAR_MINUTES = parseInt(document.getElementById('cronNearMinutes')?.value || 1);
-    config.CRON_REFRESH_TOKEN = document.getElementById('cronRefreshToken')?.checked || false;
-    config.LOGIN_EXPIRY = parseInt(document.getElementById('loginExpiry')?.value || 3600);
     config.PROVIDER_POOLS_FILE_PATH = document.getElementById('providerPoolsFilePath')?.value || '';
     config.MAX_ERROR_COUNT = parseInt(document.getElementById('maxErrorCount')?.value || 10);
     config.WARMUP_TARGET = parseInt(document.getElementById('warmupTarget')?.value || 0);

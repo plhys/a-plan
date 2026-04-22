@@ -46,14 +46,9 @@ export class ProviderPoolManager {
     // 默认健康检查模型配置
     // 键名必须与 MODEL_PROVIDER 常量值一致
     static DEFAULT_HEALTH_CHECK_MODELS = {
-        'gemini-cli-oauth': 'gemini-2.5-flash',
         'gemini-api-key': 'gemini-2.5-flash',
-        'gemini-antigravity': 'gemini-2.5-flash',
         'openai-custom': 'gpt-4o-mini',
         'claude-custom': 'claude-3-7-sonnet-20250219',
-        'claude-kiro-oauth': 'claude-haiku-4-5',
-        'openai-qwen-oauth': 'qwen3-coder-flash',
-        'openai-codex-oauth': 'gpt-5-codex-mini',
         'openaiResponses-custom': 'gpt-4o-mini',
         'forward-api': 'gpt-4o-mini',
         'nvidia-nim': 'meta/llama-3.1-70b-instruct',
@@ -143,51 +138,11 @@ export class ProviderPoolManager {
             for (const providerStatus of providers) {
                 const config = providerStatus.config;
                 
-                // 根据 providerType 确定配置文件路径字段名
-                let configPath = null;
-                if (providerType.startsWith('claude-kiro')) {
-                    configPath = config.KIRO_OAUTH_CREDS_FILE_PATH;
-                } else if (providerType.startsWith('gemini-cli')) {
-                    configPath = config.GEMINI_OAUTH_CREDS_FILE_PATH;
-                } else if (providerType.startsWith('gemini-antigravity')) {
-                    configPath = config.ANTIGRAVITY_OAUTH_CREDS_FILE_PATH;
-                } else if (providerType.startsWith('openai-qwen')) {
-                    configPath = config.QWEN_OAUTH_CREDS_FILE_PATH;
-                } else if (providerType.startsWith('openai-codex')) {
-                    configPath = config.CODEX_OAUTH_CREDS_FILE_PATH;
-                }
-                
-                // logger.info(`Checking node ${providerStatus.uuid} (${providerType}) expiry date... configPath: ${configPath}`);
                 // 排除禁用的节点（不健康节点也应允许尝试刷新以恢复健康）
                 if (config.isDisabled) continue;
 
-                if (configPath && fs.existsSync(configPath)) {
-                    try {
-                        const fileContent = fs.readFileSync(configPath, 'utf-8');
-                        const credData = JSON.parse(fileContent);
-                        const rawExpiryTime = credData.expiry_date ?? credData.expiry ?? credData.expires_at ?? credData.expiresAt;
-                        let expiryTime = null;
-                        if (typeof rawExpiryTime === 'number') {
-                            expiryTime = rawExpiryTime;
-                        } else if (typeof rawExpiryTime === 'string') {
-                            const parsedDate = Date.parse(rawExpiryTime);
-                            expiryTime = Number.isNaN(parsedDate) ? Number(rawExpiryTime) : parsedDate;
-                        }
-                        const nearExpiryMs = (this.globalConfig?.CRON_NEAR_MINUTES || 10) * 60 * 1000;
-                        if (!Number.isFinite(expiryTime)) {
-                            // 凭据文件缺少 expiry 字段，无法判断是否快过期，作为安全措施强制刷新
-                            this._log('warn', `Node ${providerStatus.uuid} (${providerType}) has no expiry field. Forcing refresh as safety measure...`);
-                            this._enqueueRefresh(providerType, providerStatus);
-                        } else if ((expiryTime - Date.now()) < nearExpiryMs) {
-                            this._log('warn', `Node ${providerStatus.uuid} (${providerType}) is near expiration. Enqueuing refresh...`);
-                            this._enqueueRefresh(providerType, providerStatus);
-                        }
-                    } catch (err) {
-                        this._log('error', `Failed to check expiry for node ${providerStatus.uuid}: ${err.message}`);
-                    }
-                } else {
-                    this._log('debug', `Node ${providerStatus.uuid} (${providerType}) has no valid config file path or file does not exist.`);
-                }
+                // 对于非 OAuth 提供商，跳过凭证文件检查
+                // 静态 API 密钥不需要刷新
             }
         }
     }
@@ -757,7 +712,6 @@ export class ProviderPoolManager {
                         providerConfig.errorCount = 0;
                         providerConfig.lastErrorTime = null;
                         providerConfig.lastErrorMessage = null;
-                        providerConfig.scheduledRecoveryTime = null;
                     } else if (existing) {
                         // 热重载：从旧状态中恢复统计数据，避免被配置文件中的旧数据覆盖
                         providerConfig.lastUsed = existing.config.lastUsed;
@@ -1655,14 +1609,7 @@ export class ProviderPoolManager {
                 provider.config.lastErrorMessage = errorMessage;
             }
 
-            // Set recovery time if provided
-            if (recoveryTime) {
-                const recoveryDate = recoveryTime instanceof Date ? recoveryTime : new Date(recoveryTime);
-                provider.config.scheduledRecoveryTime = recoveryDate.toISOString();
-                this._log('warn', `Marked provider as unhealthy with recovery time: ${providerConfig.uuid} for type ${providerType}. Recovery at: ${recoveryDate.toISOString()}. Reason: ${errorMessage || 'Quota exhausted'}`);
-            } else {
-                this._log('warn', `Marked provider as unhealthy: ${providerConfig.uuid} for type ${providerType}. Reason: ${errorMessage || 'Quota exhausted'}`);
-            }
+            this._log('warn', `Marked provider as unhealthy: ${providerConfig.uuid} for type ${providerType}. Reason: ${errorMessage || 'Quota exhausted'}`);
 
             this._debouncedSave(providerType);
         }
@@ -1866,23 +1813,7 @@ export class ProviderPoolManager {
             for (const providerStatus of providers) {
                 const config = providerStatus.config;
                 
-                // 检查是否有 scheduledRecoveryTime 且已到恢复时间
-                if (config.scheduledRecoveryTime && !config.isHealthy) {
-                    const recoveryTime = new Date(config.scheduledRecoveryTime);
-                    if (now >= recoveryTime) {
-                        this._log('info', `Auto-recovering provider ${config.uuid} (${type}). Scheduled recovery time reached: ${recoveryTime.toISOString()}`);
-                        
-                        // 恢复健康状态
-                        config.isHealthy = true;
-                        config.errorCount = 0;
-                        config.lastErrorTime = null;
-                        config.lastErrorMessage = null;
-                        config.scheduledRecoveryTime = null; // 清除恢复时间
-                        
-                        // 保存更改
-                        this._debouncedSave(type);
-                    }
-                } else if (!config.isHealthy && config.lastErrorTime) {
+                if (!config.isHealthy && config.lastErrorTime) {
                     // [极客模式] 自动微复活：如果是不健康状态，且距离上次错误已超过 2 分钟，尝试恢复一次
                     const lastError = new Date(config.lastErrorTime);
                     const recoveryInterval = (this.globalConfig?.AUTO_RECOVERY_INTERVAL_MS || 120000); // 默认 2 分钟隔离期
@@ -1934,15 +1865,6 @@ export class ProviderPoolManager {
             
             for (const providerStatus of this.providerStatus[providerType]) {
                 const providerConfig = providerStatus.config;
-
-                // 如果提供商有 scheduledRecoveryTime 且未到恢复时间，跳过健康检查
-                if (providerConfig.scheduledRecoveryTime && !providerConfig.isHealthy) {
-                    const recoveryTime = new Date(providerConfig.scheduledRecoveryTime);
-                    if (now < recoveryTime) {
-                        this._log('debug', `Skipping health check for ${providerConfig.uuid} (${providerType}). Waiting for scheduled recovery at ${recoveryTime.toISOString()}`);
-                        continue;
-                    }
-                }
 
                 // Only attempt to health check unhealthy providers after a certain interval
                 if (!providerStatus.config.isHealthy && providerStatus.config.lastErrorTime &&
@@ -2121,24 +2043,8 @@ export class ProviderPoolManager {
             });
             return requests;
         }
-
-        // Codex OAuth 健康检查先构造标准 OpenAI messages，
-        // 再在这里显式转换为 Codex 所需的 responses input 格式
-        if (this._getBaseProviderType(providerType) === MODEL_PROVIDER.CODEX_API) {
-            const openAICompatibleRequest = {
-                model: modelName,
-                messages: [baseMessage]
-            };
-            requests.push(convertData(
-                openAICompatibleRequest,
-                'request',
-                MODEL_PROVIDER.OPENAI_CUSTOM,
-                MODEL_PROVIDER.CODEX_API
-            ));
-            return requests;
-        }
         
-        // 其他提供商（OpenAI、Claude、Qwen）使用标准 messages 格式
+        // 其他提供商（OpenAI、Claude、Gemini等）使用标准 messages 格式
         requests.push({
             messages: [baseMessage],
             model: modelName
@@ -2181,8 +2087,17 @@ export class ProviderPoolManager {
      */
     async _checkProviderHealth(providerType, providerConfig) {
         // 确定健康检查使用的模型名称
+        // 优先级：checkModelName > supportedModels[0] > DEFAULT_HEALTH_CHECK_MODELS
         const baseProviderType = this._getBaseProviderType(providerType);
+        
+        // 1. 优先使用 checkModelName（用户手动指定）
+        // 2. 其次使用 supportedModels 的第一个模型（自动选择）
+        // 3. 最后使用 DEFAULT_HEALTH_CHECK_MODELS（硬编码默认值）
+        const supportedModels = providerConfig.supportedModels || [];
+        const firstSupportedModel = supportedModels.length > 0 ? supportedModels[0] : null;
+        
         const modelName = providerConfig.checkModelName ||
+                        firstSupportedModel ||
                         ProviderPoolManager.DEFAULT_HEALTH_CHECK_MODELS[providerType] ||
                         ProviderPoolManager.DEFAULT_HEALTH_CHECK_MODELS[baseProviderType];
 

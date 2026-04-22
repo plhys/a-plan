@@ -20,7 +20,6 @@ import logger from '../utils/logger.js';
  */
 export async function handleAPIRequests(method, path, req, res, currentConfig, apiService, providerPoolManager, promptLogFilename) {
 
-
     // Route model list requests
     if (method === 'GET') {
         if (path === '/v1/models') {
@@ -41,6 +40,11 @@ export async function handleAPIRequests(method, path, req, res, currentConfig, a
         }
         if (path === '/v1/responses') {
             await handleContentGenerationRequest(req, res, apiService, ENDPOINT_TYPE.OPENAI_RESPONSES, currentConfig, promptLogFilename, providerPoolManager, currentConfig.uuid, path);
+            return true;
+        }
+        if (path === '/v1/images/generations') {
+            const { handleImageGenerationRequest } = await import('../utils/common.js');
+            await handleImageGenerationRequest(req, res, currentConfig, providerPoolManager);
             return true;
         }
         const geminiUrlPattern = new RegExp(`/v1beta/models/(.+?):(${API_ACTIONS.GENERATE_CONTENT}|${API_ACTIONS.STREAM_GENERATE_CONTENT})`);

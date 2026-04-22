@@ -51,6 +51,11 @@ export class OpenAIApiService {
             },
         };
         
+        // NLB 不支持 Brotli 压缩，需要禁用压缩
+        if (this.baseUrl && this.baseUrl.includes('.nlb.aliyuncs')) {
+            axiosConfig.headers['Accept-Encoding'] = 'identity';
+        }
+        
         // 禁用系统代理以避免HTTPS代理错误
         if (!this.useSystemProxy) {
             axiosConfig.proxy = false;

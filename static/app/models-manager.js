@@ -182,17 +182,7 @@ function getProviderDisplayName(providerType) {
     }
 
     const displayNames = {
-        'gemini-cli-oauth': 'Gemini CLI (OAuth)',
-        'gemini-api-key': 'Google AI Studio (API Key)',
-        'gemini-antigravity': 'Gemini Antigravity',
-        'claude-custom': 'Claude Custom',
-        'claude-kiro-oauth': 'Claude Kiro (OAuth)',
-        'openai-custom': 'OpenAI Custom',
-        'openaiResponses-custom': 'OpenAI Responses Custom',
-        'openai-qwen-oauth': 'Qwen (OAuth)',
-        'openai-iflow': 'iFlow',
-        'openai-codex-oauth': 'OpenAI Codex (OAuth)',
-        'grok-custom': 'Grok Reverse'
+        'openai-custom': 'OpenAI Custom'
     };
 
     if (displayNames[providerType]) {

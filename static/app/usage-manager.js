@@ -9,7 +9,6 @@ import { t, getCurrentLanguage } from './i18n.js';
  * 这些提供商只显示模型名称和重置时间，不显示用量数字和进度条
  */
 const PROVIDERS_WITHOUT_USAGE_DISPLAY = [
-    'gemini-antigravity'
 ];
 
 // 提供商配置缓存
@@ -481,9 +480,7 @@ function createInstanceUsageCard(instance, providerType) {
     // 显示名称：优先自定义名称，其次 uuid
     const displayName = instance.name || instance.uuid;
 
-    const displayUsageText = totalUsage.isCodex 
-        ? `${totalUsage.percent.toFixed(1)}%`
-        : `${formatNumber(totalUsage.used)} / ${formatNumber(totalUsage.limit)}`;
+    const displayUsageText = `${formatNumber(totalUsage.used)} / ${formatNumber(totalUsage.limit)}`;
     
     collapsedSummary.innerHTML = `
         <div class="collapsed-summary-row collapsed-summary-name-row">
@@ -626,28 +623,17 @@ function renderUsageDetails(usage, providerType) {
         
         // 提取第一个有重置时间的条目（通常是总配额）
         let resetTimeHTML = '';
-        if (totalUsage.isCodex && totalUsage.resetAfterSeconds !== undefined) {
-            const resetTimeText = formatTimeRemaining(totalUsage.resetAfterSeconds);
+        const resetTimeEntry = usage.usageBreakdown.find(b => b.resetTime && b.resetTime !== '--');
+        if (resetTimeEntry) {
+            const formattedResetTime = formatDate(resetTimeEntry.resetTime);
             resetTimeHTML = `
-                <div class="total-reset-info" data-i18n="usage.resetInfo" data-i18n-params='{"time":"${resetTimeText}"}'>
-                    <i class="fas fa-history"></i> ${t('usage.resetInfo', { time: resetTimeText })}
+                <div class="total-reset-info" data-i18n="usage.card.resetAt" data-i18n-params='{"time":"${formattedResetTime}"}'>
+                    <i class="fas fa-history"></i> ${t('usage.card.resetAt', { time: formattedResetTime })}
                 </div>
             `;
-        } else {
-            const resetTimeEntry = usage.usageBreakdown.find(b => b.resetTime && b.resetTime !== '--');
-            if (resetTimeEntry) {
-                const formattedResetTime = formatDate(resetTimeEntry.resetTime);
-                resetTimeHTML = `
-                    <div class="total-reset-info" data-i18n="usage.card.resetAt" data-i18n-params='{"time":"${formattedResetTime}"}'>
-                        <i class="fas fa-history"></i> ${t('usage.card.resetAt', { time: formattedResetTime })}
-                    </div>
-                `;
-            }
         }
 
-        const displayValue = totalUsage.isCodex 
-            ? `${totalUsage.percent.toFixed(1)}%`
-            : `${formatNumber(totalUsage.used)} / ${formatNumber(totalUsage.limit)}`;
+        const displayValue = `${formatNumber(totalUsage.used)} / ${formatNumber(totalUsage.limit)}`;
 
         totalSection.innerHTML = `
             <div class="total-usage-header">
@@ -694,11 +680,6 @@ function renderUsageDetails(usage, providerType) {
  * @returns {string} HTML 字符串
  */
 function createUsageBreakdownHTML(breakdown, providerType) {
-    // 特殊处理 Codex
-    if (breakdown.rateLimit && breakdown.rateLimit.primary_window) {
-        return createCodexUsageBreakdownHTML(breakdown);
-    }
-
     // 检查是否应该显示用量信息
     const showUsage = shouldShowUsage(providerType);
 
@@ -766,37 +747,6 @@ function createUsageBreakdownHTML(breakdown, providerType) {
 }
 
 /**
- * 创建 Codex 专用的用量明细 HTML
- * @param {Object} breakdown - 包含 rateLimit 的用量明细
- * @returns {string} HTML 字符串
- */
-function createCodexUsageBreakdownHTML(breakdown) {
-    const rl = breakdown.rateLimit;
-    const secondary = rl.secondary_window;
-    
-    if (!secondary) return '';
-
-    const secondaryPercent = secondary.used_percent || 0;
-    const secondaryProgressClass = secondaryPercent >= 90 ? 'danger' : (secondaryPercent >= 70 ? 'warning' : 'normal');
-    const secondaryResetText = formatTimeRemaining(secondary.reset_after_seconds);
-
-    return `
-        <div class="breakdown-item-compact codex-usage-item">
-            <div class="breakdown-header-compact">
-                <span class="breakdown-name" data-i18n="usage.weeklyLimit"><i class="fas fa-calendar-alt"></i> ${t('usage.weeklyLimit')}</span>
-                <span class="breakdown-usage">${secondaryPercent}%</span>
-            </div>
-            <div class="progress-bar-small ${secondaryProgressClass}">
-                <div class="progress-fill" style="width: ${secondaryPercent}%"></div>
-            </div>
-            <div class="codex-reset-info" data-i18n="usage.resetInfo" data-i18n-params='{"time":"${secondaryResetText}"}'>
-                <i class="fas fa-history"></i> ${t('usage.resetInfo', { time: secondaryResetText })}
-            </div>
-        </div>
-    `;
-}
-
-/**
  * 格式化剩余时间
  * @param {number} seconds - 秒数
  * @returns {string} 格式化后的时间
@@ -821,30 +771,6 @@ function formatTimeRemaining(seconds) {
 function calculateTotalUsage(usageBreakdown) {
     if (!usageBreakdown || usageBreakdown.length === 0) {
         return { hasData: false, used: 0, limit: 0, percent: 0 };
-    }
-
-    // 特殊处理 Codex
-    const codexEntry = usageBreakdown.find(b => b.rateLimit && b.rateLimit.secondary_window);
-    if (codexEntry) {
-        const secondary = codexEntry.rateLimit.secondary_window;
-        const secondaryPercent = secondary.used_percent || 0;
-        
-        // 只有当周限制达到 100% 时，总用量才显示 100%
-        // 否则按正常逻辑计算（或者这里可以理解为非 100% 时不改变原有的总用量逻辑，
-        // 但根据用户反馈，Codex 应该主要关注周限制）
-        // 重新审视需求：达到周限制时，总用量直接100%，重置时间设置为周限制时间
-        
-        if (secondaryPercent >= 100) {
-            return {
-                hasData: true,
-                used: 100,
-                limit: 100,
-                percent: 100,
-                isCodex: true,
-                resetAfterSeconds: secondary.reset_after_seconds
-            };
-        }
-        // 如果未达到 100%，则继续执行下面的常规计算逻辑
     }
 
     let totalUsed = 0;
@@ -897,12 +823,7 @@ function getProviderDisplayName(providerType) {
     }
 
     const names = {
-        'claude-kiro-oauth': 'Claude Kiro OAuth',
-        'gemini-cli-oauth': 'Gemini CLI OAuth',
         'gemini-api-key': 'Google AI Studio',
-        'gemini-antigravity': 'Gemini Antigravity',
-        'openai-codex-oauth': 'Codex OAuth',
-        'openai-qwen-oauth': 'Qwen OAuth',
         'grok-custom': 'Grok Reverse'
     };
     return names[providerType] || providerType;
@@ -924,12 +845,7 @@ function getProviderIcon(providerType) {
     }
 
     const icons = {
-        'claude-kiro-oauth': 'fas fa-robot',
-        'gemini-cli-oauth': 'fas fa-gem',
         'gemini-api-key': 'fas fa-key',
-        'gemini-antigravity': 'fas fa-rocket',
-        'openai-codex-oauth': 'fas fa-terminal',
-        'openai-qwen-oauth': 'fas fa-code',
         'grok-custom': 'fas fa-brain'
     };
     return icons[providerType] || 'fas fa-server';

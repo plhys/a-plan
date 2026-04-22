@@ -115,6 +115,25 @@ function renderPluginsList() {
             `;
         }
         
+        // 插件直达页面映射
+        const pluginRoutes = {
+            'api-potluck': [
+                { name: 'API Potluck', path: '/potluck.html', icon: 'fa-key' },
+                { name: '用户门户', path: '/potluck-user.html', icon: 'fa-user' }
+            ],
+            'model-usage-stats': [
+                { name: '用量统计', path: '/model-usage-stats.html', icon: 'fa-chart-bar' }
+            ]
+        };
+        
+        // 构建直达链接 HTML
+        let directLinksHtml = '';
+        if (plugin.installed && plugin.enabled && pluginRoutes[plugin.name]) {
+            directLinksHtml = pluginRoutes[plugin.name].map(route => 
+                `<a href="${route.path}" target="_blank" class="plugin-badge routes" style="text-decoration:none;cursor:pointer;"><i class="fas ${route.icon}"></i> ${route.name}</a>`
+            ).join('');
+        }
+        
         card.innerHTML = `
             <div class="plugin-header">
                 <div class="plugin-title">
@@ -126,7 +145,7 @@ function renderPluginsList() {
             <div class="plugin-description">${plugin.description || t('plugins.noDescription')}</div>
             <div class="plugin-badges">
                 ${badgesHtml}
-                ${plugin.name === 'clash-guardian' ? `<a href="/plugins/clash-guardian/clash.html" target="_blank" class="plugin-badge routes" style="text-decoration:none;cursor:pointer;"><i class="fas fa-cog"></i> ${t('plugins.config') || '配置'}</a>` : ''}
+                ${directLinksHtml}
             </div>
             <div class="plugin-status">
                 <i class="fas fa-circle"></i> 

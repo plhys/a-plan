@@ -40,17 +40,6 @@ export function getCustomModelConfig(modelId, provider = null) {
  * 用于前端UI选择不支持的模型
  */
 export const PROVIDER_MODELS = {
-    'gemini-cli-oauth': [
-        'gemini-2.5-flash',
-        'gemini-2.5-flash-lite',
-        'gemini-2.5-pro',
-        'gemini-2.5-pro-preview-06-05',
-        'gemini-2.5-flash-preview-09-2025',
-        'gemini-3-pro-preview',
-        'gemini-3-flash-preview',
-        'gemini-3.1-pro-preview',
-        'gemini-3.1-flash-lite-preview',
-    ],
     'gemini-api-key': [
         // 免费模型
         'gemini-2.0-flash',
@@ -72,54 +61,9 @@ export const PROVIDER_MODELS = {
         'gemini-3.1-pro-preview',
         'gemini-3.1-flash-lite-preview',
     ],
-    'gemini-antigravity': [
-        'gemini-3-flash',
-        'gemini-3.1-pro-high',
-        'gemini-3.1-pro-low',
-        'gemini-3.1-flash-image',
-        'gemini-3-flash-agent',
-        'gemini-2.5-flash',
-        'gemini-2.5-flash-lite',
-        'gemini-2.5-flash-thinking',
-        'gemini-claude-sonnet-4-6',
-        'gemini-claude-opus-4-6-thinking',
-    ],
     'claude-custom': [],
-    'claude-kiro-oauth': [
-        'claude-haiku-4-5',
-        'claude-opus-4-7',
-        'claude-opus-4-6',
-        'claude-sonnet-4-6',
-        'claude-opus-4-5',
-        'claude-opus-4-5-20251101',
-        'claude-sonnet-4-5',
-        'claude-sonnet-4-5-20250929',
-        'claude-sonnet-4-20250514',
-        'claude-3-7-sonnet-20250219'
-    ],
     'openai-custom': [],
     'openaiResponses-custom': [],
-    'openai-qwen-oauth': [
-        'coder-model',
-        'vision-model',
-        'qwen3-coder-plus',
-        'qwen3-coder-flash',
-    ],
-    'openai-codex-oauth': [
-        'gpt-5',
-        'gpt-5-codex',
-        'gpt-5-codex-mini',
-        'gpt-5.1',
-        'gpt-5.1-codex',
-        'gpt-5.1-codex-mini',
-        'gpt-5.1-codex-max',
-        'gpt-5.2',
-        'gpt-5.2-codex',
-        'gpt-5.3-codex',
-        'gpt-5.3-codex-spark',
-        'gpt-5.4',
-        'gpt-5.4-mini',
-    ],
     'forward-api': [],
     'grok-custom': [
         'grok-4.1-mini',

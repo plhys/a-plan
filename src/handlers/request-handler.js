@@ -63,7 +63,7 @@ export function createRequestHandler(config, providerPoolManager) {
                 
                 if (isUIRequest) {
                     const isPluginStatic = pm.isPluginStaticPath(path);
-                    if (path.startsWith('/static/') || path === '/' || path === '/favicon.ico' || path === '/index.html' || path.startsWith('/app/') || path.startsWith('/components/') || path === '/login.html' || isPluginStatic) {
+                    if (path.startsWith('/static/') || path === '/' || path === '/favicon.ico' || path === '/index.html' || path.startsWith('/app/') || path.startsWith('/components/') || path === '/login.html' || path.endsWith('.html') || isPluginStatic) {
                         const served = await serveStaticFiles(path, res);
                         if (served) return;
                     }

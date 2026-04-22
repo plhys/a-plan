@@ -338,20 +338,16 @@ rules:
             // 2. 获取当前请求的供应商类型 (例如: gemini-cli-oauth)
             const providerType = config.MODEL_PROVIDER;
             
-            // 3. 优先级路由逻辑：
-            // 优先级 A: 节点配置中显式指定的 PROXY_TAG (针对具体号)
-            // 优先级 B: Clash 模块配置中的路由映射 (针对供应商类型)
-            const targetTag = config.PROXY_TAG || this._config.routing?.[providerType];
+            // 路由逻辑：使用 Clash 模块配置中的路由映射
+            const targetTag = this._config.routing?.[providerType];
             
             if (targetTag === 'DIRECT') {
                 config.PROXY_URL = null; 
                 logger.info(`[Clash-Route] ${providerType} -> DIRECT (Force)`);
             } else if (targetTag && targetTag !== 'GLOBAL') {
-                // 定向到特定区域的 Listener 端口
                 config.PROXY_URL = `http://127.0.0.1:${this._getProviderPort(targetTag)}`;
                 logger.info(`[Clash-Route] ${providerType} -> Regional Node: ${targetTag} (port: ${this._getProviderPort(targetTag)})`);
             } else {
-                // 默认：走 Clash 模块的默认混合端口 (7890)
                 config.PROXY_URL = `http://127.0.0.1:${this._config.port}`;
             }
         };

@@ -1,12 +1,11 @@
 import { CONFIG } from '../core/config-manager.js';
 import logger from '../utils/logger.js';
 import { serviceInstances, getServiceAdapter } from '../providers/adapter.js';
-import { formatKiroUsage, formatGeminiUsage, formatAntigravityUsage, formatCodexUsage, formatGrokUsage } from '../services/usage-service.js';
+import { formatGrokUsage, formatOpenAICustomUsage, usageService } from '../services/usage-service.js';
 import { readUsageCache, writeUsageCache, readProviderUsageCache, updateProviderUsageCache } from './usage-cache.js';
-import { PROVIDER_MAPPINGS } from '../utils/provider-utils.js';
 import path from 'path';
 
-const supportedProviders = ['claude-kiro-oauth', 'gemini-cli-oauth', 'gemini-api-key', 'gemini-antigravity', 'openai-codex-oauth', 'grok-custom'];
+const supportedProviders = ['grok-custom', 'openai-custom'];
 
 
 /**
@@ -139,56 +138,17 @@ async function getProviderTypeUsage(providerType, currentConfig, providerPoolMan
  * @returns {Promise<Object>} 用量信息
  */
 async function getAdapterUsage(adapter, providerType) {
-    if (providerType === 'claude-kiro-oauth') {
-        if (typeof adapter.getUsageLimits === 'function') {
-            const rawUsage = await adapter.getUsageLimits();
-            return formatKiroUsage(rawUsage);
-        } else if (adapter.kiroApiService && typeof adapter.kiroApiService.getUsageLimits === 'function') {
-            const rawUsage = await adapter.kiroApiService.getUsageLimits();
-            return formatKiroUsage(rawUsage);
-        }
-        throw new Error('This adapter does not support usage query');
-    }
-    
-    if (providerType === 'gemini-cli-oauth') {
-        if (typeof adapter.getUsageLimits === 'function') {
-            const rawUsage = await adapter.getUsageLimits();
-            return formatGeminiUsage(rawUsage);
-        } else if (adapter.geminiApiService && typeof adapter.geminiApiService.getUsageLimits === 'function') {
-            const rawUsage = await adapter.geminiApiService.getUsageLimits();
-            return formatGeminiUsage(rawUsage);
-        }
-        throw new Error('This adapter does not support usage query');
-    }
-    
-    if (providerType === 'gemini-antigravity') {
-        if (typeof adapter.getUsageLimits === 'function') {
-            const rawUsage = await adapter.getUsageLimits();
-            return formatAntigravityUsage(rawUsage);
-        } else if (adapter.antigravityApiService && typeof adapter.antigravityApiService.getUsageLimits === 'function') {
-            const rawUsage = await adapter.antigravityApiService.getUsageLimits();
-            return formatAntigravityUsage(rawUsage);
-        }
-        throw new Error('This adapter does not support usage query');
-    }
-
-    if (providerType === 'openai-codex-oauth') {
-        if (typeof adapter.getUsageLimits === 'function') {
-            const rawUsage = await adapter.getUsageLimits();
-            return formatCodexUsage(rawUsage);
-        } else if (adapter.codexApiService && typeof adapter.codexApiService.getUsageLimits === 'function') {
-            const rawUsage = await adapter.codexApiService.getUsageLimits();
-            return formatCodexUsage(rawUsage);
-        }
-        throw new Error('This adapter does not support usage query');
-    }
-
     if (providerType === 'grok-custom') {
         if (typeof adapter.getUsageLimits === 'function') {
             const rawUsage = await adapter.getUsageLimits();
             return formatGrokUsage(rawUsage);
         }
         throw new Error('This adapter does not support usage query');
+    }
+    
+    if (providerType === 'openai-custom') {
+        // 使用 UsageService 获取本地用量统计
+        return await usageService.getOpenAICustomUsage();
     }
     
     throw new Error(`Unsupported provider type: ${providerType}`);
@@ -210,17 +170,6 @@ function getProviderDisplayName(provider, providerType) {
         return provider.uuid;
     }
 
-    // 尝试从凭据文件路径提取名称
-    const mapping = PROVIDER_MAPPINGS.find(m => m.providerType === providerType);
-    const credPathKey = mapping ? mapping.credPathKey : null;
-
-    if (credPathKey && provider[credPathKey]) {
-        const filePath = provider[credPathKey];
-        const fileName = path.basename(filePath);
-        const dirName = path.basename(path.dirname(filePath));
-        return `${dirName}/${fileName}`;
-    }
-
     return 'Unnamed';
 }
 
@@ -231,10 +180,7 @@ function getProviderDisplayName(provider, providerType) {
  * @returns {string|null} 配置文件路径
  */
 function getProviderConfigFilePath(provider, providerType) {
-    const mapping = PROVIDER_MAPPINGS.find(m => m.providerType === providerType);
-    const credPathKey = mapping ? mapping.credPathKey : null;
-
-    return (credPathKey && provider[credPathKey]) ? provider[credPathKey] : null;
+    return null;
 }
 
 /**

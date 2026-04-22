@@ -8,7 +8,7 @@ import { t } from './i18n.js';
  */
 class FileUploadHandler {
     constructor() {
-        this.currentProvider = 'gemini'; // 默认提供商
+        this.currentProvider = 'openai-custom'; // 默认提供商
         this.initEventListeners();
     }
 
@@ -54,14 +54,9 @@ class FileUploadHandler {
      */
     getProviderKey(provider) {
         const providerMap = {
-            'gemini-cli-oauth': 'gemini',
-            'gemini-api-key': 'gemini',
-            'gemini-antigravity': 'antigravity',
-            'claude-kiro-oauth': 'kiro',
-            'openai-qwen-oauth': 'qwen',
-            'openai-iflow': 'iflow'
+            'openai-custom': 'openai'
         };
-        return providerMap[provider] || 'gemini';
+        return providerMap[provider] || 'openai';
     }
 
     /**

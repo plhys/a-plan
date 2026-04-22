@@ -1,18 +1,27 @@
 # 🚀 A计划 (A-Plan) - AI 接口网关
 
-**A计划** 是一个为极客设计的、专为不稳定的 POD 环境优化的 AI 接口中转网关。它能把各种模型（Gemini CLI/OAuth、Claude Kiro、Grok、Nvidia NIM、Groq、Github Models 等）统一包装成 OpenAI 格式的 API。
+**A计划** 是一个为极客设计的 AI 接口中转网关，支持多种模型统一包装成 OpenAI 格式的 API。
+
+[![Version](https://img.shields.io/badge/version-5.0.0-blue)](https://github.com/plhys/a-plan)
+[![Node.js](https://img.shields.io/badge/Node.js-18%2B-green)](https://nodejs.org/)
+[![License](https://img.shields.io/badge/license-MIT-orange)](LICENSE)
 
 ---
 
-## 🎯 核心哲学
+## 🎯 核心特性
 
-- **极致轻量**: 零 SDK 依赖，纯原生 HTTPS 实现，POD 启动耗时 < 1s。
-- **寄生生存**: 针对 3-5 天频繁调度的服务器环境优化，支持冷启动 Token 懒加载 (JIT)。
-- **幽灵模式**: 默认锁定 **18781** 端口，支持端口僵尸自动清理，确保 POD 重建后即刻可用。
+- **多提供商支持**: OpenAI 兼容模式 (NLB/自定义)、Grok、NVIDIA NIM、Groq、SambaNova、Github Models、Claude、Gemini
+- **用量查询**: 支持 Grok 和 OpenAI 兼容模式的本地用量统计
+- **健康检查**: 自动从 supportedModels 获取检查模型
+- **轻量高效**: 纯原生 HTTPS 实现，零 SDK 依赖
+- **插件系统**: 支持插件扩展功能
+- **Web UI**: 图形化管理界面
+
+---
 
 ## 🛠️ 快速部署
 
-### 极客一键拉起 (Linux / macOS)
+### 一键安装 (Linux / macOS)
 
 ```bash
 curl -sSL https://raw.githubusercontent.com/plhys/a-plan/master/install-and-run.sh | bash
@@ -25,17 +34,13 @@ curl -sSL https://raw.githubusercontent.com/plhys/a-plan/master/install-and-run.
 git clone https://github.com/plhys/a-plan.git ~/a-plan
 cd ~/a-plan
 
-# 2. 快速安装依赖
-pnpm install # 或 npm install
+# 2. 安装依赖
+pnpm install
+# 或
+npm install
 
-# 3. 启动（默认端口 18781）
+# 3. 启动
 npm start
-```
-
-### 方式二：Docker（待实现）
-
-```bash
-docker run -d -p 18781:18781 -e A_ADMIN_PASSWORD=123456 a-plan
 ```
 
 ---
@@ -48,77 +53,115 @@ docker run -d -p 18781:18781 -e A_ADMIN_PASSWORD=123456 a-plan
 |--------|--------|------|
 | `A_PORT` | 18781 | 服务端口 |
 | `A_ADMIN_PASSWORD` | 123456 | 管理后台密码 |
-| `CORE_ONLY` | false | 开启极简模式（只启动 API，不加载 UI） |
-| `WORKER_COUNT` | 1 | API 处理进程数，可设为 `auto` 自动匹配 CPU 核心 |
 
 ### 管理后台
 
-启动后访问：`http://你的IP:18781`
+访问：`http://你的IP:18781`
 
 - 默认密码：`123456`
-- 可以配置模型 Key、查看用量统计、管理渠道等
+- 可配置模型 Key、查看用量统计、管理渠道
 
 ---
 
-## 📡 API 调用示例
+## 📡 API 调用
+
+### 1. 登录获取 Token
 
 ```bash
-# 调用 ChatGPT 兼容接口
+TOKEN=$(curl -s -X POST http://localhost:18781/api/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"admin","password":"123456"}' | python3 -c "import sys,json; print(json.load(sys.stdin)['token'])")
+
+echo $TOKEN
+```
+
+### 2. 调用 API
+
+```bash
 curl -X POST http://localhost:18781/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer 你的Key" \
+  -H "Authorization: Bearer $TOKEN" \
   -d '{
-    "model": "gpt-4",
+    "model": "glm-5",
     "messages": [{"role": "user", "content": "你好"}]
   }'
 ```
 
-支持的模型列表请参见管理后台。
+### 支持的模型
+
+| 模型 | 提供商 |
+|------|--------|
+| glm-5 | 智谱 GLM |
+| glm-4 | 智谱 GLM |
+| kimi | 月之暗面 |
+| minimax | MiniMax |
+| qwen | 阿里 Qwen |
+| claude | Anthropic |
+| gemini | Google |
+| gpt-4 | OpenAI |
+| grok | xAI |
+| groq | Groq |
+| nv-nim | NVIDIA |
 
 ---
 
-## 🔧 目录结构
+## 📁 目录结构
 
 ```
 a-plan/
 ├── src/
-│   ├── services/
-│   │   └── api-server.js    # 主服务入口
-│   ├── plugins/             # 插件目录
-│   │   ├── clash-guardian   # 代理插件
-│   │   ├── easytier-link    # 组网插件
-│   │   └── api-potluck      # 多 Key 轮询
-│   └── ...
-├── static/                  # 前端页面
-├── README-ZH.md            # 中文说明
-└── package.json
+│   ├── core/               # 核心模块
+│   │   ├── master.js       # 主入口
+│   │   └── plugin-manager.js
+│   ├── services/           # 服务层
+│   │   ├── api-server.js   # API 服务器
+│   │   ├── api-manager.js
+│   │   └── service-manager.js
+│   ├── providers/          # 提供商适配器
+│   │   ├── adapter.js      # 适配器基类
+│   │   ├── grok/           # Grok 提供商
+│   │   ├── openai/         # OpenAI 兼容
+│   │   └── ...
+│   ├── handlers/           # 请求处理器
+│   ├── modules/            # 功能模块
+│   ├── utils/              # 工具函数
+│   └── ui-modules/         # UI 模块
+├── static/                 # 前端页面
+│   ├── app/               # 前端应用
+│   └── components/        # 组件
+├── configs/               # 配置文件
+├── tls-sidecar/           # TLS 代理
+├── CHANGELOG.md          # 更新日志
+├── package.json
+└── README.md
 ```
 
 ---
 
 ## 📝 更新日志
 
-- **v4.2.8** - 极速版：精简核心依赖，仅5个（dotenv, ws, axios, uuid, lodash），安装几秒完成
-- **v4.2.6** - Geek Overhaul: Eradicated hardcoded '3000' zombie config and synchronized server startup logic for Port 18781. Evolution of providers: swapped DeepSeek with native Nvidia NIM support. Unified core logic and removed legacy reverse-proxy modules for extreme lightness. Integrated **Groq**, **SambaNova**, and **Github Models** for lightning-fast inference and robust failover.
-- **v4.2.5** - Environment Compatibility: POSIX-compliant `start.sh` for multi-shell support, refined logging semantics, and full-stack version alignment.
-- **v4.2.4** - Survivability Boost: JIT token refresh, 60s silent startup, 404/400 error filtering to prevent provider 'poisoning', 2-min node auto-recovery, and semantic error reporting.
-- **v4.1.0** - Geek Refactor: Atomized plugins, hot-routing, Pod stability optimizations, and Clash management menu.
-- **v4.0.2** - 添加项目说明，优化 UI
-- **v4.0.1** - 稳定版发布，支持多渠道管理
-- **v3.0** - 初始版本
+### v5.0.0 (2026-04-23)
+- OpenAI 兼容模式用量查询支持
+- NLB 压缩问题修复
+- 健康检查逻辑优化
+
+### v4.2.x
+- 历代版本优化
+
+详见 [CHANGELOG.md](./CHANGELOG.md)
 
 ---
 
 ## ❓ 常见问题
 
-**Q: 如何获取免费 Key？**
-A: 各模型的获取方式不同，请自行搜索。一般需要手机号注册或邀请码。
-
 **Q: 支持哪些模型？**
-A: 理论上支持所有 OpenAI 兼容格式的模型，具体看管理后台的渠道配置。
+A: 支持所有 OpenAI 兼容格式的模型，包括：GLM5、Kimi、MiniMax、Qwen 等
 
-**Q: 会被封号吗？**
-A: 使用免费模型有风险，A计划不保证稳定性，请合理使用。
+**Q: 如何查看用量？**
+A: 访问管理后台 -> 用量查询，或调用 `/api/usage` 接口
+
+**Q: 如何更新？**
+A: `git pull origin main` 然后 `npm start`
 
 ---
 
@@ -128,5 +171,10 @@ MIT License
 
 ---
 
-*Powered by A-Plan Team & OpenClaw Agent*Random Number: 0
-Random Number: 0
+## ⭐ 支持
+
+如果这个项目对你有帮助，请给一个 Star！
+
+---
+
+*Powered by A-Plan*

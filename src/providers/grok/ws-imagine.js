@@ -1,7 +1,6 @@
 import WebSocket from 'ws';
 import logger from '../../utils/logger.js';
 import { v4 as uuidv4 } from 'uuid';
-import { getProxyConfigForProvider } from '../../utils/proxy-utils.js';
 import { MODEL_PROVIDER } from '../../utils/common.js';
 
 /**
@@ -26,9 +25,6 @@ export class ImagineWebSocketService {
      * @returns {AsyncGenerator<object>}
      */
     async *stream(token, prompt, aspectRatio = '1:1', n = 1, enableNsfw = true) {
-        const proxyConfig = getProxyConfigForProvider(this.config, MODEL_PROVIDER.GROK_CUSTOM);
-        const agent = proxyConfig?.httpsAgent;
-
         let ssoToken = token || "";
         if (ssoToken.startsWith("sso=")) ssoToken = ssoToken.substring(4);
         const cfClearance = this.config.GROK_CF_CLEARANCE;

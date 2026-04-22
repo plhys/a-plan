@@ -357,12 +357,6 @@ input:checked + .toggle-slider:before {
     -webkit-font-smoothing: antialiased;
 }
 
-/* 影子代理全局样式补丁（防止动态加载失效） */
-.shadow-proxy-container { padding: 5px; }
-.geek-header { background: #0f172a !important; border-radius: 12px; padding: 20px; color: #fff; }
-.online { color: #10b981 !important; }
-.offline { color: #ef4444 !important; }
-
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     background: var(--bg-secondary);
@@ -632,10 +626,11 @@ body {
     transform: translateY(0);
 }
 
-.theme-toggle .fa-sun { display: none; }
-.theme-toggle .fa-moon { display: inline-block; }
-[data-theme="dark"] .theme-toggle .fa-sun { display: inline-block; }
-[data-theme="dark"] .theme-toggle .fa-moon { display: none; }
+/* 主题切换按钮 - 根据主题显示对应图标 */
+.theme-toggle i.fa-sun { display: none !important; }
+.theme-toggle i.fa-moon { display: inline-block !important; }
+[data-theme="dark"] .theme-toggle i.fa-sun { display: inline-block !important; }
+[data-theme="dark"] .theme-toggle i.fa-moon { display: none !important; }
 
 /* 语言切换器通用部分 */
 .language-switcher {

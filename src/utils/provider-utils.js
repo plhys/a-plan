@@ -5,92 +5,13 @@
 
 import * as path from 'path';
 import logger from './logger.js';
-import { promises as fs } from 'fs';
 
 /**
  * 提供商目录映射配置
  * 定义目录名称到提供商类型的映射关系
+ * 注意：当前仅支持 OpenAI Custom
  */
-export const PROVIDER_MAPPINGS = [
-    {
-        // Kiro OAuth 配置
-        dirName: 'kiro',
-        patterns: ['configs/kiro/', '/kiro/'],
-        providerType: 'claude-kiro-oauth',
-        credPathKey: 'KIRO_OAUTH_CREDS_FILE_PATH',
-        defaultCheckModel: 'claude-haiku-4-5',
-        displayName: 'Claude Kiro OAuth',
-        needsProjectId: false,
-        urlKeys: ['KIRO_BASE_URL', 'KIRO_REFRESH_URL', 'KIRO_REFRESH_IDC_URL']
-    },
-    {
-        // Gemini CLI OAuth 配置
-        dirName: 'gemini',
-        patterns: ['configs/gemini/', '/gemini/', 'configs/gemini-cli/'],
-        providerType: 'gemini-cli-oauth',
-        credPathKey: 'GEMINI_OAUTH_CREDS_FILE_PATH',
-        defaultCheckModel: 'gemini-2.5-flash',
-        displayName: 'Gemini CLI OAuth',
-        needsProjectId: true,
-        urlKeys: ['GEMINI_BASE_URL']
-    },
-    {
-        // Google AI Studio API Key 配置
-        dirName: 'gemini-key',
-        patterns: ['configs/gemini-key/', '/gemini-key/', 'configs/gemini-api-key/'],
-        providerType: 'gemini-api-key',
-        credPathKey: 'GEMINI_API_KEY',
-        defaultCheckModel: 'gemini-2.5-flash',
-        displayName: 'Google AI Studio (API Key)',
-        needsProjectId: false,
-        urlKeys: ['GEMINI_BASE_URL']
-    },
-    {
-        // Qwen OAuth 配置
-        dirName: 'qwen',
-        patterns: ['configs/qwen/', '/qwen/'],
-        providerType: 'openai-qwen-oauth',
-        credPathKey: 'QWEN_OAUTH_CREDS_FILE_PATH',
-        defaultCheckModel: 'qwen3-coder-plus',
-        defaultCheckHealth: true,
-        displayName: 'Qwen OAuth',
-        needsProjectId: false,
-        urlKeys: ['QWEN_BASE_URL', 'QWEN_OAUTH_BASE_URL']
-    },
-    {
-        // Antigravity OAuth 配置
-        dirName: 'antigravity',
-        patterns: ['configs/antigravity/', '/antigravity/'],
-        providerType: 'gemini-antigravity',
-        credPathKey: 'ANTIGRAVITY_OAUTH_CREDS_FILE_PATH',
-        defaultCheckModel: 'gemini-2.5-computer-use-preview-10-2025',
-        displayName: 'Gemini Antigravity',
-        needsProjectId: true,
-        urlKeys: ['ANTIGRAVITY_BASE_URL_DAILY', 'ANTIGRAVITY_BASE_URL_AUTOPUSH']
-    },
-    {
-        // Codex OAuth 配置
-        dirName: 'codex',
-        patterns: ['configs/codex/', '/codex/'],
-        providerType: 'openai-codex-oauth',
-        credPathKey: 'CODEX_OAUTH_CREDS_FILE_PATH',
-        defaultCheckModel: 'gpt-5.2-codex',
-        displayName: 'OpenAI Codex OAuth',
-        needsProjectId: false,
-        urlKeys: ['CODEX_BASE_URL']
-    },
-    {
-        // Grok Reverse 配置
-        dirName: 'grok',
-        patterns: ['configs/grok/', '/grok/'],
-        providerType: 'grok-custom',
-        credPathKey: 'GROK_COOKIE_TOKEN',
-        defaultCheckModel: 'grok-3',
-        displayName: 'Grok Reverse',
-        needsProjectId: false,
-        urlKeys: ['GROK_BASE_URL', 'GROK_CF_CLEARANCE', 'GROK_USER_AGENT']
-    }
-];
+export const PROVIDER_MAPPINGS = [];
 
 /**
  * 生成 UUID
@@ -288,38 +209,6 @@ export function getProviderMappingByDirName(dirName) {
 }
 
 /**
- * 验证文件是否是有效的 OAuth 凭据文件
- * @param {string} filePath - 文件路径
- * @returns {Promise<boolean>} 是否有效
- */
-export async function isValidOAuthCredentials(filePath) {
-    try {
-        const content = await fs.readFile(filePath, 'utf8');
-        const jsonData = JSON.parse(content);
-        
-        // 检查是否包含 OAuth 相关字段
-        // 凭据通常包含 access_token/accessToken, refresh_token/refreshToken, client_id 等字段
-        // 支持下划线命名（access_token）和驼峰命名（accessToken）两种格式
-        if (jsonData.access_token || jsonData.refresh_token ||
-            jsonData.accessToken || jsonData.refreshToken ||
-            jsonData.client_id || jsonData.client_secret ||
-            jsonData.token || jsonData.credentials) {
-            return true;
-        }
-        
-        // 也可能是包含嵌套结构的凭据文件
-        if (jsonData.installed || jsonData.web) {
-            return true;
-        }
-        
-        return false;
-    } catch (error) {
-        // 如果无法解析，认为不是有效的凭据文件
-        return false;
-    }
-}
-
-/**
  * 创建新的提供商配置对象
  * @param {Object} options - 配置选项
  * @param {string} options.credPathKey - 凭据路径键名
@@ -345,8 +234,7 @@ export function createProviderConfig(options) {
         lastErrorTime: null,
         lastHealthCheckTime: null,
         lastHealthCheckModel: null,
-        lastErrorMessage: null,
-        PROXY_TAG: '' // 极客分流标签 (例如: US, HK)
+        lastErrorMessage: null
     };
     
     // 如果需要 PROJECT_ID，添加空字符串占位

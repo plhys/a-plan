@@ -8,6 +8,14 @@ const DEFAULT_DISABLED_PLUGINS = ['api-potluck', 'ai-monitor', 'model-usage-stat
 
 const PLUGIN_MARKETPLACE = [];
 
+// 插件中文名称映射
+const PLUGIN_DISPLAY_NAME_ZH = {
+    'default-auth': '默认认证',
+    'api-potluck': 'API 套餐',
+    'ai-monitor': 'AI 监控',
+    'model-usage-stats': '用量统计'
+};
+
 export const PLUGIN_TYPE = {
     AUTH: 'auth',
     MIDDLEWARE: 'middleware'
@@ -140,6 +148,7 @@ class PluginManager {
             const pConfig = this.pluginsConfig.plugins[name] || {};
             list.push({
                 name,
+                displayName: PLUGIN_DISPLAY_NAME_ZH[name] || name,
                 enabled: pConfig.enabled === true,
                 installed: existsSync(path.join(pluginsDir, name, 'index.js')),
                 hasRoutes: Array.isArray(this.plugins.get(name)?.routes)
@@ -193,9 +202,13 @@ class PluginManager {
             if (!p._enabled || !Array.isArray(p.routes)) continue;
             for (const r of p.routes) {
                 const mMatch = r.method === '*' || r.method.toUpperCase() === method;
-                // 【极客强化】强制路径对齐
-                const targetPath = `/api/plugins/${p.name}${r.path}`;
-                if (mMatch && path === targetPath) {
+                // 直接匹配插件定义的路由路径
+                if (mMatch && path === r.path) {
+                    if (await r.handler(method, path, req, res, config)) return true;
+                }
+                // 也支持 /api/plugins/{pluginName}{path} 格式
+                const pluginPath = `/api/plugins/${p.name}${r.path}`;
+                if (mMatch && path === pluginPath) {
                     if (await r.handler(method, path, req, res, config)) return true;
                 }
             }

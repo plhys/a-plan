@@ -83,10 +83,6 @@ import {
 } from './tutorial-manager.js';
 
 import {
-    initShadowProxyManager
-} from './shadow-proxy-manager.js';
-
-import {
     CustomModelsManager
 } from './custom-models-manager.js';
 
@@ -97,9 +93,6 @@ function loadInitialData() {
     loadSystemInfo();
     loadProviders();
     loadConfiguration();
-    if (window.shadowProxyManager) {
-        window.shadowProxyManager.init();
-    }
     if (window.customModelsManager) {
         window.customModelsManager.load();
     }
@@ -126,8 +119,6 @@ export function initApp() {
     initImageZoom();
     initPluginManager();
     initTutorialManager();
-    initShadowProxyManager();
-    initShadowProxyControl();
     
     window.customModelsManager = new CustomModelsManager();
     initMobileMenu();
@@ -136,13 +127,6 @@ export function initApp() {
     // 定时刷新显示
     setInterval(updateTimeDisplay, 5000);
     setInterval(loadProviders, REFRESH_INTERVALS.SYSTEM_INFO);
-}
-
-/**
- * 初始化 Clash 模块开关逻辑 (内建)
- */
-async function initShadowProxyControl() {
-    // 逻辑已迁移至 shadow-proxy-manager.js，此处仅保留占位以防报错
 }
 
 /**

@@ -1,25 +1,57 @@
 {
-  "timestamp": "2026-04-22T00:00:00.000Z",
+  "timestamp": "2026-04-22T17:13:24.600Z",
   "providers": {
-    "claude-kiro-oauth": {
-      "providerType": "claude-kiro-oauth",
-      "instances": [],
-      "totalCount": 0,
-      "successCount": 0,
-      "errorCount": 0
-    },
-    "openai-codex-oauth": {
-      "providerType": "openai-codex-oauth",
-      "instances": [],
-      "totalCount": 0,
-      "successCount": 0,
-      "errorCount": 0
-    },
     "grok-custom": {
       "providerType": "grok-custom",
       "instances": [],
       "totalCount": 0,
       "successCount": 0,
+      "errorCount": 0
+    },
+    "openai-custom": {
+      "providerType": "openai-custom",
+      "instances": [
+        {
+          "uuid": "bc343bc4-e5de-4df1-9d55-708d8b0ad761",
+          "name": "NLB",
+          "configFilePath": null,
+          "isHealthy": true,
+          "isDisabled": false,
+          "success": true,
+          "usage": {
+            "daysUntilReset": null,
+            "nextDateReset": null,
+            "subscription": {
+              "title": "NLB",
+              "type": "openai-custom",
+              "upgradeCapability": null,
+              "overageCapability": null
+            },
+            "user": {
+              "email": null,
+              "userId": null
+            },
+            "usageBreakdown": [
+              {
+                "resourceType": "REQUEST_COUNT",
+                "displayName": "API Requests",
+                "displayNamePlural": "API Requests",
+                "unit": "requests",
+                "currency": null,
+                "currentUsage": 1,
+                "usageLimit": null,
+                "nextDateReset": null,
+                "freeTrial": null,
+                "bonuses": []
+              }
+            ],
+            "lastUsed": "2026-04-22T17:12:23.444Z"
+          },
+          "error": null
+        }
+      ],
+      "totalCount": 1,
+      "successCount": 1,
       "errorCount": 0
     }
   }
