@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# 获取脚本所在目录并切换到该目录，确保在任何位置运行都能正常工作
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR"
+
 # 设置中文环境
 export LC_ALL=zh_CN.UTF-8
 export LANG=zh_CN.UTF-8
@@ -103,4 +107,5 @@ echo "按 Ctrl+C 停止服务器"
 echo
 
 # 启动服务器
+export PORT=${PORT:-3000}
 node src/core/master.js
