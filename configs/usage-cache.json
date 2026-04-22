@@ -1,22 +1,8 @@
 {
-  "timestamp": "2026-04-18T05:48:06.721Z",
+  "timestamp": "2026-04-22T00:00:00.000Z",
   "providers": {
     "claude-kiro-oauth": {
       "providerType": "claude-kiro-oauth",
-      "instances": [],
-      "totalCount": 0,
-      "successCount": 0,
-      "errorCount": 0
-    },
-    "gemini-cli-oauth": {
-      "providerType": "gemini-cli-oauth",
-      "instances": [],
-      "totalCount": 0,
-      "successCount": 0,
-      "errorCount": 0
-    },
-    "gemini-antigravity": {
-      "providerType": "gemini-antigravity",
       "instances": [],
       "totalCount": 0,
       "successCount": 0,

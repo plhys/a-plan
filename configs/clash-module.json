@@ -2,9 +2,7 @@
   "enabled": false,
   "subUrl": "",
   "port": 7890,
-  "routing": {
-    "gemini-cli-oauth": "US"
-  },
+  "routing": {},
   "secret": "geek-clash-secret",
   "controllerPort": 9090
 }

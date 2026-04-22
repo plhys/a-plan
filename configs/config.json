@@ -2,7 +2,7 @@
     "REQUIRED_API_KEY": "123456",
     "SERVER_PORT": 18781,
     "HOST": "0.0.0.0",
-    "MODEL_PROVIDER": "gemini-cli-oauth",
+    "MODEL_PROVIDER": "openai-custom",
     "SYSTEM_PROMPT_FILE_PATH": "configs/fetch_system_prompt.txt",
     "SYSTEM_PROMPT_MODE": "overwrite",
     "SYSTEM_PROMPT_REPLACEMENTS": [
@@ -23,38 +23,12 @@
     "GROK_USER_AGENT": "Mozilla/5.0 ...",
     "GROK_BASE_URL": "https://grok.com",
     "providerFallbackChain": {
-      "gemini-cli-oauth": ["gemini-antigravity"],
-      "gemini-antigravity": ["gemini-cli-oauth"],
       "claude-kiro-oauth": ["claude-custom"],
       "claude-custom": ["claude-kiro-oauth"]
     },
-    "modelFallbackMapping": {
-      "gemini-claude-opus-4-5-thinking": {
-        "targetProviderType": "claude-kiro-oauth",
-        "targetModel": "claude-opus-4-5"
-      },
-      "gemini-claude-sonnet-4-5-thinking": {
-        "targetProviderType": "claude-kiro-oauth", 
-        "targetModel": "claude-sonnet-4-5"
-      },
-      "gemini-claude-sonnet-4-5": {
-        "targetProviderType": "claude-kiro-oauth",
-        "targetModel": "claude-sonnet-4-5"
-      },
-      "claude-opus-4-5": {
-        "targetProviderType": "gemini-antigravity",
-        "targetModel": "gemini-claude-opus-4-5-thinking"
-      },
-      "claude-sonnet-4-5": {
-        "targetProviderType": "gemini-antigravity",
-        "targetModel": "gemini-claude-sonnet-4-5"
-      }
-    },
+    "modelFallbackMapping": {},
     "PROXY_URL": "http://127.0.0.1:7890",
-    "PROXY_ENABLED_PROVIDERS": [
-            "gemini-cli-oauth",
-            "gemini-antigravity"
-    ],
+    "PROXY_ENABLED_PROVIDERS": [],
     "LOG_ENABLED": true,
     "LOG_OUTPUT_MODE": "all",
     "LOG_LEVEL": "info",
