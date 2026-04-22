@@ -298,6 +298,20 @@ function getProviderTypeFields(providerType) {
                 placeholder: 'https://cloudcode-pa.googleapis.com'
             }
         ],
+        'gemini-api-key': [
+            {
+                id: 'GEMINI_API_KEY',
+                label: 'Google AI Studio API Key',
+                type: 'password',
+                placeholder: 'AIza...'
+            },
+            {
+                id: 'GEMINI_BASE_URL',
+                label: `Gemini Base URL <span class="optional-tag">${t('config.optional')}</span>`,
+                type: 'text',
+                placeholder: 'https://generativelanguage.googleapis.com'
+            }
+        ],
         'claude-kiro-oauth': [
             {
                 id: 'KIRO_OAUTH_CREDS_FILE_PATH',

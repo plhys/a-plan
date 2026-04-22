@@ -567,6 +567,7 @@ function getFilteredProviders() {
             p.CLAUDE_API_KEY,
             p.CLAUDE_BASE_URL,
             p.GEMINI_OAUTH_CREDS_FILE_PATH,
+            p.GEMINI_API_KEY,
             p.KIRO_OAUTH_CREDS_FILE_PATH,
             p.QWEN_OAUTH_CREDS_FILE_PATH,
             p.ANTIGRAVITY_OAUTH_CREDS_FILE_PATH,
