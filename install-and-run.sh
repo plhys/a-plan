@@ -9,7 +9,7 @@ export LC_ALL=zh_CN.UTF-8
 export LANG=zh_CN.UTF-8
 
 echo "========================================"
-echo "  AI Client 2 API 快速安装启动脚本"
+echo "  A计划 快速安装启动脚本"
 echo "========================================"
 echo
 
