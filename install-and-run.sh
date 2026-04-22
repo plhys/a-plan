@@ -5,30 +5,26 @@
 #  支持：离线安装、国内镜像、智能回退
 # ============================================
 
-# 检测是否通过 pipe 方式运行
-if [ -z "$SCRIPT_DIR" ]; then
-    if [ -t 0 ]; then
-        # 交互式运行，检查是否在项目目录
-        SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-    else
-        # pipe 方式运行 (curl ... | bash)
-        SCRIPT_DIR="/tmp/a-plan"
+# 判断是否通过 pipe 方式运行 (curl ... | bash)
+# 如果当前目录没有 package.json，则需要克隆项目
+CURRENT_DIR=$(pwd)
+if [ ! -f "$CURRENT_DIR/package.json" ]; then
+    # 当前目录不是项目目录，需要克隆
+    TARGET_DIR="/tmp/a-plan"
+    
+    if [ ! -f "$TARGET_DIR/package.json" ]; then
+        echo "[提示] 正在自动克隆项目到 $TARGET_DIR ..."
+        rm -rf "$TARGET_DIR"
+        git clone https://github.com/plhys/a-plan.git "$TARGET_DIR"
+        if [ $? -ne 0 ]; then
+            echo "[错误] 克隆失败，请检查网络"
+            exit 1
+        fi
     fi
+    
+    cd "$TARGET_DIR"
+    echo "[信息] 已切换到项目目录: $(pwd)"
 fi
-
-# 如果目录不是项目目录，则克隆
-if [ ! -f "$SCRIPT_DIR/package.json" ]; then
-    echo "[提示] 正在自动克隆项目..."
-    rm -rf /tmp/a-plan
-    git clone https://github.com/plhys/a-plan.git /tmp/a-plan
-    if [ $? -ne 0 ]; then
-        echo "[错误] 克隆失败，请检查网络"
-        exit 1
-    fi
-    SCRIPT_DIR="/tmp/a-plan"
-fi
-
-cd "$SCRIPT_DIR"
 
 export LC_ALL=zh_CN.UTF-8
 export LANG=zh_CN.UTF-8
@@ -127,6 +123,7 @@ elif command -v yarn > /dev/null 2>&1; then
 else
     PKG_MANAGER=npm
 fi
+log_info "使用包管理器: $PKG_MANAGER"
 
 # 检查离线包
 OFFLINE_PACKAGE="node_modules.tar.gz"
@@ -154,7 +151,7 @@ setup_mirror() {
 
 # 安装依赖
 install_dependencies() {
-    log_info "正在安装依赖 (使用 $PKG_MANAGER)..."
+    log_info "正在安装依赖..."
     
     if [ "$PKG_MANAGER" = "pnpm" ]; then
         pnpm install --frozen-lockfile 2>/dev/null || pnpm install
