@@ -1,0 +1,19 @@
+{
+  "timestamp": "2026-04-24T17:15:44.766Z",
+  "providers": {
+    "grok-custom": {
+      "providerType": "grok-custom",
+      "instances": [],
+      "totalCount": 0,
+      "successCount": 0,
+      "errorCount": 0
+    },
+    "openai-custom": {
+      "providerType": "openai-custom",
+      "instances": [],
+      "totalCount": 0,
+      "successCount": 0,
+      "errorCount": 0
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "name": "a-plan",
+  "version": "5.0.2",
+  "type": "module",
+  "description": "A 计划 - AI 接口网关",
+  "dependencies": {
+    "@anthropic-ai/tokenizer": "^0.0.4",
+    "adm-zip": "^0.5.16",
+    "axios": "^1.14.0",
+    "dotenv": "^16.4.5",
+    "lodash": "^4.17.21",
+    "multer": "^2.0.2",
+    "undici": "^7.12.0",
+    "uuid": "^11.1.0",
+    "ws": "^8.19.0"
+  },
+  "scripts": {
+    "start": "node src/core/master.js",
+    "start:standalone": "node src/services/api-server.js"
+  }
+}

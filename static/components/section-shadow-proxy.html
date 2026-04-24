@@ -1,0 +1,284 @@
+<section id="shadow-proxy" class="section">
+    <div class="shadow-proxy-container">
+        <!-- 核心状态头 (暗色渐变，极客风格) -->
+        <div class="geek-header">
+            <div class="title-group">
+                <i class="fas fa-ghost"></i>
+                <div class="text">
+                    <h2>影子代理 (Shadow Proxy)</h2>
+                    <p class="geek-subtitle">基于 Sing-box | 寄生环境增强版 v4.2.7</p>
+                </div>
+            </div>
+            <div class="status-indicator">
+                <span class="status-dot" id="proxy-status-dot"></span>
+                <span id="proxy-status-text">OFFLINE</span>
+            </div>
+        </div>
+
+        <!-- 关键统计 -->
+        <div class="stats-row">
+            <div class="geek-card stat-item">
+                <div class="icon"><i class="fas fa-network-wired"></i></div>
+                <div class="val">
+                    <span id="proxy-active-port">----</span>
+                    <label>影子端口</label>
+                </div>
+            </div>
+            <div class="geek-card stat-item">
+                <div class="icon"><i class="fas fa-microchip"></i></div>
+                <div class="val">
+                    <span id="proxy-cpu-usage">0.0%</span>
+                    <label>内核 CPU</label>
+                </div>
+            </div>
+            <div class="geek-card stat-item">
+                <div class="icon"><i class="fas fa-memory"></i></div>
+                <div class="val">
+                    <span id="proxy-mem-usage">0 MB</span>
+                    <label>内核内存</label>
+                </div>
+            </div>
+            <div class="geek-card stat-item">
+                <div class="icon"><i class="fas fa-satellite-dish"></i></div>
+                <div class="val">
+                    <span id="proxy-sub-count">0</span>
+                    <label>活跃订阅</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-row mini-stats" style="grid-template-columns: 1fr 1fr; margin-top: -15px; margin-bottom: 25px;">
+             <div class="geek-card stat-item">
+                <div class="icon" style="font-size: 1rem;"><i class="fas fa-fingerprint"></i></div>
+                <div class="val" style="display: flex; gap: 10px; align-items: center;">
+                    <label style="margin:0;">运行状态:</label>
+                    <span id="proxy-pid" style="font-size: 1rem;">N/A</span>
+                </div>
+            </div>
+            <div class="geek-card stat-item action-card" onclick="window.shadowProxyManager.openAddSub()" title="点击添加新订阅链接" style="padding: 10px 18px;">
+                <div class="icon" style="font-size: 1rem;"><i class="fas fa-plus-circle"></i></div>
+                <div class="val">
+                    <span style="color: inherit !important; font-size: 1rem;">添加订阅链接</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 影子订阅管理 (新增) -->
+        <div class="geek-card main-card sub-management-card">
+            <div class="card-header">
+                <h3><i class="fas fa-list-ul"></i> 影子订阅管理 (Subscription List)</h3>
+            </div>
+            <div id="proxy-subscriptions-list" class="sub-list-container">
+                <!-- 动态加载订阅列表 -->
+                <div class="loading-placeholder">加载中...</div>
+            </div>
+        </div>
+
+        <!-- AI 路由矩阵 -->
+        <div class="geek-card main-card">
+            <div class="card-header">
+                <h3><i class="fas fa-route"></i> 供应商分流矩阵 (Provider Routing)</h3>
+                <button class="btn btn-sm btn-secondary" onclick="window.shadowProxyManager.refresh()">
+                    <i class="fas fa-sync"></i> 刷新矩阵
+                </button>
+            </div>
+            <div class="matrix-grid" id="proxy-routing-matrix">
+                <!-- 动态加载 -->
+            </div>
+        </div>
+
+        <!-- 节点雷达 -->
+        <div class="geek-card main-card">
+            <div class="card-header">
+                <h3><i class="fas fa-server"></i> 节点雷达 (Outbound Nodes)</h3>
+                <div class="actions">
+                    <button class="btn btn-primary btn-sm" onclick="window.shadowProxyManager.testAllAI()">
+                        <i class="fas fa-bolt"></i> AI 专项测速
+                    </button>
+                </div>
+            </div>
+            <div class="node-grid-modern" id="proxy-node-list">
+                <!-- 动态加载 -->
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+/* 影子代理专属极客样式 */
+.shadow-proxy-container {
+    padding: 5px;
+    animation: fadeIn 0.4s ease;
+}
+
+.geek-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 24px;
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.geek-header .title-group { display: flex; align-items: center; gap: 18px; }
+.geek-header i { font-size: 2.8rem; color: #10b981; opacity: 0.9; }
+.geek-header h2 { margin: 0; font-size: 1.6rem; color: #ffffff; }
+.geek-subtitle { margin: 6px 0 0 0; font-size: 0.85rem; color: #94a3b8; font-family: monospace; }
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 20px;
+    background: rgba(0,0,0,0.4);
+    border-radius: 30px;
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: #f8fafc;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+.status-dot { width: 12px; height: 12px; border-radius: 50%; background: #ef4444; box-shadow: 0 0 12px #ef4444; }
+.status-dot.online { background: #10b981; box-shadow: 0 0 12px #10b981; }
+
+.stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 25px; }
+.geek-card {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 18px;
+    transition: all 0.25s ease;
+}
+.geek-card:hover { border-color: var(--primary-color); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+
+.stat-item { display: flex; align-items: center; gap: 15px; }
+.stat-item .icon { font-size: 1.6rem; color: var(--text-tertiary); opacity: 0.7; }
+.stat-item .val span { display: block; font-size: 1.3rem; font-weight: 700; color: var(--text-primary); }
+.stat-item .val label { font-size: 0.75rem; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.5px; }
+
+.action-card { cursor: pointer; background: var(--primary-10); border: 1px dashed var(--primary-color); }
+.action-card:hover { background: var(--primary-color); border-style: solid; }
+.action-card:hover * { color: #fff !important; }
+
+.main-card { margin-bottom: 25px; padding: 0; }
+.main-card .card-header {
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.main-card h3 { font-size: 1rem; font-weight: 600; color: var(--text-primary); }
+
+.matrix-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 12px;
+    padding: 20px;
+}
+.matrix-item {
+    padding: 15px;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.matrix-item .provider-name { font-weight: 700; font-size: 0.9rem; color: var(--primary-color); }
+.matrix-select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.node-grid-modern {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 15px;
+    padding: 20px;
+}
+.modern-node-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    padding: 18px;
+    border-radius: 12px;
+}
+.modern-node-card h4 { margin: 0 0 12px 0; font-size: 1rem; color: var(--text-primary); overflow: hidden; text-overflow: ellipsis; }
+.latency-stack { display: flex; flex-direction: column; gap: 6px; }
+.lat-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8rem;
+    padding: 6px 12px;
+    background: var(--bg-primary);
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+}
+.lat-val { font-family: 'JetBrains Mono', monospace; font-weight: 800; }
+.lat-val.green { color: #10b981; }
+.lat-val.yellow { color: #f59e0b; }
+.lat-val.red { color: #ef4444; }
+.lat-val.gray { color: #64748b; }
+
+/* 测速脉冲动画 */
+@keyframes pulse-border {
+    0% { border-color: var(--border-color); }
+    50% { border-color: var(--primary-color); box-shadow: 0 0 10px var(--primary-10); }
+    100% { border-color: var(--border-color); }
+}
+.node-testing-pulse {
+    animation: pulse-border 1.5s infinite;
+}
+
+/* 订阅列表样式 */
+.sub-list-container {
+    padding: 10px 20px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+.sub-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    margin-bottom: 8px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    transition: var(--transition);
+}
+.sub-list-item:hover {
+    border-color: var(--primary-color);
+    background: var(--bg-primary);
+}
+.sub-info { flex: 1; min-width: 0; }
+.sub-name { font-weight: bold; font-size: 0.9rem; color: var(--primary-color); margin-bottom: 4px; }
+.sub-url { font-size: 0.75rem; color: var(--text-tertiary); font-family: monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.btn-danger-alt {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+.btn-danger-alt:hover {
+    background: #ef4444;
+    color: #fff;
+}
+
+/* 模态框修正 */
+.modal-overlay { z-index: 10000 !important; }
+.geek-modal { border-radius: 16px !important; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important; }
+
+@media (max-width: 768px) {
+    .stats-row { grid-template-columns: 1fr 1fr; }
+    .geek-header { flex-direction: column; text-align: center; gap: 15px; }
+    .geek-header .title-group { flex-direction: column; }
+}
+</style>

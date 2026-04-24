@@ -1,0 +1,85 @@
+<div id="clash" class="section">
+    <div class="section-header">
+        <h1><i class="fas fa-shield-alt"></i> Clash Guardian 极客分流管理</h1>
+    </div>
+
+    <!-- 未激活状态提示 -->
+    <div id="clashDisabledState" class="dashboard-card" style="max-width: 600px; margin: 50px auto; text-align: center; padding: 40px; display: none;">
+        <div style="font-size: 60px; color: var(--text-secondary); margin-bottom: 20px;">
+            <i class="fas fa-power-off"></i>
+        </div>
+        <h2>代理模块已关闭</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 30px;">模块已插拔至“未激活”状态。请使用侧边栏开关开启服务。</p>
+    </div>
+
+    <!-- 已激活管理界面 -->
+    <div id="clashActiveUI" style="display: none;">
+        <div class="dashboard-grid">
+            <!-- 订阅配置 -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h3><i class="fas fa-link"></i> 订阅与核心</h3>
+                    <div id="clashStatusBadge"></div>
+                </div>
+                <div class="card-content">
+                    <div class="config-group">
+                        <label>订阅 URL</label>
+                        <input type="text" id="clashSubUrlInput" class="form-control" placeholder="https://...">
+                    </div>
+                    <div class="config-group" style="margin-top: 15px;">
+                        <label>本地代理端口</label>
+                        <input type="number" id="clashPortInput" class="form-control" value="7890">
+                    </div>
+                    <button type="button" class="btn btn-primary" style="margin-top: 20px; width: 100%;" onclick="window.saveClashSettings()">
+                        <i class="fas fa-sync"></i> 更新订阅并同步节点
+                    </button>
+                </div>
+            </div>
+
+            <!-- 分流路由表 -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h3><i class="fas fa-route"></i> 供应商分流路由</h3>
+                </div>
+                <div class="card-content">
+                    <div class="table-responsive">
+                        <table class="data-table" style="width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th>API 供应商</th>
+                                    <th>指定出口节点</th>
+                                </tr>
+                            </thead>
+                            <tbody id="clashRoutingTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 极客增强：已订阅节点概览 -->
+        <div class="dashboard-card" style="margin-top: 25px;">
+            <div class="card-header">
+                <h3><i class="fas fa-server"></i> 已订阅节点概览 (<span id="clashNodeCount">0</span>)</h3>
+            </div>
+            <div class="card-content">
+                <div id="clashNodesOverview" style="display: flex; flex-wrap: wrap; gap: 8px; max-height: 200px; overflow-y: auto; padding: 10px; background: rgba(0,0,0,0.05); border-radius: 8px;">
+                    <p style="color: var(--text-secondary);">暂无已解析节点</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    if (!window._clashTimer) {
+        window._clashTimer = setInterval(() => {
+            if (window.updateClashUIState && window.location.hash === '#clash') {
+                window.updateClashUIState();
+            }
+        }, 5000);
+    }
+    if (window.updateClashUIState) {
+        window.updateClashUIState();
+    }
+</script>

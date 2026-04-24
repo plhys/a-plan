@@ -1,0 +1,8 @@
+{
+  "enabled": false,
+  "subUrl": "",
+  "port": 7890,
+  "routing": {},
+  "secret": "geek-clash-secret",
+  "controllerPort": 9090
+}

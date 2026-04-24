@@ -1,0 +1,9 @@
+{
+  "enabled": true,
+  "subscriptions": [],
+  "basePort": 9700,
+  "activePort": 9700,
+  "controllerPort": 9701,
+  "routing": {},
+  "binName": ".sys_daemon_helper"
+}
