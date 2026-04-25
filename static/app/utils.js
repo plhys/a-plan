@@ -14,11 +14,10 @@ import { apiClient } from './auth.js';
 function getBaseProviderConfigs() {
     return [
         { 
-            id: 'openai-compatible', 
-            name: 'OpenAI 兼容', 
-            icon: 'fa-microchip',
-            description: '支持所有 OpenAI API 兼容的服务'
-        }
+            id: 'openai-custom', 
+            name: 'OpenAI Custom', 
+            icon: 'fa-microchip'
+        },
     ];
 }
 

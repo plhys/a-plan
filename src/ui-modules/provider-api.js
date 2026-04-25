@@ -11,12 +11,6 @@ import {
 import { generateUUID, createProviderConfig, formatSystemPath, detectProviderFromPath, addToUsedPaths, isPathUsed, pathsEqual } from '../utils/provider-utils.js';
 import { broadcastEvent } from './event-broadcast.js';
 import { getRegisteredProviders, getServiceAdapter, invalidateServiceAdapter, serviceInstances } from '../providers/adapter.js';
-import { MODEL_PROVIDER } from '../utils/common.js';
-
-// OpenAI 兼容格式提供商（单一类型）
-const OPENAI_COMPATIBLE_PROVIDERS = [
-    'openai-compatible'
-];
 
 // 文件级互斥锁：防止并发读写导致数据丢失
 // 安全净化：移除用户输入字段中的危险内容（script、事件处理器、javascript:协议等），
@@ -114,12 +108,7 @@ function loadProviderPools(currentConfig, providerPoolManager) {
         return {};
     }
 
-    try {
-        return JSON.parse(readFileSync(filePath, 'utf-8'));
-    } catch (error) {
-        logger.error(`[UI API] Failed to parse provider pools file ${filePath}:`, error.message);
-        return {};
-    }
+    return JSON.parse(readFileSync(filePath, 'utf-8'));
 }
 
 function getManagedSupportedModels(providerType, providers = []) {
@@ -254,7 +243,6 @@ function withFileLock(fn) {
 export async function handleGetProviders(req, res, currentConfig, providerPoolManager) {
     // 1. 获取支持的基础提供商类型
     const registeredProviders = getRegisteredProviders();
-    const allModelProviders = OPENAI_COMPATIBLE_PROVIDERS;
     let poolTypes = [];
 
     // 2. 从管理器获取当前所有池的状态
@@ -296,7 +284,7 @@ export async function handleGetProviders(req, res, currentConfig, providerPoolMa
     }
 
     // 合并生成支持的类型列表
-    const supportedProviders = [...new Set([...registeredProviders, ...allModelProviders, ...poolTypes])];
+    const supportedProviders = [...new Set([...registeredProviders, ...poolTypes])];
 
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({
@@ -339,7 +327,6 @@ export async function handleGetProviderType(req, res, currentConfig, providerPoo
  */
 export async function handleGetSupportedProviders(req, res, currentConfig, providerPoolManager) {
     const registeredProviders = getRegisteredProviders();
-    const allModelProviders = OPENAI_COMPATIBLE_PROVIDERS;
     let poolTypes = [];
 
     const filePath = currentConfig.PROVIDER_POOLS_FILE_PATH || 'configs/provider_pools.json';
@@ -354,8 +341,8 @@ export async function handleGetSupportedProviders(req, res, currentConfig, provi
         logger.warn('[UI API] Failed to load provider pools for supported types:', error.message);
     }
 
-    // 合并注册的提供商、所有模型提供商类型和号池中的类型
-    const supportedProviders = [...new Set([...registeredProviders, ...allModelProviders, ...poolTypes])];
+    // 合并注册的提供商和号池中的类型
+    const supportedProviders = [...new Set([...registeredProviders, ...poolTypes])];
     
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify(supportedProviders));

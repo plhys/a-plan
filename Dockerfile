@@ -28,7 +28,7 @@ WORKDIR /app
 
 # 1. 优先安装生产依赖（忽略开发包）
 COPY package*.json ./
-RUN npm install --omit=dev --no-audit --no-fund
+RUN npm ci --omit=dev --no-audit --no-fund
 
 # 2. 复制源代码
 COPY . .

@@ -48,17 +48,8 @@ export class ProviderPoolManager {
     // Cloudflare Gateway 是路由层，不直接提供模型，使用 null 表示需要用户在创建时指定
     // Workers AI 模型格式：@cf/{provider}/{model-name}，例如：@cf/meta/llama-3.3-70b-instruct-fp8-fast
     static DEFAULT_HEALTH_CHECK_MODELS = {
-        'gemini-api-key': 'gemini-2.5-flash',
         'openai-custom': 'gpt-4o-mini',
-        'claude-custom': 'claude-3-7-sonnet-20250219',
         'openaiResponses-custom': 'gpt-4o-mini',
-        'forward-api': 'gpt-4o-mini',
-        'nvidia-nim': 'meta/llama-3.1-70b-instruct',
-        'groq-api': 'llama3-70b-8192',
-        'sambanova-api': 'Meta-Llama-3.1-70B-Instruct',
-        'github-models': 'gpt-4o',
-        'cloudflare-gateway-free': null,  // Cloudflare Gateway 是路由层，需要用户指定实际模型（Workers AI: @cf/meta/llama-3.3-70b-instruct-fp8-fast）
-        'cloudflare-gateway-proxy': null  // Cloudflare Gateway 是路由层，需要用户指定实际模型（Workers AI: @cf/meta/llama-3.3-70b-instruct-fp8-fast）
     };
 
     constructor(providerPools, options = {}) {

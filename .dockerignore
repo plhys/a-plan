@@ -19,3 +19,8 @@ babel.config.js
 tests/
 run-tests.js
 test-summary.js
+# 首次部署加速
+logs/
+*.log
+audit-fix-backup-*/
+DEV-LOG.md

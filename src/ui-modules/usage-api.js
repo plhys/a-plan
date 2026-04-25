@@ -1,11 +1,11 @@
 import { CONFIG } from '../core/config-manager.js';
 import logger from '../utils/logger.js';
 import { serviceInstances, getServiceAdapter } from '../providers/adapter.js';
-import { formatGrokUsage, formatOpenAICustomUsage, usageService } from '../services/usage-service.js';
+import { formatOpenAICustomUsage, usageService } from '../services/usage-service.js';
 import { readUsageCache, writeUsageCache, readProviderUsageCache, updateProviderUsageCache } from './usage-cache.js';
 import path from 'path';
 
-const supportedProviders = ['grok-custom', 'openai-custom'];
+const supportedProviders = ['openai-custom'];
 
 
 /**
@@ -138,14 +138,6 @@ async function getProviderTypeUsage(providerType, currentConfig, providerPoolMan
  * @returns {Promise<Object>} 用量信息
  */
 async function getAdapterUsage(adapter, providerType) {
-    if (providerType === 'grok-custom') {
-        if (typeof adapter.getUsageLimits === 'function') {
-            const rawUsage = await adapter.getUsageLimits();
-            return formatGrokUsage(rawUsage);
-        }
-        throw new Error('This adapter does not support usage query');
-    }
-    
     if (providerType === 'openai-custom') {
         // 使用 UsageService 获取本地用量统计
         return await usageService.getOpenAICustomUsage();

@@ -40,55 +40,13 @@ export function getCustomModelConfig(modelId, provider = null) {
  * 用于前端UI选择不支持的模型
  */
 export const PROVIDER_MODELS = {
-    'gemini-api-key': [
-        // 免费模型
-        'gemini-2.0-flash',
-        'gemini-2.0-flash-lite',
-        'gemini-2.5-flash',
-        'gemini-2.5-flash-lite',
-        'gemini-1.5-flash',
-        'gemini-1.5-flash-8b',
-        // 付费模型
-        'gemini-2.0-pro',
-        'gemini-2.5-pro',
-        'gemini-1.5-pro',
-        // 预览版 (最新)
-        'gemini-2.5-flash-preview-05-20',
-        'gemini-2.5-pro-preview-06-05',
-        'gemini-3-flash-preview',
-        'gemini-3-pro-preview',
-        'gemini-3.1-flash-preview',
-        'gemini-3.1-pro-preview',
-        'gemini-3.1-flash-lite-preview',
-    ],
-    'claude-custom': [],
     'openai-custom': [],
     'openaiResponses-custom': [],
-    'forward-api': [],
-    'grok-custom': [
-        'grok-4.1-mini',
-        'grok-4.1-thinking',
-        'grok-4.20',
-        'grok-4.20-auto',
-        'grok-4.20-fast',
-        'grok-4.20-expert',
-        'grok-4.20-heavy',
-        'grok-imagine-1.0',
-        'grok-imagine-1.0-edit',
-        'grok-imagine-1.0-fast',
-        'grok-imagine-1.0-fast-edit',
-    ],
-    // Cloudflare Gateway 的模型列表由目标 API 决定，使用动态获取
-    'cloudflare-gateway-free': [],
-    'cloudflare-gateway-proxy': []
 };
 
 export const MANAGED_MODEL_LIST_PROVIDERS = [
     'openai-custom',
     'openaiResponses-custom',
-    'claude-custom',
-    'cloudflare-gateway-free',
-    'cloudflare-gateway-proxy'
 ];
 
 export function getManagedModelListProviderType(providerType) {

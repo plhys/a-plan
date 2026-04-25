@@ -1,19 +1,8 @@
 {
   "name": "a-plan",
-  "version": "5.0.8",
+  "version": "5.0.2",
   "type": "module",
   "description": "A 计划 - AI 接口网关",
-  "bin": "src/core/master.js",
-  "pkg": {
-    "scripts": [
-      "src/**/*.js",
-      "src/**/*.mjs"
-    ],
-    "targets": [
-      "node22-linux-x64"
-    ],
-    "outputPath": "dist"
-  },
   "dependencies": {
     "@anthropic-ai/tokenizer": "^0.0.4",
     "adm-zip": "^0.5.16",
@@ -27,7 +16,6 @@
   },
   "scripts": {
     "start": "node src/core/master.js",
-    "start:standalone": "node src/services/api-server.js",
-    "build": "pkg . --targets node22-linux-x64 --output dist/a-plan-linux-x86_64"
+    "start:standalone": "node src/services/api-server.js"
   }
 }

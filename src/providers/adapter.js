@@ -1,11 +1,5 @@
 import { OpenAIResponsesApiService } from './openai/openai-responses-core.js';
-import { GeminiApiKeyService } from './gemini/gemini-api-key-core.js';
 import { OpenAIApiService } from './openai/openai-core.js';
-import { ClaudeApiService } from './claude/claude-core.js';
-import { ForwardApiService } from './forward/forward-core.js';
-import { GrokApiService } from './grok/grok-core.js';
-import { NvidiaApiService } from './nvidia/nvidia-core.js';
-import { WorkersAIApiServiceAdapter } from './workersai/workersai-adapter.js';
 import { MODEL_PROVIDER } from '../utils/constants.js';
 import logger from '../utils/logger.js';
 
@@ -92,62 +86,6 @@ export class ApiServiceAdapter {
     }
 }
 
-// NVIDIA NIM API 服务适配器
-export class NvidiaNimApiServiceAdapter extends ApiServiceAdapter {
-    constructor(config) {
-        super();
-        this.nvidiaApiService = new NvidiaApiService(config);
-    }
-
-    async generateContent(model, requestBody) {
-        return this.nvidiaApiService.generateContent(model, requestBody);
-    }
-
-    async *generateContentStream(model, requestBody) {
-        yield* this.nvidiaApiService.generateContentStream(model, requestBody);
-    }
-
-    async listModels() {
-        return this.nvidiaApiService.listModels();
-    }
-
-    async refreshToken() { return Promise.resolve(); }
-    async forceRefreshToken() { return Promise.resolve(); }
-    isExpiryDateNear() { return false; }
-}
-
-// Gemini API Key 服务适配器
-export class GeminiApiKeyServiceAdapter extends ApiServiceAdapter {
-    constructor(config) {
-        super();
-        this.geminiApiKeyService = new GeminiApiKeyService(config);
-    }
-
-    async generateContent(model, requestBody) {
-        return this.geminiApiKeyService.generateContent(model, requestBody);
-    }
-
-    async *generateContentStream(model, requestBody) {
-        yield* this.geminiApiKeyService.generateContentStream(model, requestBody);
-    }
-
-    async listModels() {
-        return this.geminiApiKeyService.listModels();
-    }
-
-    async refreshToken() {
-        return this.geminiApiKeyService.refreshToken();
-    }
-
-    async forceRefreshToken() {
-        return this.geminiApiKeyService.forceRefreshToken();
-    }
-
-    isExpiryDateNear() {
-        return this.geminiApiKeyService.isExpiryDateNear();
-    }
-}
-
 // OpenAI API 服务适配器
 export class OpenAIApiServiceAdapter extends ApiServiceAdapter {
     constructor(config) {
@@ -226,129 +164,8 @@ export class OpenAIResponsesApiServiceAdapter extends ApiServiceAdapter {
     }
 }
 
-// Claude API 服务适配器
-export class ClaudeApiServiceAdapter extends ApiServiceAdapter {
-    constructor(config) {
-        super();
-        this.claudeApiService = new ClaudeApiService(config);
-    }
-
-    async generateContent(model, requestBody) {
-        // The adapter now expects the requestBody to be in the native Claude format.
-        return this.claudeApiService.generateContent(model, requestBody);
-    }
-
-    async *generateContentStream(model, requestBody) {
-        // The adapter now expects the requestBody to be in the native Claude format.
-        const stream = this.claudeApiService.generateContentStream(model, requestBody);
-        yield* stream;
-    }
-
-    async listModels() {
-        // The adapter now returns the native model list from the underlying service.
-        return this.claudeApiService.listModels();
-    }
-
-    async refreshToken() {
-        return Promise.resolve();
-    }
-
-    async forceRefreshToken() {
-        return Promise.resolve();
-    }
-
-    isExpiryDateNear() {
-        return false;
-    }
-}
-
-// Forward API 服务适配器
-export class ForwardApiServiceAdapter extends ApiServiceAdapter {
-    constructor(config) {
-        super();
-        this.forwardApiService = new ForwardApiService(config);
-    }
-
-    async generateContent(model, requestBody) {
-        return this.forwardApiService.generateContent(model, requestBody);
-    }
-
-    async *generateContentStream(model, requestBody) {
-        yield* this.forwardApiService.generateContentStream(model, requestBody);
-    }
-
-    async listModels() {
-        return this.forwardApiService.listModels();
-    }
-
-    async refreshToken() {
-        return Promise.resolve();
-    }
-
-    async forceRefreshToken() {
-        return Promise.resolve();
-    }
-
-    isExpiryDateNear() {
-        return false;
-    }
-}
-
-// Grok API 服务适配器
-export class GrokApiServiceAdapter extends ApiServiceAdapter {
-    constructor(config) {
-        super();
-        this.grokApiService = new GrokApiService(config);
-    }
-
-    async generateContent(model, requestBody) {
-        if (!this.grokApiService.isInitialized) {
-            await this.grokApiService.initialize();
-        }
-        return this.grokApiService.generateContent(model, requestBody);
-    }
-
-    async *generateContentStream(model, requestBody) {
-        if (!this.grokApiService.isInitialized) {
-            await this.grokApiService.initialize();
-        }
-        yield* this.grokApiService.generateContentStream(model, requestBody);
-    }
-
-    async listModels() {
-        if (!this.grokApiService.isInitialized) {
-            await this.grokApiService.initialize();
-        }
-        return this.grokApiService.listModels();
-    }
-
-    async refreshToken() {
-        return this.grokApiService.refreshToken();
-    }
-
-    async forceRefreshToken() {
-        return this.grokApiService.refreshToken();
-    }
-
-    isExpiryDateNear() {
-        return this.grokApiService.isExpiryDateNear();
-    }
-
-    /**
-     * 获取用量限制信息
-     * @returns {Promise<Object>} 用量限制信息
-     */
-    async getUsageLimits() {
-        if (!this.grokApiService.isInitialized) {
-            await this.grokApiService.initialize();
-        }
-        return this.grokApiService.getUsageLimits();
-    }
-}
-
 // 注册所有内置适配器
 registerAdapter(MODEL_PROVIDER.OPENAI_CUSTOM, OpenAIApiServiceAdapter);
-registerAdapter(MODEL_PROVIDER.CLOUDFLARE_GATEWAY_FREE, WorkersAIApiServiceAdapter);
 registerAdapter(MODEL_PROVIDER.CLOUDFLARE_GATEWAY_PROXY, OpenAIApiServiceAdapter);
 
 // 用于存储服务适配器单例的映射

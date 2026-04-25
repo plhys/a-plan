@@ -1,25 +1,3 @@
 {
-  "openai-custom": [
-    {
-      "customName": "请修改-节点名称",
-      "OPENAI_API_KEY": "请修改-API密钥",
-      "OPENAI_BASE_URL": "请修改-API地址",
-      "checkModelName": "请修改-健康检查模型名",
-      "checkHealth": true,
-      "notSupportedModels": [],
-      "uuid": "请修改-唯一UUID",
-      "isHealthy": true,
-      "isDisabled": false,
-      "lastUsed": null,
-      "usageCount": 0,
-      "errorCount": 0,
-      "lastErrorTime": null,
-      "lastErrorMessage": null,
-      "needsRefresh": false,
-      "refreshCount": 0,
-      "lastHealthCheckTime": null,
-      "lastHealthCheckModel": null,
-      "lastRefreshTime": null
-    }
-  ]
+  "openai-custom": []
 }

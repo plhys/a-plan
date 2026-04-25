@@ -743,9 +743,7 @@ function showSimplePrompt(title, placeholder, callback) {
 
 function generateAddGroupButton(providerType) {
 
-    const allowedTypes = [
-        'openai-compatible'
-    ];
+    const allowedTypes = ['openai-custom', 'cloudflare-gateway-free', 'cloudflare-gateway-proxy'];
 
     if (!allowedTypes.includes(providerType)) {
 
@@ -3682,16 +3680,7 @@ function showAddProviderGroupModal(defaultBaseType = null) {
         const isSupported = cachedSupportedProviders.includes(config.id);
         
         // 2. 允许添加的提供商类型
-        const allowedTypes = [
-            'openai-custom',
-            'forward-api',
-            'nvidia-nim',
-            'groq-api',
-            'sambanova-api',
-            'github-models',
-            'cloudflare-gateway-free',
-            'cloudflare-gateway-proxy'
-        ];
+        const allowedTypes = ['openai-custom', 'cloudflare-gateway-free', 'cloudflare-gateway-proxy'];
         const isAllowed = allowedTypes.includes(config.id);
         
         return isSupported && isAllowed;

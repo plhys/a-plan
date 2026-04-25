@@ -10,7 +10,6 @@ import { countTokensAnthropic } from '../utils/token-utils.js';
 import { PROMPT_LOG_FILENAME } from '../core/config-manager.js';
 import { getPluginManager } from '../core/plugin-manager.js';
 import { randomUUID } from 'crypto';
-import { handleGrokAssetsProxy } from '../utils/grok-assets-proxy.js';
 
 let requestIdCounter = 0;
 const processStartTime = Date.now().toString(36);

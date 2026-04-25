@@ -43,33 +43,19 @@ export const RETRY = {
 
 // 协议前缀常量
 export const MODEL_PROTOCOL_PREFIX = {
-    GEMINI: 'gemini',
     OPENAI: 'openai',
     OPENAI_RESPONSES: 'openaiResponses',
+    // 以下为已废弃协议的兼容性存根，仅用于路由分派不再报错
+    // 实际转换和适配器已全部移除
     CLAUDE: 'claude',
-    CODEX: 'codex',
-    FORWARD: 'forward',
+    GEMINI: 'gemini',
     GROK: 'grok',
-    NVIDIA: 'nvidia',
-    GROQ: 'groq',
-    SAMBANOVA: 'sambanova',
-    GITHUB: 'github',
-    CLOUDFLARE: 'cloudflare'
 };
 
 // 提供商标识符常量
 export const MODEL_PROVIDER = {
-    GEMINI_API_KEY: 'gemini-api-key',
     OPENAI_CUSTOM: 'openai-custom',
     OPENAI_CUSTOM_RESPONSES: 'openaiResponses-custom',
-    CLAUDE_CUSTOM: 'claude-custom',
-    FORWARD_API: 'forward-api',
-    GROK_CUSTOM: 'grok-custom',
-    NVIDIA_NIM: 'nvidia-nim',
-    GROQ_API: 'groq-api',
-    SAMBANOVA_API: 'sambanova-api',
-    GITHUB_MODELS: 'github-models',
-    CLOUDFLARE_GATEWAY_FREE: 'cloudflare-gateway-free',
     CLOUDFLARE_GATEWAY_PROXY: 'cloudflare-gateway-proxy',
     AUTO: 'auto',
 };

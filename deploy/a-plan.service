@@ -1,0 +1,22 @@
+[Unit]
+Description=A-Plan AI API Gateway
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/data/workspace/a-plan
+ExecStart=/usr/bin/node /data/workspace/a-plan/src/core/master.js
+Restart=always
+RestartSec=3
+StandardOutput=append:/data/workspace/a-plan/logs/a-plan.log
+StandardError=append:/data/workspace/a-plan/logs/a-plan-error.log
+
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=no
+ReadWritePaths=/data/workspace/a-plan
+
+[Install]
+WantedBy=multi-user.target

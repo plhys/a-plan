@@ -1,1 +1,20 @@
-{}
+{
+  "plugins": {
+    "ai-monitor": {
+      "enabled": true,
+      "config": {}
+    },
+    "api-potluck": {
+      "enabled": true,
+      "config": {}
+    },
+    "default-auth": {
+      "enabled": true,
+      "config": {}
+    },
+    "model-usage-stats": {
+      "enabled": true,
+      "config": {}
+    }
+  }
+}

@@ -46,12 +46,6 @@ export function convertData(data, type, fromProvider, toProvider, model, request
         const fromProtocol = getProtocolPrefix(fromProvider);
         const toProtocol = getProtocolPrefix(toProvider);
 
-        // 如果目标协议为 forward，直接返回原始数据，无需转换
-        if (toProtocol === MODEL_PROTOCOL_PREFIX.FORWARD || fromProtocol === MODEL_PROTOCOL_PREFIX.FORWARD) {
-            logger.info(`[Convert] Target protocol is forward, skipping conversion`);
-            return data;
-        }
-
         // 从工厂获取转换器
         const converter = ConverterFactory.getConverter(fromProtocol);
 
@@ -91,103 +85,6 @@ export function convertData(data, type, fromProvider, toProvider, model, request
  * 内部使用新的转换器架构
  */
 
-// OpenAI 相关转换
-export function toOpenAIRequestFromGemini(geminiRequest) {
-    const converter = ConverterFactory.getConverter(MODEL_PROTOCOL_PREFIX.GEMINI);
-    return converter.toOpenAIRequest(geminiRequest);
-}
-
-export function toOpenAIRequestFromClaude(claudeRequest) {
-    const converter = ConverterFactory.getConverter(MODEL_PROTOCOL_PREFIX.CLAUDE);
-    return converter.toOpenAIRequest(claudeRequest);
-}
-
-export function toOpenAIChatCompletionFromGemini(geminiResponse, model) {
-    const converter = ConverterFactory.getConverter(MODEL_PROTOCOL_PREFIX.GEMINI);
-    return converter.toOpenAIResponse(geminiResponse, model);
-}
-
-export function toOpenAIChatCompletionFromClaude(claudeResponse, model) {
-    const converter = ConverterFactory.getConverter(MODEL_PROTOCOL_PREFIX.CLAUDE);
-    return converter.toOpenAIResponse(claudeResponse, model);
-}
-
-export function toOpenAIStreamChunkFromGemini(geminiChunk, model) {
-    const converter = ConverterFactory.getConverter(MODEL_PROTOCOL_PREFIX.GEMINI);
-    return converter.toOpenAIStreamChunk(geminiChunk, model);
-}
-
-export function toOpenAIStreamChunkFromClaude(claudeChunk, model) {
-    const converter = ConverterFactory.getConverter(MODEL_PROTOCOL_PREFIX.CLAUDE);
-    return converter.toOpenAIStreamChunk(claudeChunk, model);
-}
-
-export function toOpenAIModelListFromGemini(geminiModels) {
-    const converter = ConverterFactory.getConverter(MODEL_PROTOCOL_PREFIX.GEMINI);
-    return converter.toOpenAIModelList(geminiModels);
-}
-
-export function toOpenAIModelListFromClaude(claudeModels) {
-    const converter = ConverterFactory.getConverter(MODEL_PROTOCOL_PREFIX.CLAUDE);
-    return converter.toOpenAIModelList(claudeModels);
-}
-
-// Claude 相关转换
-export function toClaudeRequestFromOpenAI(openaiRequest) {
-    const converter = ConverterFactory.getConverter(MODEL_PROTOCOL_PREFIX.OPENAI);
-    return converter.toClaudeRequest(openaiRequest);
-}
-
-export function toClaudeRequestFromOpenAIResponses(responsesRequest) {
-    const converter = ConverterFactory.getConverter(MODEL_PROTOCOL_PREFIX.OPENAI_RESPONSES);
-    return converter.toClaudeRequest(responsesRequest);
-}
-
-export function toClaudeChatCompletionFromOpenAI(openaiResponse, model) {
-    const converter = ConverterFactory.getConverter(MODEL_PROTOCOL_PREFIX.OPENAI);
-    return converter.toClaudeResponse(openaiResponse, model);
-}
-
-export function toClaudeChatCompletionFromGemini(geminiResponse, model) {
-    const converter = ConverterFactory.getConverter(MODEL_PROTOCOL_PREFIX.GEMINI);
-    return converter.toClaudeResponse(geminiResponse, model);
-}
-
-export function toClaudeStreamChunkFromOpenAI(openaiChunk, model) {
-    const converter = ConverterFactory.getConverter(MODEL_PROTOCOL_PREFIX.OPENAI);
-    return converter.toClaudeStreamChunk(openaiChunk, model);
-}
-
-export function toClaudeStreamChunkFromGemini(geminiChunk, model) {
-    const converter = ConverterFactory.getConverter(MODEL_PROTOCOL_PREFIX.GEMINI);
-    return converter.toClaudeStreamChunk(geminiChunk, model);
-}
-
-export function toClaudeModelListFromOpenAI(openaiModels) {
-    const converter = ConverterFactory.getConverter(MODEL_PROTOCOL_PREFIX.OPENAI);
-    return converter.toClaudeModelList(openaiModels);
-}
-
-export function toClaudeModelListFromGemini(geminiModels) {
-    const converter = ConverterFactory.getConverter(MODEL_PROTOCOL_PREFIX.GEMINI);
-    return converter.toClaudeModelList(geminiModels);
-}
-
-// Gemini 相关转换
-export function toGeminiRequestFromOpenAI(openaiRequest) {
-    const converter = ConverterFactory.getConverter(MODEL_PROTOCOL_PREFIX.OPENAI);
-    return converter.toGeminiRequest(openaiRequest);
-}
-
-export function toGeminiRequestFromClaude(claudeRequest) {
-    const converter = ConverterFactory.getConverter(MODEL_PROTOCOL_PREFIX.CLAUDE);
-    return converter.toGeminiRequest(claudeRequest);
-}
-
-export function toGeminiRequestFromOpenAIResponses(responsesRequest) {
-    const converter = ConverterFactory.getConverter(MODEL_PROTOCOL_PREFIX.OPENAI_RESPONSES);
-    return converter.toGeminiRequest(responsesRequest);
-}
 
 // OpenAI Responses 相关转换
 export function toOpenAIResponsesFromOpenAI(openaiResponse, model) {
@@ -195,29 +92,9 @@ export function toOpenAIResponsesFromOpenAI(openaiResponse, model) {
     return converter.toOpenAIResponsesResponse(openaiResponse, model);
 }
 
-export function toOpenAIResponsesFromClaude(claudeResponse, model) {
-    const converter = ConverterFactory.getConverter(MODEL_PROTOCOL_PREFIX.CLAUDE);
-    return converter.toOpenAIResponsesResponse(claudeResponse, model);
-}
-
-export function toOpenAIResponsesFromGemini(geminiResponse, model) {
-    const converter = ConverterFactory.getConverter(MODEL_PROTOCOL_PREFIX.GEMINI);
-    return converter.toOpenAIResponsesResponse(geminiResponse, model);
-}
-
 export function toOpenAIResponsesStreamChunkFromOpenAI(openaiChunk, model, requestId) {
     const converter = ConverterFactory.getConverter(MODEL_PROTOCOL_PREFIX.OPENAI);
     return converter.toOpenAIResponsesStreamChunk(openaiChunk, model, requestId);
-}
-
-export function toOpenAIResponsesStreamChunkFromClaude(claudeChunk, model, requestId) {
-    const converter = ConverterFactory.getConverter(MODEL_PROTOCOL_PREFIX.CLAUDE);
-    return converter.toOpenAIResponsesStreamChunk(claudeChunk, model, requestId);
-}
-
-export function toOpenAIResponsesStreamChunkFromGemini(geminiChunk, model, requestId) {
-    const converter = ConverterFactory.getConverter(MODEL_PROTOCOL_PREFIX.GEMINI);
-    return converter.toOpenAIResponsesStreamChunk(geminiChunk, model, requestId);
 }
 
 // 从 OpenAI Responses 转换到其他格式
@@ -359,35 +236,12 @@ export default {
     isProtocolRegistered,
     clearConverterCache,
     getConverter,
-    // 向后兼容的函数
-    toOpenAIRequestFromGemini,
-    toOpenAIRequestFromClaude,
-    toOpenAIChatCompletionFromGemini,
-    toOpenAIChatCompletionFromClaude,
-    toOpenAIStreamChunkFromGemini,
-    toOpenAIStreamChunkFromClaude,
-    toOpenAIModelListFromGemini,
-    toOpenAIModelListFromClaude,
-    toClaudeRequestFromOpenAI,
-    toClaudeChatCompletionFromOpenAI,
-    toClaudeChatCompletionFromGemini,
-    toClaudeStreamChunkFromOpenAI,
-    toClaudeStreamChunkFromGemini,
-    toClaudeModelListFromOpenAI,
-    toClaudeModelListFromGemini,
-    toGeminiRequestFromOpenAI,
-    toGeminiRequestFromClaude,
+    // OpenAI ↔ OpenAIResponses
     toOpenAIResponsesFromOpenAI,
-    toOpenAIResponsesFromClaude,
-    toOpenAIResponsesFromGemini,
     toOpenAIResponsesStreamChunkFromOpenAI,
-    toOpenAIResponsesStreamChunkFromClaude,
-    toOpenAIResponsesStreamChunkFromGemini,
     toOpenAIRequestFromOpenAIResponses,
     toOpenAIChatCompletionFromOpenAIResponses,
     toOpenAIStreamChunkFromOpenAIResponses,
-    toClaudeRequestFromOpenAIResponses,
-    toGeminiRequestFromOpenAIResponses,
 };
 
 

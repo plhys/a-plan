@@ -7,4 +7,3 @@ configs/token-store.json
 configs/*.lock
 configs/*.tmp
 logs/*.log
-dist/
