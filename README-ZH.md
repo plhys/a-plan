@@ -50,7 +50,7 @@ chmod +x a-plan
 ```bash
 # 1. 克隆项目
 git clone https://gitee.com/JunFengLiangZi/a-plan.git
-cd a-plan
+cd a-plan-* && ./start.sh
 
 # 2. 安装依赖
 pnpm install

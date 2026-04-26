@@ -2,7 +2,7 @@
 
 **A计划** 是一个轻量级的 AI API 中转服务，将上游 AI 提供商的接口统一包装为标准 OpenAI 格式。
 
-[![Version](https://img.shields.io/badge/version-5.1.0-blue)](https://github.com/plhys/a-plan)
+[![Version](https://img.shields.io/badge/version-5.2.3-blue)](https://github.com/plhys/a-plan)
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green)](https://nodejs.org/)
 [![Docker](https://img.shields.io/badge/Docker-Support-blue)](https://docker.com/)
 [![License](https://img.shields.io/badge/license-MIT-orange)](LICENSE)
@@ -35,15 +35,15 @@
 
 适合：网络不稳定、追求一键部署、生产环境
 
-从 Gitee Release 下载完整包（包含所有二进制）:
+从 GitHub Release 下载完整包（包含所有二进制）:
 
 ```bash
 # 1. 下载完整包（从 Release 页面获取最新链接）
-wget https://gitee.com/JunFengLiangZi/a-plan/releases/download/v5.1.0/a-plan-5.1.0-full-linux-x86_64.tar.gz
+wget https://github.com/plhys/a-plan/releases/download/v5.2.3/a-plan-latest.tar.gz
 
 # 2. 解压
-tar -xzf a-plan-5.1.0-full-linux-x86_64.tar.gz
-cd a-plan
+tar -xzf a-plan-latest.tar.gz
+cd a-plan-* && ./start.sh
 
 # 3. 启动（无需额外安装，开箱即用）
 ./start.sh
@@ -55,7 +55,7 @@ cd a-plan
 
 ```bash
 # 1. 克隆
-git clone https://gitee.com/JunFengLiangZi/a-plan.git && cd a-plan
+git clone https://gitee.com/JunFengLiangZi/a-plan.git && cd a-plan-* && ./start.sh
 
 # 2. 一键安装（需要能访问 GitHub）
 ./install.sh
@@ -72,7 +72,7 @@ git clone https://gitee.com/JunFengLiangZi/a-plan.git && cd a-plan
 
 ```bash
 # 1. 克隆
-git clone https://gitee.com/JunFengLiangZi/a-plan.git && cd a-plan
+git clone https://gitee.com/JunFengLiangZi/a-plan.git && cd a-plan-* && ./start.sh
 
 # 2. 启动（自动构建并运行）
 docker-compose up -d
